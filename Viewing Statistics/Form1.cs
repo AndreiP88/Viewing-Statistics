@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace Viewing_Statistics
 {
@@ -23,6 +24,8 @@ namespace Viewing_Statistics
 
         Dictionary<int, string> users = new Dictionary<int, string>();
         Dictionary<int, string> machines = new Dictionary<int, string>();
+
+        List<User> usersList;
 
         private void LoadUsers()
         {
@@ -166,9 +169,9 @@ namespace Viewing_Statistics
             return result;
         }
 
-        private List<int> LoadAListOfUsersFromTheSelectedRangeForTheSelectedEquipmentList(List<int> equips, DateTime date)
+        private void LoadUsersList(List<int> equips, DateTime date)
         {
-            List<int> usersList = new List<int>();
+            usersList = new List<User>();
 
             string startDate = date.ToString("yyyy-MM") + "-01T07:40:00.000";
             string endDate = date.AddMonths(1).ToString("yyyy-MM") + "-01T07:10:00.000";
@@ -208,9 +211,9 @@ namespace Viewing_Statistics
                         {
                             int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
 
-                            if(!usersList.Contains(loadUser)) 
+                            if(usersList.FindIndex((v) => v.Id == loadUser) == -1)
                             {
-                                usersList.Add(loadUser);
+                                usersList.Add(new User(loadUser));
                             }
                         }
                     }
@@ -222,13 +225,11 @@ namespace Viewing_Statistics
             {
                 MessageBox.Show("Ошибка подключения", e.Message);
             }
-
-            return usersList;
         }
 
         private void LoadShifts()
         {
-            try
+            //try
             {
                 int countShifts = 2;
 
@@ -243,21 +244,214 @@ namespace Viewing_Statistics
                 {
                     for(int j = 1; j <= countShifts; j++)
                     {
-                        DateTime caurrentDaet = selectDate.AddDays(i);
+                        DateTime currentDate = selectDate.AddDays(i);
 
-                        string startDateTime = SelectStartDateTimeFromShiftNumberAndDate(caurrentDaet, j);
-                        string endDateTime = SelectEndDateTimeFromShiftNumberAndDate(selectDate, j);
+                        string dateShift = currentDate.ToString("dd.MM.yyyy");
 
+                        string startDateTime = SelectStartDateTimeFromShiftNumberAndDate(currentDate, j);
+                        string endDateTime = SelectEndDateTimeFromShiftNumberAndDate(currentDate, j);
+                        MessageBox.Show(startDateTime);
+                        using (SqlConnection connection = DBConnection.GetDBConnection())
+                        {
+                            connection.Open();
+                            SqlCommand Command = new SqlCommand
+                            {
+                                Connection = connection,
 
+                                CommandText =
+                                    @"SELECT
+	                                    order_head.id_order_head, 
+	                                    man_planjob.id_man_planjob, 
+	                                    man_planjob.status, 
+	                                    common_employee.employee_lastname, 
+	                                    common_employee.employee_firstname, 
+	                                    common_employee.employee_middlename, 
+                                        man_factjob.id_common_employee,
+	                                    common_equip_directory.equip_name, 
+	                                    man_factjob.shift_num, 
+	                                    order_head.order_num, 
+	                                    common_ul_directory.ul_name, 
+	                                    order_head.order_name, 
+	                                    man_factjob.date_begin, 
+	                                    man_factjob.date_end, 
+	                                    man_factjob.duration, 
+	                                    man_factjob.fact_out_qty, 
+	                                    man_factjob.flags, 
+	                                    man_planjob_list.plan_out_qty, 
+	                                    man_planjob_list.normtime, 
+	                                    man_factjob.norm_time, 
+	                                    man_factjob.id_man_factjob, 
+	                                    man_planjob_list.id_norm_operation, 
+	                                    man_planjob_list.id_man_order_job_item, 
+	                                    man_planjob_list.id_man_planjob_list
+                                    FROM
+	                                    dbo.man_factjob
+                                    INNER JOIN
+	                                dbo.man_planjob_list
+	                                ON 
+		                                man_factjob.id_man_planjob_list = man_planjob_list.id_man_planjob_list
+	                                RIGHT JOIN
+	                                dbo.fbc_brigade
+	                                ON 
+		                                man_factjob.id_fbc_brigade = fbc_brigade.id_fbc_brigade
+	                                RIGHT JOIN
+	                                dbo.common_employee
+	                                ON 
+		                                man_factjob.id_common_employee = common_employee.id_common_employee
+	                                INNER JOIN
+	                                dbo.common_equip_directory
+	                                ON 
+		                                man_factjob.id_equip = common_equip_directory.id_common_equip_directory
+	                                LEFT JOIN
+	                                dbo.man_order_job_item
+	                                ON 
+		                                man_planjob_list.id_man_order_job_item = man_order_job_item.id_man_order_job_item
+	                                INNER JOIN
+	                                dbo.man_order_job
+	                                ON 
+		                                man_order_job_item.id_man_order_job = man_order_job.id_man_order_job
+	                                INNER JOIN
+	                                dbo.order_head
+	                                ON 
+		                                man_order_job.id_order_head = order_head.id_order_head
+	                                LEFT JOIN
+	                                dbo.common_ul_directory
+	                                ON 
+		                                order_head.id_customer = common_ul_directory.id_common_ul_directory
+	                                LEFT JOIN
+	                                dbo.man_planjob
+	                                ON 
+		                                man_order_job_item.id_man_order_job_item = man_planjob.id_man_order_job_item
+                                    WHERE
+                                        man_factjob.date_begin IS NOT NULL AND 
+	                                    man_factjob.date_begin >= CONVERT ( VARCHAR ( 32 ), @startDate, 21 ) AND
+	                                    man_factjob.date_begin <= CONVERT ( VARCHAR ( 32 ), @endDate, 21 ) AND
+                                        man_factjob.shift_num = @shiftNum AND
+                                        man_factjob.id_common_employee IS NOT NULL AND
+                                        man_factjob.id_equip IS NOT NULL AND
+                                        man_factjob.fact_out_qty IS NOT NULL AND
+                                        man_planjob_list.normtime IS NOT NULL AND
+                                        man_planjob_list.plan_out_qty IS NOT NULL"
+                            };
+                            Command.Parameters.AddWithValue("@startDate", startDateTime);
+                            Command.Parameters.AddWithValue("@endDate", endDateTime);
+                            Command.Parameters.AddWithValue("@shiftNum", j);
+
+                            DbDataReader sqlReader = Command.ExecuteReader();
+
+                            while (sqlReader.Read())
+                            {
+                                int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
+
+                                int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser);
+                                
+                                if (indexFromUserList != -1)
+                                {
+                                    int indexFromUserListShifts = -1;
+
+                                    if (usersList[indexFromUserList].Shifts == null)
+                                    {
+                                        usersList[indexFromUserList].Shifts = new List<UserShift>();
+                                    }
+
+                                    indexFromUserListShifts = usersList[indexFromUserList].Shifts.FindIndex(
+                                        (v) => v.ShiftDate == dateShift &&
+                                               v.ShiftNumber == j);
+
+                                    int indexShift = indexFromUserListShifts;
+
+                                    if (indexFromUserListShifts == -1)
+                                    {
+                                        usersList[indexFromUserList].Shifts.Add(new UserShift(
+                                        dateShift,
+                                        j
+                                        ));
+
+                                        indexShift = 0;
+                                    }
+
+                                    if (usersList[indexFromUserList].Shifts[indexShift].Orders == null)
+                                    {
+                                        usersList[indexFromUserList].Shifts[indexShift].Orders = new List<Order>();
+                                    }
+
+                                    usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new Order(
+                                        sqlReader["order_num"].ToString(),
+                                        sqlReader["order_name"].ToString(),
+                                        Convert.ToInt32(sqlReader["status"]),
+                                        Convert.ToInt32(sqlReader["flags"]),
+                                        sqlReader["date_begin"].ToString(),
+                                        sqlReader["date_end"].ToString(),
+                                        Convert.ToInt32(sqlReader["duration"]),
+                                        Convert.ToInt32(sqlReader["fact_out_qty"]),
+                                        Convert.ToInt32(sqlReader["plan_out_qty"]),
+                                        Convert.ToInt32(sqlReader["normtime"]),
+                                        Convert.ToInt32(sqlReader["id_man_order_job_item"])
+                                        ));
+                                }
+                            }
+
+                            connection.Close();
+                        }
+
+                        AddWorkTimeToLV(i, j);
                     }
                 }
             }
-            catch (Exception ex)
+            //catch (Exception ex)
             {
-                MessageBox.Show("Ошибка " + ex.Message, "Ошибка");
+                //MessageBox.Show(ex.Message, "Ошибка. LoadShifts");
             }
         }
 
+        private void AddWorkTimeToLV(int day, int shifNum)
+        {
+            int year = GetYearFromComboBox();
+            int month = GetMonthFromComboBox();
+
+            string dateShift = day.ToString("D2") + "." + month.ToString("D2") + "." + year.ToString();
+
+            
+
+            for (int i = 0; i < usersList.Count; i++)
+            {
+                //int indexFromUserList = usersList.FindIndex((v) => v.Id == user);
+
+                int indexFromUserListShifts = -1;
+
+                if (usersList[i].Shifts != null)
+                {
+                    indexFromUserListShifts = usersList[i].Shifts.FindIndex(
+                                        (v) => v.ShiftDate == dateShift &&
+                                               v.ShiftNumber == shifNum);
+
+                    int index = listView1.Items.IndexOfKey(usersList[i].Id.ToString());
+
+                    if (index >= 0 && indexFromUserListShifts >= 0)
+                    {
+                        if(usersList[i].Shifts[indexFromUserListShifts].Orders != null)
+                        {
+                            int count = usersList[i].Shifts[indexFromUserListShifts].Orders.Count;
+                            int amount = 0;
+
+                            for(int k = 0; k < count; k++)
+                            {
+                                amount += usersList[i].Shifts[indexFromUserListShifts].Orders[k].FactOutQty;
+                            }
+
+                            ListViewItem item = listView1.Items[index];
+                            if (item != null)
+                            {
+                                item.SubItems[day + 1].Text = (amount).ToString();
+                            }
+                        }
+                        
+                    }
+                }
+
+                
+            }
+        }
         private List<int> GetSelectegEquipsList()
         {
             List<int> equips = new List<int>();
@@ -286,26 +480,31 @@ namespace Viewing_Statistics
             listView1.Columns.Add("ИТОГ", 80, HorizontalAlignment.Center);
         }
 
-        private void AddUsersToListView(List<int> usersList)
+        private void AddUsersToListView(int countDaysFromSellectedDate)
         {
             for (int i = 0; i < usersList.Count; i++)
             {
                 string user = "";
 
-                if (users.ContainsKey(usersList[i]))
+                if (users.ContainsKey(usersList[i].Id))
                 {
-                    user = users[usersList[i]];
+                    user = users[usersList[i].Id];
                 }
                 else
                 {
-                    user = "Работник " + usersList[i];
+                    user = "Работник " + usersList[i].Id;
                 }
 
                 ListViewItem item = new ListViewItem();
 
-                item.Name = usersList[i].ToString();
+                item.Name = usersList[i].Id.ToString();
                 item.Text = (i + 1).ToString();
                 item.SubItems.Add(user);
+
+                for(int j = 1; j <= countDaysFromSellectedDate; j++)
+                {
+                    item.SubItems.Add("");
+                }
 
                 listView1.Items.Add(item);
             }
@@ -336,7 +535,7 @@ namespace Viewing_Statistics
             }
             catch(Exception ex)
             {
-                MessageBox.Show("Ошибка получения года " + ex, "Ошибка");
+                MessageBox.Show("Ошибка получения года " + ex.Message, "Ошибка");
             }
 
             return result;
@@ -352,7 +551,7 @@ namespace Viewing_Statistics
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка получения месяца " + ex, "Ошибка");
+                MessageBox.Show("Ошибка получения месяца " + ex.Message, "Ошибка");
             }
 
             return result;
@@ -373,9 +572,11 @@ namespace Viewing_Statistics
 
             List<int> equips = GetSelectegEquipsList();
 
-            List<int> usersList = LoadAListOfUsersFromTheSelectedRangeForTheSelectedEquipmentList(equips, selectDate);
+            LoadUsersList(equips, selectDate);
 
-            AddUsersToListView(usersList);
+            AddUsersToListView(countDaysFromSellectedDate);
+
+            LoadShifts();
         }
 
         private void Form1_Load(object sender, EventArgs e)

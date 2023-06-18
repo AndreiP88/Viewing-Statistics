@@ -8,15 +8,16 @@ namespace Viewing_Statistics
 {
     internal class UserShift
     {
-        public int IdUser;
+        //public int IdUser;
         public string ShiftDate;
         public int ShiftNumber;
         public List<Order> Orders;
 
-        public UserShift(int idUser, string shiftDate, string shiftNumber, List<Order> orders) 
+        public UserShift(string shiftDate, int shiftNumber) 
         {
-            
-        
+            //this.IdUser = idUser;
+            this.ShiftDate = shiftDate;
+            this.ShiftNumber = shiftNumber;        
         }
     }
 }
