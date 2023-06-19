@@ -214,6 +214,7 @@ namespace Viewing_Statistics
                             if(usersList.FindIndex((v) => v.Id == loadUser) == -1)
                             {
                                 usersList.Add(new User(loadUser));
+                                usersList[usersList.Count - 1].Shifts = new List<UserShift>();
                             }
                         }
                     }
@@ -240,17 +241,17 @@ namespace Viewing_Statistics
 
                 int countDaysFromSellectedDate = DateTime.DaysInMonth(year, month);
 
-                for (int i = 0; i < countDaysFromSellectedDate; i++)
+                for (int currentDay = 0; currentDay < countDaysFromSellectedDate; currentDay++)
                 {
-                    for(int j = 1; j <= countShifts; j++)
+                    for(int currentShift = 1; currentShift <= countShifts; currentShift++)
                     {
-                        DateTime currentDate = selectDate.AddDays(i);
+                        DateTime currentDate = selectDate.AddDays(currentDay);
 
                         string dateShift = currentDate.ToString("dd.MM.yyyy");
 
-                        string startDateTime = SelectStartDateTimeFromShiftNumberAndDate(currentDate, j);
-                        string endDateTime = SelectEndDateTimeFromShiftNumberAndDate(currentDate, j);
-                        MessageBox.Show(startDateTime);
+                        string startDateTime = SelectStartDateTimeFromShiftNumberAndDate(currentDate, currentShift);
+                        string endDateTime = SelectEndDateTimeFromShiftNumberAndDate(currentDate, currentShift);
+
                         using (SqlConnection connection = DBConnection.GetDBConnection())
                         {
                             connection.Open();
@@ -335,7 +336,7 @@ namespace Viewing_Statistics
                             };
                             Command.Parameters.AddWithValue("@startDate", startDateTime);
                             Command.Parameters.AddWithValue("@endDate", endDateTime);
-                            Command.Parameters.AddWithValue("@shiftNum", j);
+                            Command.Parameters.AddWithValue("@shiftNum", currentShift);
 
                             DbDataReader sqlReader = Command.ExecuteReader();
 
@@ -347,16 +348,9 @@ namespace Viewing_Statistics
                                 
                                 if (indexFromUserList != -1)
                                 {
-                                    int indexFromUserListShifts = -1;
-
-                                    if (usersList[indexFromUserList].Shifts == null)
-                                    {
-                                        usersList[indexFromUserList].Shifts = new List<UserShift>();
-                                    }
-
-                                    indexFromUserListShifts = usersList[indexFromUserList].Shifts.FindIndex(
+                                    int indexFromUserListShifts = usersList[indexFromUserList].Shifts.FindIndex(
                                         (v) => v.ShiftDate == dateShift &&
-                                               v.ShiftNumber == j);
+                                               v.ShiftNumber == currentShift);
 
                                     int indexShift = indexFromUserListShifts;
 
@@ -364,14 +358,11 @@ namespace Viewing_Statistics
                                     {
                                         usersList[indexFromUserList].Shifts.Add(new UserShift(
                                         dateShift,
-                                        j
+                                        currentShift
                                         ));
 
-                                        indexShift = 0;
-                                    }
+                                        indexShift = usersList[indexFromUserList].Shifts.Count - 1;
 
-                                    if (usersList[indexFromUserList].Shifts[indexShift].Orders == null)
-                                    {
                                         usersList[indexFromUserList].Shifts[indexShift].Orders = new List<Order>();
                                     }
 
@@ -387,14 +378,14 @@ namespace Viewing_Statistics
                                         Convert.ToInt32(sqlReader["plan_out_qty"]),
                                         Convert.ToInt32(sqlReader["normtime"]),
                                         Convert.ToInt32(sqlReader["id_man_order_job_item"])
-                                        ));
+                                    ));
                                 }
                             }
 
                             connection.Close();
                         }
 
-                        AddWorkTimeToLV(i, j);
+                        AddWorkTimeToLV(currentDay, currentShift);
                     }
                 }
             }
@@ -410,8 +401,6 @@ namespace Viewing_Statistics
             int month = GetMonthFromComboBox();
 
             string dateShift = day.ToString("D2") + "." + month.ToString("D2") + "." + year.ToString();
-
-            
 
             for (int i = 0; i < usersList.Count; i++)
             {
@@ -431,18 +420,15 @@ namespace Viewing_Statistics
                     {
                         if(usersList[i].Shifts[indexFromUserListShifts].Orders != null)
                         {
-                            int count = usersList[i].Shifts[indexFromUserListShifts].Orders.Count;
-                            int amount = 0;
-
-                            for(int k = 0; k < count; k++)
-                            {
-                                amount += usersList[i].Shifts[indexFromUserListShifts].Orders[k].FactOutQty;
-                            }
+                            int timeWorkigOut = CalculateWorkTime(usersList[i].Shifts[indexFromUserListShifts].Orders);
+                            float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
 
                             ListViewItem item = listView1.Items[index];
+
                             if (item != null)
                             {
-                                item.SubItems[day + 1].Text = (amount).ToString();
+                                //item.SubItems[day + 1].Text = MinuteToTimeString(timeWorkigOut);
+                                item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
                             }
                         }
                         
@@ -452,6 +438,44 @@ namespace Viewing_Statistics
                 
             }
         }
+
+        private int CalculateWorkTime(List<Order> order)
+        {
+            int workingOut = 0;
+
+            for (int i = 0;  i < order.Count; i++)
+            {
+                if (order[i].Flags == 576)
+                {
+                    workingOut += order[i].Normtime;
+                }
+
+                if (order[i].Flags == 512 || order[i].Flags == 544)
+                {
+                    if (order[i].Normtime > 0)
+                    {
+                        int norm = order[i].PlanOutQty / order[i].Normtime;
+
+                        if (norm > 0)
+                        {
+                            workingOut += order[i].FactOutQty / norm;
+                        }
+                    }
+                }
+            }
+
+            return workingOut;
+        }
+
+        private float GetPercentWorkingOut(int targetWorkingOut, int facticalWorkingOut)
+        {
+            float result;
+
+            result = (float)facticalWorkingOut / targetWorkingOut;
+
+            return result;
+        }
+
         private List<int> GetSelectegEquipsList()
         {
             List<int> equips = new List<int>();
@@ -464,17 +488,36 @@ namespace Viewing_Statistics
 
         }
 
+        public string MinuteToTimeString(int totalMinutes)
+        {
+            string result = "00:00";
+
+            int absMinutes = Math.Abs(totalMinutes);
+
+            int hours = 0;
+            int minutes = absMinutes % 60;
+
+            if (absMinutes >= 60)
+            {
+                hours = absMinutes / 60;
+            }
+
+            result = hours.ToString("D2") + ":" + minutes.ToString("D2");
+
+            return result;
+        }
+
         private void CreateColomnsToListView(int days)
         {
             listView1.Items.Clear();
             listView1.Columns.Clear();
 
             listView1.Columns.Add("№", 40, HorizontalAlignment.Center);
-            listView1.Columns.Add("Имя", 260);
+            listView1.Columns.Add("Имя", 300);
 
             for(int i =  1; i <= days; i++)
             {
-                listView1.Columns.Add(i.ToString(), 40, HorizontalAlignment.Center);
+                listView1.Columns.Add(i.ToString(), 50, HorizontalAlignment.Center);
             }
 
             listView1.Columns.Add("ИТОГ", 80, HorizontalAlignment.Center);
