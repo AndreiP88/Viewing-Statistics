@@ -427,8 +427,8 @@ namespace Viewing_Statistics
 
                             if (item != null)
                             {
-                                //item.SubItems[day + 1].Text = MinuteToTimeString(timeWorkigOut);
-                                item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
+                                item.SubItems[day + 1].Text = MinuteToTimeString(timeWorkigOut);
+                                //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
                             }
                         }
                         

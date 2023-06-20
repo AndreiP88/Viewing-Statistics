@@ -10,6 +10,7 @@ namespace Viewing_Statistics
     {
         public int Id;
         public List<UserShift> Shifts;
+        public int WorkingOut;
 
         public User(int id)
         {
