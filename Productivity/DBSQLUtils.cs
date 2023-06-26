@@ -1,6 +1,6 @@
 ﻿using System.Data.SqlClient;
 
-namespace Viewing_Statistics
+namespace Productivity
 {
     internal class DBSQLUtils
     {

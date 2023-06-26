@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Viewing_Statistics
+namespace Productivity
 {
-    internal class UserShift
+    public class UserShift
     {
         //public int IdUser;
         public string ShiftDate;

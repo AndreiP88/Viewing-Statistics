@@ -1,63 +1,42 @@
-﻿using System;
+﻿using MetroSet_UI.Forms;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Productivity;
 
-namespace Viewing_Statistics
+namespace Productivity
 {
-    public partial class Form1 : Form
+    public partial class FormMain : MetroSetForm
     {
-        public Form1()
+        public FormMain()
         {
             InitializeComponent();
         }
+
+        bool viewAllEquipsForUser = false;
+        int countShifts = 2;
 
         Dictionary<int, string> users = new Dictionary<int, string>();
         Dictionary<int, string> machines = new Dictionary<int, string>();
 
         List<User> usersList;
 
-        private void LoadUsers()
+        private void LoadAllUsers()
         {
             try
             {
-                using (SqlConnection connection = DBConnection.GetDBConnection())
-                {
-                    connection.Open();
-                    SqlCommand Command = new SqlCommand
-                    {
-                        Connection = connection,
-                        //CommandText = @"SELECT * FROM dbo.order_head WHERE status = '1' AND order_num LIKE '@order_num'"
-                        //CommandText = @"SELECT * FROM dbo.common_employee WHERE fire_date IS null"
-                        CommandText = 
-                            @"SELECT
-	                            * 
-                            FROM
-	                            dbo.common_employee"
-                        /* WHERE
-                             fire_date IS NULL"*/
+                UsersValue usersValue = new UsersValue();
 
-                    };
-                    //Command.Parameters.AddWithValue("@order_num", "%" + textBox1.Text + "%");
-
-                    DbDataReader sqlReader = Command.ExecuteReader();
-
-                    while (sqlReader.Read())
-                    {
-                        string fullName = sqlReader["employee_lastname"].ToString() + " " +
-                            sqlReader["employee_firstname"].ToString() + " " +
-                            sqlReader["employee_middlename"].ToString();
-
-                        users.Add(Convert.ToInt32(sqlReader["id_common_employee"]), fullName);
-                    }
-
-                    connection.Close();
-                }
+                users = usersValue.LoadAllUsersNames();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Ошибка подключения");
             }
@@ -67,45 +46,22 @@ namespace Viewing_Statistics
         {
             try
             {
-                using (SqlConnection connection = DBConnection.GetDBConnection())
-                {
-                    connection.Open();
-                    SqlCommand Command = new SqlCommand
-                    {
-                        Connection = connection,
+                EquipsValue equipsValue = new EquipsValue();
 
-                        CommandText =
-                            @"SELECT
-	                            id_common_equip_directory,
-	                            equip_name
-                            FROM
-	                            dbo.common_equip_directory"
-                    };
-                    //Command.Parameters.AddWithValue("@order_num", "%" + textBox1.Text + "%");
-
-                    DbDataReader sqlReader = Command.ExecuteReader();
-
-                    while (sqlReader.Read())
-                    {
-                        machines.Add(Convert.ToInt32(sqlReader["id_common_equip_directory"]), sqlReader["equip_name"].ToString());
-                    }
-
-                    connection.Close();
-                }
+                machines = equipsValue.LoadMachine();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Ошибка подключения");
             }
         }
-
         private void AddYearsToComboBox(int yearStart, int yearEnd)
         {
-            comboBox1.Items.Clear();
+            comboBox3.Items.Clear();
 
             for (int i = yearStart; i <= yearEnd; i++)
             {
-                comboBox1.Items.Add(i.ToString());
+                comboBox3.Items.Add(i.ToString());
             }
         }
 
@@ -118,45 +74,94 @@ namespace Viewing_Statistics
             comboBox2.Items.AddRange(month);
         }
 
-        private void SelectCurrentDate()
+        private void SelectCurrentMonth()
         {
-            comboBox1.Text = DateTime.Now.Year.ToString();
+            comboBox3.Text = DateTime.Now.Year.ToString();
             comboBox2.SelectedIndex = DateTime.Now.Month - 1;
         }
 
         private void SelectPreviewMonth()
         {
-            comboBox1.Text = DateTime.Now.AddMonths(-1).Year.ToString();
+            comboBox3.Text = DateTime.Now.AddMonths(-1).Year.ToString();
             comboBox2.SelectedIndex = DateTime.Now.AddMonths(-1).Month;
         }
 
-        private string SelectStartDateTimeFromShiftNumberAndDate(DateTime date, int shiftNumber)
+        private void CreateColomnsToListView(int days)
         {
-            string result = "";
+            listView2.Items.Clear();
+            listView2.Columns.Clear();
 
-            if(shiftNumber == 1)
+            int width = listView2.Width;
+
+            int w = (width - 440) / days;
+
+            listView2.Columns.Add("№", 40, HorizontalAlignment.Center);
+            listView2.Columns.Add("Имя", 300);
+
+            for (int i = 1; i <= days; i++)
             {
-                result = date.ToString("yyyy-MM-dd") + "T07:00:00.000";
+                listView2.Columns.Add(i.ToString(), w, HorizontalAlignment.Center);
             }
-            else
+
+            listView2.Columns.Add("ИТОГ", 80, HorizontalAlignment.Center);
+        }
+
+        private void ChangeDate()
+        {
+            if (comboBox2.SelectedIndex != -1 && comboBox3.SelectedIndex != -1 && comboBox4.SelectedIndex != -1)
             {
-                result = date.ToString("yyyy-MM-dd") + "T19:00:00.000";
+                UpdateStatistics();
+            }
+        }
+
+        private DateTime ReturnDateFromInputParameter(int year, int month)
+        {
+            DateTime result = DateTime.MinValue.AddYears(year - 1).AddMonths(month - 1);
+
+            return result;
+        }
+
+        private void LoadStartsValues()
+        {
+            LoadAllUsers();
+            LoadMachine();
+
+            AddYearsToComboBox(2015, 2050);
+            AddMonthToComboBox();
+
+            SelectCurrentMonth();
+
+            //Update Later
+            comboBox4.SelectedIndex = 0;
+        }
+
+        private int GetYearFromComboBox()
+        {
+            int result = 0;
+
+            try
+            {
+                result = Convert.ToInt32(comboBox3.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка получения года " + ex.Message, "Ошибка");
             }
 
             return result;
         }
 
-        private string SelectEndDateTimeFromShiftNumberAndDate(DateTime date, int shiftNumber)
+        private int GetMonthFromComboBox()
         {
-            string result = "";
+            int result = 0;
 
-            if (shiftNumber == 1)
+            try
             {
-                result = date.ToString("yyyy-MM-dd") + "T21:00:00.000";
+                result = comboBox2.SelectedIndex + 1;
             }
-            else
+            catch (Exception ex)
             {
-                result = date.AddDays(1).ToString("yyyy-MM-dd") + "T09:00:00.000";
+                MessageBox.Show("Ошибка получения месяца " + ex.Message, "Ошибка");
             }
 
             return result;
@@ -164,56 +169,13 @@ namespace Viewing_Statistics
 
         private void LoadUsersList(List<int> equips, DateTime date)
         {
-            usersList = new List<User>();
-
-            string startDate = date.ToString("yyyy-MM") + "-01T07:40:00.000";
-            string endDate = date.AddMonths(1).ToString("yyyy-MM") + "-01T07:10:00.000";
-
             try
             {
-                using (SqlConnection connection = DBConnection.GetDBConnection())
-                {
-                    connection.Open();
-                    SqlCommand Command = new SqlCommand
-                    {
-                        Connection = connection,
+                usersList = new List<User>();
 
-                        CommandText =
-                            @"SELECT
-	                            id_common_employee,
-	                            id_equip
-                            FROM
-	                            dbo.man_factjob
-                            WHERE
-                                date_begin IS NOT NULL AND 
-	                            date_begin >= CONVERT ( VARCHAR ( 32 ), @startDate, 21 ) AND
-	                            date_begin <= CONVERT ( VARCHAR ( 32 ), @endDate, 21 ) AND
-                                id_common_employee IS NOT NULL AND
-                                id_equip IS NOT NULL"
-                    };
-                    Command.Parameters.AddWithValue("@startDate", startDate);
-                    Command.Parameters.AddWithValue("@endDate", endDate);
+                UsersValue usersValue = new UsersValue();
 
-                    DbDataReader sqlReader = Command.ExecuteReader();
-
-                    while (sqlReader.Read())
-                    {
-                        int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
-                        
-                        if (equips.Contains(loadEquip))
-                        {
-                            int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
-
-                            if(usersList.FindIndex((v) => v.Id == loadUser) == -1)
-                            {
-                                usersList.Add(new User(loadUser, loadEquip));
-                                usersList[usersList.Count - 1].Shifts = new List<UserShift>();
-                            }
-                        }
-                    }
-
-                    connection.Close();
-                }
+                usersList = usersValue.LoadUsersList(equips, date);
             }
             catch (Exception ex)
             {
@@ -225,7 +187,7 @@ namespace Viewing_Statistics
         {
             try
             {
-                int countShifts = 2;
+                DateTimeValues timeValues = new DateTimeValues();
 
                 int year = GetYearFromComboBox();
                 int month = GetMonthFromComboBox();
@@ -236,14 +198,14 @@ namespace Viewing_Statistics
 
                 for (int currentDay = 0; currentDay < countDaysFromSellectedDate; currentDay++)
                 {
-                    for(int currentShift = 1; currentShift <= countShifts; currentShift++)
+                    for (int currentShift = 1; currentShift <= countShifts; currentShift++)
                     {
                         DateTime currentDate = selectDate.AddDays(currentDay);
 
                         string dateShift = currentDate.ToString("dd.MM.yyyy");
 
-                        string startDateTime = SelectStartDateTimeFromShiftNumberAndDate(currentDate, currentShift);
-                        string endDateTime = SelectEndDateTimeFromShiftNumberAndDate(currentDate, currentShift);
+                        string startDateTime = timeValues.SelectStartDateTimeFromShiftNumberAndDate(currentDate, currentShift);
+                        string endDateTime = timeValues.SelectEndDateTimeFromShiftNumberAndDate(currentDate, currentShift);
 
                         using (SqlConnection connection = DBConnection.GetDBConnection())
                         {
@@ -261,6 +223,7 @@ namespace Viewing_Statistics
 	                                    common_employee.employee_firstname, 
 	                                    common_employee.employee_middlename, 
                                         man_factjob.id_common_employee,
+                                        man_factjob.id_equip,
 	                                    common_equip_directory.equip_name, 
 	                                    man_factjob.shift_num, 
 	                                    order_head.order_num, 
@@ -336,9 +299,11 @@ namespace Viewing_Statistics
                             while (sqlReader.Read())
                             {
                                 int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
+                                int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
 
-                                int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser);
-                                
+                                int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser &&
+                                                                                   v.Equip == loadEquip);
+
                                 if (indexFromUserList != -1)
                                 {
                                     int indexFromUserListShifts = usersList[indexFromUserList].Shifts.FindIndex(
@@ -388,8 +353,188 @@ namespace Viewing_Statistics
             }
         }
 
+        private void AddUsersToListView(int countDaysFromSellectedMonth)
+        {
+            List<int> equips = GetSelectegEquipsList();
+
+            if (comboBox4.SelectedIndex == 0)
+            {
+                for(int i = 0; i < equips.Count; i++)
+                {
+                    int countUserForCurrentEquip = 0;
+                    string machine = "";
+
+                    if (machines.ContainsKey(equips[i]))
+                    {
+                        machine = machines[equips[i]];
+                    }
+                    else
+                    {
+                        machine = "Оборудование " + machines[i];
+                    }
+
+                    AddItemToListView("e" + equips[i], "", machine, countDaysFromSellectedMonth, Color.Gray);
+
+                    for (int j = 0; j < usersList.Count; j++)
+                    {
+                        if (usersList[j].Equip == equips[i])
+                        {
+                            countUserForCurrentEquip++;
+                            string user = "    ";
+
+                            if (users.ContainsKey(usersList[j].Id))
+                            {
+                                user += users[usersList[j].Id];
+                            }
+                            else
+                            {
+                                user += "Работник " + usersList[j].Id;
+                            }
+
+                            Color color = Color.White;
+
+                            if (countUserForCurrentEquip % 2 == 0)
+                            {
+                                color = Color.LightGray;
+                            }
+
+                            AddItemToListView(CreateNameListViewItem(equips[i], usersList[j].Id), countUserForCurrentEquip.ToString(), user, countDaysFromSellectedMonth, color);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                List<int> usersCurrent = new List<int>();
+                List<int> equipsCurrent = new List<int>();
+
+                for (int i = 0; i < usersList.Count; i++)
+                {
+                    if (!usersCurrent.Contains(usersList[i].Id))
+                    {
+                        usersCurrent.Add(usersList[i].Id);
+                    }
+
+                    if (viewAllEquipsForUser && !equipsCurrent.Contains(usersList[i].Equip))
+                    {
+                        equipsCurrent.Add(usersList[i].Equip);
+                    }
+                }
+
+                if (!viewAllEquipsForUser)
+                {
+                    equipsCurrent = equips;
+                }
+
+                for (int i = 0; i < usersCurrent.Count; i++)
+                {
+                    string user = "";
+
+                    if (users.ContainsKey(usersCurrent[i]))
+                    {
+                        user += users[usersCurrent[i]];
+                    }
+                    else
+                    {
+                        user += "Работник " + usersCurrent[i];
+                    }
+
+                    AddItemToListView("u" + usersCurrent[i], "", user, countDaysFromSellectedMonth, Color.Gray);
+
+                    int countEquipForCurrentUser = 0;
+
+                    for (int j = 0; j < equipsCurrent.Count; j++)
+                    {
+                        int index = usersList.FindIndex((v) => v.Id == usersCurrent[i] &&
+                                                               v.Equip == equipsCurrent[j]);
+
+                        if(index >= 0)
+                        {
+                            countEquipForCurrentUser++;
+
+                            string machine = "    ";
+
+                            if (machines.ContainsKey(equipsCurrent[j]))
+                            {
+                                machine += machines[equipsCurrent[j]];
+                            }
+                            else
+                            {
+                                machine += "Оборудование " + machines[j];
+                            }
+
+                            Color color = Color.White;
+
+                            if (countEquipForCurrentUser % 2 == 0)
+                            {
+                                color = Color.LightGray;
+                            }
+
+                            AddItemToListView(CreateNameListViewItem(equipsCurrent[j], usersList[index].Id), countEquipForCurrentUser.ToString(), machine, countDaysFromSellectedMonth, color);
+                        }
+                    }
+                }
+            }
+
+
+            /*for (int i = 0; i < usersList.Count; i++)
+            {
+                string user = "";
+
+                if (users.ContainsKey(usersList[i].Id))
+                {
+                    user = users[usersList[i].Id];
+                }
+                else
+                {
+                    user = "Работник " + usersList[i].Id;
+                }
+
+                ListViewItem item = new ListViewItem();
+
+                item.Name = usersList[i].Id.ToString();
+                item.Text = (i + 1).ToString();
+                item.SubItems.Add(user);
+
+                for (int j = 1; j <= countDaysFromSellectedMonth; j++)
+                {
+                    item.SubItems.Add("");
+                }
+
+                listView2.Items.Add(item);
+            }*/
+        }
+
+        private void AddItemToListView(string name, string text, string subText, int countDays, Color color)
+        {
+            ListViewItem item = new ListViewItem();
+
+            item.Name = name;
+            item.Text = text;
+            item.SubItems.Add(subText);
+
+            for (int j = 1; j <= countDays; j++)
+            {
+                item.SubItems.Add("");
+            }
+
+            item.BackColor = color;
+
+            if (text == "")
+                item.Font = new Font(item.Font, FontStyle.Bold);
+
+            listView2.Items.Add(item);
+        }
+
+        private string CreateNameListViewItem(int equip, int user)
+        {
+            return "e" + equip + "u" + user;
+        }
+
         private void AddWorkTimeToLV(int day, int shifNum)
         {
+            DateTimeValues timeValues = new DateTimeValues();
+
             int year = GetYearFromComboBox();
             int month = GetMonthFromComboBox();
 
@@ -407,27 +552,28 @@ namespace Viewing_Statistics
                                         (v) => v.ShiftDate == dateShift &&
                                                v.ShiftNumber == shifNum);
 
-                    int index = listView1.Items.IndexOfKey(usersList[i].Id.ToString());
+                    //int index = listView2.Items.IndexOfKey(usersList[i].Id.ToString());
+                    int index = listView2.Items.IndexOfKey(CreateNameListViewItem(usersList[i].Equip, usersList[i].Id));
 
                     if (index >= 0 && indexFromUserListShifts >= 0)
                     {
-                        if(usersList[i].Shifts[indexFromUserListShifts].Orders != null)
+                        if (usersList[i].Shifts[indexFromUserListShifts].Orders != null)
                         {
                             int timeWorkigOut = CalculateWorkTime(usersList[i].Shifts[indexFromUserListShifts].Orders);
                             float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
 
-                            ListViewItem item = listView1.Items[index];
+                            ListViewItem item = listView2.Items[index];
 
                             if (item != null)
                             {
-                                item.SubItems[day + 1].Text = MinuteToTimeString(timeWorkigOut);
+                                item.SubItems[day + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
                                 //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
                             }
                         }
-                        
+
                     }
                 }
-                
+
             }
         }
 
@@ -435,7 +581,7 @@ namespace Viewing_Statistics
         {
             int workingOut = 0;
 
-            for (int i = 0;  i < order.Count; i++)
+            for (int i = 0; i < order.Count; i++)
             {
                 if (order[i].Flags == 576)
                 {
@@ -480,120 +626,6 @@ namespace Viewing_Statistics
 
         }
 
-        public string MinuteToTimeString(int totalMinutes)
-        {
-            string result = "00:00";
-
-            int absMinutes = Math.Abs(totalMinutes);
-
-            int hours = 0;
-            int minutes = absMinutes % 60;
-
-            if (absMinutes >= 60)
-            {
-                hours = absMinutes / 60;
-            }
-
-            result = hours.ToString("D2") + ":" + minutes.ToString("D2");
-
-            return result;
-        }
-
-        private void CreateColomnsToListView(int days)
-        {
-            listView1.Items.Clear();
-            listView1.Columns.Clear();
-
-            int width = listView1.Width;
-
-            listView1.Columns.Add("№", 40, HorizontalAlignment.Center);
-            listView1.Columns.Add("Имя", 300);
-
-            for(int i =  1; i <= days; i++)
-            {
-                listView1.Columns.Add(i.ToString(), 50, HorizontalAlignment.Center);
-            }
-
-            listView1.Columns.Add("ИТОГ", 80, HorizontalAlignment.Center);
-        }
-
-        private void AddUsersToListView(int countDaysFromSellectedDate)
-        {
-            for (int i = 0; i < usersList.Count; i++)
-            {
-                string user = "";
-
-                if (users.ContainsKey(usersList[i].Id))
-                {
-                    user = users[usersList[i].Id];
-                }
-                else
-                {
-                    user = "Работник " + usersList[i].Id;
-                }
-
-                ListViewItem item = new ListViewItem();
-
-                item.Name = usersList[i].Id.ToString();
-                item.Text = (i + 1).ToString();
-                item.SubItems.Add(user);
-
-                for(int j = 1; j <= countDaysFromSellectedDate; j++)
-                {
-                    item.SubItems.Add("");
-                }
-
-                listView1.Items.Add(item);
-            }
-        }
-
-        private DateTime ReturnDateFromInputParameter(int year, int month)
-        {
-            DateTime result = DateTime.MinValue.AddYears(year - 1).AddMonths(month - 1);
-
-            return result;
-        }
-
-        private void ChangeDate()
-        {
-            if (comboBox1.SelectedIndex != -1 && comboBox2.SelectedIndex != -1)
-            {
-                UpdateStatistics();
-            }
-        }
-
-        private int GetYearFromComboBox()
-        {
-            int result = 0;
-
-            try
-            {
-                result = Convert.ToInt32(comboBox1.Text);
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show("Ошибка получения года " + ex.Message, "Ошибка");
-            }
-
-            return result;
-        }
-
-        private int GetMonthFromComboBox()
-        {
-            int result = 0;
-
-            try
-            {
-                result = comboBox2.SelectedIndex + 1;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ошибка получения месяца " + ex.Message, "Ошибка");
-            }
-
-            return result;
-        }
-
         private void UpdateStatistics()
         {
             int year = GetYearFromComboBox();
@@ -601,9 +633,9 @@ namespace Viewing_Statistics
 
             DateTime selectDate = ReturnDateFromInputParameter(year, month);
 
-            int countDaysFromSellectedDate = DateTime.DaysInMonth(year, month);
+            int countDaysFromSellectedMonth = DateTime.DaysInMonth(year, month);
 
-            CreateColomnsToListView(countDaysFromSellectedDate);
+            CreateColomnsToListView(countDaysFromSellectedMonth);
 
 
 
@@ -611,29 +643,27 @@ namespace Viewing_Statistics
 
             LoadUsersList(equips, selectDate);
 
-            AddUsersToListView(countDaysFromSellectedDate);
+            AddUsersToListView(countDaysFromSellectedMonth);
 
             LoadShifts();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void FormMain_Load(object sender, EventArgs e)
         {
-            LoadUsers();
-            LoadMachine();
-
-            AddYearsToComboBox(2015, 2050);
-            AddMonthToComboBox();
-
-            SelectCurrentDate();
-
+            LoadStartsValues();
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             ChangeDate();
         }
 
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ChangeDate();
+        }
+
+        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
         {
             ChangeDate();
         }

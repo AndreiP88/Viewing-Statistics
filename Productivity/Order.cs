@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Viewing_Statistics
+namespace Productivity
 {
-    internal class Order
+    public class Order
     {
         public string OrderNumber;
         public string OrderName;

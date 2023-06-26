@@ -1,8 +1,8 @@
 ﻿using System.Data.SqlClient;
 
-namespace Viewing_Statistics
+namespace Productivity
 {
-    internal class DBConnection
+    public class DBConnection
     {
         public static SqlConnection GetDBConnection()
         {

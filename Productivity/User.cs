@@ -4,17 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Viewing_Statistics
+namespace Productivity
 {
-    internal class User
+    public class User
     {
         public int Id;
+        public int Equip;
         public List<UserShift> Shifts;
         public int WorkingOut;
 
-        public User(int id)
+        public User(int id, int equip)
         {
             this.Id = id;
+            this.Equip = equip;
         }
     }
 }
