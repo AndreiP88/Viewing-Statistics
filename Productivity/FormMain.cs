@@ -136,8 +136,6 @@ namespace Productivity
 
             listView2.Columns.Add("Выработка", 90, HorizontalAlignment.Center);
             listView2.Columns.Add("Отставание", 95, HorizontalAlignment.Center);
-
-            
         }
 
         private void ChangeDate()
@@ -215,6 +213,21 @@ namespace Productivity
             {
                 MessageBox.Show(ex.Message, "Ошибка подключения");
             }
+        }
+
+        private void LoadShiftsFromUser()
+        {
+            /*equipsList = new List<Equips>();*/
+
+            ValueDateTime timeValues = new ValueDateTime();
+            ValueShifts valueShifts = new ValueShifts();
+
+            int year = GetYearFromComboBox();
+            int month = GetMonthFromComboBox();
+
+            DateTime selectDate = ReturnDateFromInputParameter(year, month);
+
+            usersList = valueShifts.LoadShifts(usersList, selectDate, countShifts);
         }
 
         private void LoadShifts()

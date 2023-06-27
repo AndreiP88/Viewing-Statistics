@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,17 +20,15 @@ namespace Productivity
             string startDate = date.ToString("yyyy-MM") + "-01T07:40:00.000";
             string endDate = date.AddMonths(1).ToString("yyyy-MM") + "-01T07:10:00.000";
 
-            try
+            using (SqlConnection connection = DBConnection.GetDBConnection())
             {
-                using (SqlConnection connection = DBConnection.GetDBConnection())
+                connection.Open();
+                SqlCommand Command = new SqlCommand
                 {
-                    connection.Open();
-                    SqlCommand Command = new SqlCommand
-                    {
-                        Connection = connection,
+                    Connection = connection,
 
-                        CommandText =
-                            @"SELECT
+                    CommandText =
+                        @"SELECT
 	                            id_common_employee,
 	                            id_equip
                             FROM
@@ -40,58 +39,126 @@ namespace Productivity
 	                            date_begin <= CONVERT ( VARCHAR ( 32 ), @endDate, 21 ) AND
                                 id_common_employee IS NOT NULL AND
                                 id_equip IS NOT NULL"
-                    };
-                    Command.Parameters.AddWithValue("@startDate", startDate);
-                    Command.Parameters.AddWithValue("@endDate", endDate);
+                };
+                Command.Parameters.AddWithValue("@startDate", startDate);
+                Command.Parameters.AddWithValue("@endDate", endDate);
 
-                    DbDataReader sqlReader = Command.ExecuteReader();
+                DbDataReader sqlReader = Command.ExecuteReader();
 
-                    while (sqlReader.Read())
+                while (sqlReader.Read())
+                {
+                    int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
+
+                    if (equips.Contains(loadEquip))
                     {
-                        int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
+                        int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
 
-                        if (equips.Contains(loadEquip))
+                        if (usersList.FindIndex((v) => v.Id == loadUser &&
+                                                       v.Equip == loadEquip) == -1)
                         {
-                            int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
-
-                            if (usersList.FindIndex((v) => v.Id == loadUser &&
-                                                           v.Equip == loadEquip) == -1)
-                            {
-                                usersList.Add(new User(loadUser, loadEquip));
-                                usersList[usersList.Count - 1].Shifts = new List<UserShift>();
-                            }
+                            usersList.Add(new User(loadUser, loadEquip));
+                            usersList[usersList.Count - 1].Shifts = new List<UserShift>();
                         }
                     }
-
-                    connection.Close();
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка подключения");
+
+                connection.Close();
             }
 
             return usersList;
         }
 
-        public List<int> LoadUsersIncludedAllEquips(List<int> equips, DateTime dateStart, DateTime dateEnd)
+        /// <summary>
+        /// Получить список сотрудников с оборудованием за выбранный месяц
+        /// </summary>
+        /// <param name="equips"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public List<User> LoadUsersListFromSelectMonth(List<int> equips, DateTime date)
+        {
+            /*string startDate = date.ToString("yyyy-MM") + "-01T07:40:00.000";
+            string endDate = date.AddMonths(1).ToString("yyyy-MM") + "-01T07:10:00.000";*/
+
+            DateTime startDate = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1);
+            DateTime endDate = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month);
+
+            List<int> users = LoadUsersIncludedAllEquips(equips, startDate, endDate);
+
+            List<User> usersList = LoadUsersList(users, startDate, endDate);
+
+            return usersList;
+        }
+
+        private List<User> LoadUsersList(List<int> users, DateTime dateStart, DateTime dateEnd)
+        {
+            List<User> usersList = new List<User>();
+
+            string startDate = dateStart.ToString("yyyy-MM-dd") + "T07:40:00.000";
+            string endDate = dateEnd.AddMonths(1).ToString("yyyy-MM-dd") + "T07:10:00.000";
+
+            using (SqlConnection connection = DBConnection.GetDBConnection())
+            {
+                connection.Open();
+                SqlCommand Command = new SqlCommand
+                {
+                    Connection = connection,
+
+                    CommandText =
+                        @"SELECT
+	                            id_common_employee,
+	                            id_equip
+                            FROM
+	                            dbo.man_factjob
+                            WHERE
+                                date_begin IS NOT NULL AND 
+	                            date_begin >= CONVERT ( VARCHAR ( 32 ), @startDate, 21 ) AND
+	                            date_begin <= CONVERT ( VARCHAR ( 32 ), @endDate, 21 ) AND
+                                id_common_employee IS NOT NULL AND
+                                id_equip IS NOT NULL"
+                };
+                Command.Parameters.AddWithValue("@startDate", startDate);
+                Command.Parameters.AddWithValue("@endDate", endDate);
+
+                DbDataReader sqlReader = Command.ExecuteReader();
+
+                while (sqlReader.Read())
+                {
+                    int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
+                    int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
+
+                    if (users.Contains(loadUser))
+                    {
+                        if (usersList.FindIndex((v) => v.Id == loadUser &&
+                                                       v.Equip == loadEquip) == -1)
+                        {
+                            usersList.Add(new User(loadUser, loadEquip));
+                            usersList[usersList.Count - 1].Shifts = new List<UserShift>();
+                        }
+                    }
+                }
+
+                connection.Close();
+            }
+
+            return usersList;
+        }
+
+        private List<int> LoadUsersIncludedAllEquips(List<int> equips, DateTime dateStart, DateTime dateEnd)
         {
             List<int> users = new List<int>();
 
             string startDate = dateStart.ToString("yyyy-MM-dd") + "T07:40:00.000";
             string endDate = dateEnd.AddMonths(1).ToString("yyyy-MM-dd") + "T07:10:00.000";
 
-            try
+            using (SqlConnection connection = DBConnection.GetDBConnection())
             {
-                using (SqlConnection connection = DBConnection.GetDBConnection())
+                connection.Open();
+                SqlCommand Command = new SqlCommand
                 {
-                    connection.Open();
-                    SqlCommand Command = new SqlCommand
-                    {
-                        Connection = connection,
+                    Connection = connection,
 
-                        CommandText =
-                            @"SELECT
+                    CommandText =
+                        @"SELECT
 	                            id_common_employee,
 	                            id_equip
                             FROM
@@ -102,38 +169,31 @@ namespace Productivity
 	                            date_begin <= CONVERT ( VARCHAR ( 32 ), @endDate, 21 ) AND
                                 id_common_employee IS NOT NULL AND
                                 id_equip IS NOT NULL"
-                    };
-                    Command.Parameters.AddWithValue("@startDate", startDate);
-                    Command.Parameters.AddWithValue("@endDate", endDate);
+                };
+                Command.Parameters.AddWithValue("@startDate", startDate);
+                Command.Parameters.AddWithValue("@endDate", endDate);
 
-                    DbDataReader sqlReader = Command.ExecuteReader();
+                DbDataReader sqlReader = Command.ExecuteReader();
 
-                    while (sqlReader.Read())
+                while (sqlReader.Read())
+                {
+                    int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
+
+                    if (equips.Contains(loadEquip))
                     {
-                        int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
+                        int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
 
-                        if (equips.Contains(loadEquip))
+                        if (!users.Contains(loadUser))
                         {
-                            int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
-
-                            if (usersList.FindIndex((v) => v.Id == loadUser &&
-                                                           v.Equip == loadEquip) == -1)
-                            {
-                                usersList.Add(new User(loadUser, loadEquip));
-                                usersList[usersList.Count - 1].Shifts = new List<UserShift>();
-                            }
+                            users.Add(loadUser);
                         }
                     }
-
-                    connection.Close();
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка подключения");
+
+                connection.Close();
             }
 
-            return usersList;
+            return users;
         }
 
         public Dictionary<int, string> LoadAllUsersNames()
