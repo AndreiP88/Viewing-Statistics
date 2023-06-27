@@ -22,16 +22,26 @@
 
         #region Код, автоматически созданный конструктором форм Windows
 
+        public class MyListView : System.Windows.Forms.ListView
+        {
+            public MyListView()
+            {
+                DoubleBuffered = true;
+            }
+        }
+
+
         /// <summary>
         /// Требуемый метод для поддержки конструктора — не изменяйте 
         /// содержимое этого метода с помощью редактора кода.
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("");
             this.metroSetTabControl1 = new MetroSet_UI.Controls.MetroSetTabControl();
             this.metroSetSetTabPage1 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.listView1 = new MyListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -46,12 +56,16 @@
             this.metroSetSwitch1 = new MetroSet_UI.Controls.MetroSetSwitch();
             this.metroSetSetTabPage2 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.listView2 = new System.Windows.Forms.ListView();
+            this.listView2 = new MyListView();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.comboBox4 = new System.Windows.Forms.ComboBox();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.listView3 = new MyListView();
             this.metroSetSetTabPage3 = new MetroSet_UI.Child.MetroSetSetTabPage();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.metroSetControlBox1 = new MetroSet_UI.Controls.MetroSetControlBox();
             this.metroSetTabControl1.SuspendLayout();
             this.metroSetSetTabPage1.SuspendLayout();
@@ -60,6 +74,9 @@
             this.metroSetSetTabPage2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
+            this.metroSetSetTabPage3.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // metroSetTabControl1
@@ -70,7 +87,7 @@
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage1);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage2);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage3);
-            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.metroSetTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroSetTabControl1.IsDerivedStyle = true;
             this.metroSetTabControl1.ItemSize = new System.Drawing.Size(130, 38);
@@ -281,14 +298,16 @@
             this.tableLayoutPanel3.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.tableLayoutPanel3.ColumnCount = 1;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Controls.Add(this.listView2, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.listView2, 0, 2);
             this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.listView3, 0, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.ForeColor = System.Drawing.Color.Transparent;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 2;
+            this.tableLayoutPanel3.RowCount = 3;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.Size = new System.Drawing.Size(1271, 472);
             this.tableLayoutPanel3.TabIndex = 0;
@@ -300,11 +319,11 @@
             this.listView2.GridLines = true;
             this.listView2.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listView2.HideSelection = false;
-            this.listView2.Location = new System.Drawing.Point(3, 39);
+            this.listView2.Location = new System.Drawing.Point(3, 69);
             this.listView2.MultiSelect = false;
             this.listView2.Name = "listView2";
             this.listView2.ShowItemToolTips = true;
-            this.listView2.Size = new System.Drawing.Size(1265, 430);
+            this.listView2.Size = new System.Drawing.Size(1265, 400);
             this.listView2.TabIndex = 1;
             this.listView2.UseCompatibleStateImageBehavior = false;
             this.listView2.View = System.Windows.Forms.View.Details;
@@ -319,6 +338,7 @@
             this.tableLayoutPanel4.Controls.Add(this.comboBox4, 2, 0);
             this.tableLayoutPanel4.Controls.Add(this.comboBox3, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.comboBox2, 0, 0);
+            this.tableLayoutPanel4.Controls.Add(this.button1, 3, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -366,9 +386,38 @@
             this.comboBox2.TabIndex = 3;
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(483, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // listView3
+            // 
+            this.listView3.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.listView3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listView3.GridLines = true;
+            this.listView3.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listView3.HideSelection = false;
+            this.listView3.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem1});
+            this.listView3.Location = new System.Drawing.Point(3, 39);
+            this.listView3.MultiSelect = false;
+            this.listView3.Name = "listView3";
+            this.listView3.Scrollable = false;
+            this.listView3.Size = new System.Drawing.Size(1265, 24);
+            this.listView3.TabIndex = 3;
+            this.listView3.UseCompatibleStateImageBehavior = false;
+            this.listView3.View = System.Windows.Forms.View.Details;
+            // 
             // metroSetSetTabPage3
             // 
             this.metroSetSetTabPage3.BaseColor = System.Drawing.Color.White;
+            this.metroSetSetTabPage3.Controls.Add(this.tableLayoutPanel5);
             this.metroSetSetTabPage3.Font = null;
             this.metroSetSetTabPage3.ImageIndex = 0;
             this.metroSetSetTabPage3.ImageKey = null;
@@ -383,6 +432,38 @@
             this.metroSetSetTabPage3.ThemeAuthor = "Narwin";
             this.metroSetSetTabPage3.ThemeName = "MetroLite";
             this.metroSetSetTabPage3.ToolTipText = null;
+            // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.tableLayoutPanel5.ColumnCount = 1;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel5.Controls.Add(this.dataGridView1, 0, 0);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 1;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 472F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(1271, 472);
+            this.tableLayoutPanel5.TabIndex = 0;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.tableLayoutPanel5.SetColumnSpan(this.dataGridView1, 2);
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
+            this.dataGridView1.MultiSelect = false;
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridView1.Size = new System.Drawing.Size(1265, 466);
+            this.dataGridView1.TabIndex = 0;
             // 
             // metroSetControlBox1
             // 
@@ -434,6 +515,9 @@
             this.metroSetSetTabPage2.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
+            this.metroSetSetTabPage3.ResumeLayout(false);
+            this.tableLayoutPanel5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -465,6 +549,10 @@
         private System.Windows.Forms.ComboBox comboBox3;
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.ComboBox comboBox4;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.ListView listView3;
+        private System.Windows.Forms.Button button1;
     }
 }
 

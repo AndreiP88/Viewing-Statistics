@@ -356,10 +356,10 @@ namespace Viewing_Statistics
 
                                         indexShift = usersList[indexFromUserList].Shifts.Count - 1;
 
-                                        usersList[indexFromUserList].Shifts[indexShift].Orders = new List<Order>();
+                                        usersList[indexFromUserList].Shifts[indexShift].Orders = new List<UserShiftOrder>();
                                     }
 
-                                    usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new Order(
+                                    usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
                                         sqlReader["order_num"].ToString(),
                                         sqlReader["order_name"].ToString(),
                                         Convert.ToInt32(sqlReader["status"]),
@@ -431,7 +431,7 @@ namespace Viewing_Statistics
             }
         }
 
-        private int CalculateWorkTime(List<Order> order)
+        private int CalculateWorkTime(List<UserShiftOrder> order)
         {
             int workingOut = 0;
 

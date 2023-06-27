@@ -10,6 +10,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
+using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Reflection;
+using System.Threading;
 
 namespace Productivity
 {
@@ -20,6 +25,8 @@ namespace Productivity
             InitializeComponent();
         }
 
+        CancellationTokenSource cancelTokenSource;
+
         bool viewAllEquipsForUser = false;
         int countShifts = 2;
 
@@ -27,12 +34,13 @@ namespace Productivity
         Dictionary<int, string> machines = new Dictionary<int, string>();
 
         List<User> usersList;
+        List<Equips> equipsList;
 
         private void LoadAllUsers()
         {
             try
             {
-                UsersValue usersValue = new UsersValue();
+                ValueUsers usersValue = new ValueUsers();
 
                 users = usersValue.LoadAllUsersNames();
             }
@@ -46,7 +54,7 @@ namespace Productivity
         {
             try
             {
-                EquipsValue equipsValue = new EquipsValue();
+                ValueEquips equipsValue = new ValueEquips();
 
                 machines = equipsValue.LoadMachine();
             }
@@ -86,24 +94,50 @@ namespace Productivity
             comboBox2.SelectedIndex = DateTime.Now.AddMonths(-1).Month;
         }
 
-        private void CreateColomnsToListView(int days)
+        private void CreateColomnsToListView(int days, int month)
         {
             listView2.Items.Clear();
             listView2.Columns.Clear();
 
             int width = listView2.Width;
 
-            int w = (width - 440) / days;
+            int w = 50;//(width - 560) / (days);
 
             listView2.Columns.Add("№", 40, HorizontalAlignment.Center);
             listView2.Columns.Add("Имя", 300);
 
+            listView3.Columns.Add("№", 40, HorizontalAlignment.Center);
+            listView3.Columns.Add("Имя", 300);
+
             for (int i = 1; i <= days; i++)
             {
-                listView2.Columns.Add(i.ToString(), w, HorizontalAlignment.Center);
+                listView3.Columns.Add(i.ToString("D2") + "." + month.ToString("D2"), w * 2, HorizontalAlignment.Center);
+
+                for (int j = 1; j <= countShifts; j++)
+                {
+                    listView2.Columns.Add(i.ToString("D2") + "." + month.ToString("D2"), w, HorizontalAlignment.Center);
+                    
+
+                    /*if (j == 1)
+                    {
+                        listView2.Columns.Add(i.ToString("D2"), w, HorizontalAlignment.Right);
+                    }
+                    if (j == countShifts)
+                    {
+                        listView2.Columns.Add(month.ToString("D2"), w, HorizontalAlignment.Left);
+                    }*/
+
+                    /*dataGridView1.Columns.Add(i.ToString("D2") + ": " + j.ToString(), i.ToString("D2") + ": " + j.ToString());
+                    dataGridView1.Columns[i].Width = w;*/
+
+
+                }
             }
 
-            listView2.Columns.Add("ИТОГ", 80, HorizontalAlignment.Center);
+            listView2.Columns.Add("Выработка", 90, HorizontalAlignment.Center);
+            listView2.Columns.Add("Отставание", 95, HorizontalAlignment.Center);
+
+            
         }
 
         private void ChangeDate()
@@ -173,7 +207,7 @@ namespace Productivity
             {
                 usersList = new List<User>();
 
-                UsersValue usersValue = new UsersValue();
+                ValueUsers usersValue = new ValueUsers();
 
                 usersList = usersValue.LoadUsersList(equips, date);
             }
@@ -187,7 +221,9 @@ namespace Productivity
         {
             try
             {
-                DateTimeValues timeValues = new DateTimeValues();
+                /*equipsList = new List<Equips>();*/
+
+                ValueDateTime timeValues = new ValueDateTime();
 
                 int year = GetYearFromComboBox();
                 int month = GetMonthFromComboBox();
@@ -218,10 +254,7 @@ namespace Productivity
                                     @"SELECT
 	                                    order_head.id_order_head, 
 	                                    man_planjob.id_man_planjob, 
-	                                    man_planjob.status, 
-	                                    common_employee.employee_lastname, 
-	                                    common_employee.employee_firstname, 
-	                                    common_employee.employee_middlename, 
+	                                    man_planjob.status,  
                                         man_factjob.id_common_employee,
                                         man_factjob.id_equip,
 	                                    common_equip_directory.equip_name, 
@@ -307,8 +340,8 @@ namespace Productivity
                                 if (indexFromUserList != -1)
                                 {
                                     int indexFromUserListShifts = usersList[indexFromUserList].Shifts.FindIndex(
-                                        (v) => v.ShiftDate == dateShift &&
-                                               v.ShiftNumber == currentShift);
+                                                                    (v) => v.ShiftDate == dateShift &&
+                                                                           v.ShiftNumber == currentShift);
 
                                     int indexShift = indexFromUserListShifts;
 
@@ -321,10 +354,10 @@ namespace Productivity
 
                                         indexShift = usersList[indexFromUserList].Shifts.Count - 1;
 
-                                        usersList[indexFromUserList].Shifts[indexShift].Orders = new List<Order>();
+                                        usersList[indexFromUserList].Shifts[indexShift].Orders = new List<UserShiftOrder>();
                                     }
 
-                                    usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new Order(
+                                    usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
                                         sqlReader["order_num"].ToString(),
                                         sqlReader["order_name"].ToString(),
                                         Convert.ToInt32(sqlReader["status"]),
@@ -336,16 +369,35 @@ namespace Productivity
                                         Convert.ToInt32(sqlReader["plan_out_qty"]),
                                         Convert.ToInt32(sqlReader["normtime"]),
                                         Convert.ToInt32(sqlReader["id_man_order_job_item"])
-                                    ));
+                                    )); 
                                 }
+
+                                /*int indexEquipsList = equipsList.FindIndex(
+                                                    (v) => v.Equip == loadEquip &&
+                                                           v.ShiftDate == dateShift &&
+                                                           v.ShiftNumber == currentShift
+                                                           );
+
+                                if (indexEquipsList == -1)
+                                {
+                                    equipsList.Add(new Equips(
+                                        loadEquip,
+                                        dateShift,
+                                        currentShift
+                                        ));
+                                }*/
                             }
 
                             connection.Close();
                         }
 
-                        AddWorkTimeToLV(currentDay, currentShift);
+                        //AddWorkTimeToLV(currentDay, currentShift);
+                        //AddWorkTimeEquipToLV(currentDay, currentShift);
+                        //AddWorkTimeUserToLV(currentDay, currentShift);
                     }
                 }
+
+                StartAddingWorkingTimeToListView();
             }
             catch (Exception ex)
             {
@@ -475,34 +527,6 @@ namespace Productivity
                     }
                 }
             }
-
-
-            /*for (int i = 0; i < usersList.Count; i++)
-            {
-                string user = "";
-
-                if (users.ContainsKey(usersList[i].Id))
-                {
-                    user = users[usersList[i].Id];
-                }
-                else
-                {
-                    user = "Работник " + usersList[i].Id;
-                }
-
-                ListViewItem item = new ListViewItem();
-
-                item.Name = usersList[i].Id.ToString();
-                item.Text = (i + 1).ToString();
-                item.SubItems.Add(user);
-
-                for (int j = 1; j <= countDaysFromSellectedMonth; j++)
-                {
-                    item.SubItems.Add("");
-                }
-
-                listView2.Items.Add(item);
-            }*/
         }
 
         private void AddItemToListView(string name, string text, string subText, int countDays, Color color)
@@ -513,7 +537,7 @@ namespace Productivity
             item.Text = text;
             item.SubItems.Add(subText);
 
-            for (int j = 1; j <= countDays; j++)
+            for (int j = 1; j <= countDays * countShifts; j++)
             {
                 item.SubItems.Add("");
             }
@@ -524,6 +548,34 @@ namespace Productivity
                 item.Font = new Font(item.Font, FontStyle.Bold);
 
             listView2.Items.Add(item);
+            /*
+            dataGridView1.Rows.Add(name);
+            //dataGridView1.Rows[i-1].SetValues(i.ToString(), j.ToString(),1,3);
+            dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[0].Value = text;
+            dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[1].Value = subText;
+            //dataGridView1.Rows[2].Cells[3].Style.;
+            */
+            
+        }
+        private void AddShiftNumbersToListView(int days)
+        {
+            ListViewItem item = new ListViewItem();
+
+            item.Name = "";
+            item.Text = "";
+            item.SubItems.Add("");
+
+            for (int i = 1; i <= days; i++)
+            {
+                for (int j = 1; j <= countShifts; j++)
+                {
+                    item.SubItems.Add(j.ToString());
+                }
+            }
+
+            item.Font = new Font(item.Font, FontStyle.Bold);
+
+            listView2.Items.Add(item);
         }
 
         private string CreateNameListViewItem(int equip, int user)
@@ -531,9 +583,325 @@ namespace Productivity
             return "e" + equip + "u" + user;
         }
 
+        private void StartAddingWorkingTimeToListView()
+        {
+            if (cancelTokenSource != null)
+            {
+                cancelTokenSource.Cancel();
+            }
+
+            cancelTokenSource = new CancellationTokenSource();
+
+            Task taskDetails = new Task(() => AddWorkingTimeUsersToListView(cancelTokenSource.Token), cancelTokenSource.Token);
+            taskDetails.Start();
+            //AddWorkingTimeUsersToListView(cancelTokenSource.Token);
+
+            Task taskEquips = new Task(() => AddWorkingTimeEquipsToListView(cancelTokenSource.Token), cancelTokenSource.Token);
+            //taskEquips.Start();
+            //AddWorkingTimeEquipsToListView
+        }
+
+        private void AddWorkingTimeUsersToListView(CancellationToken token)
+        {
+            equipsList = new List<Equips>();
+
+            ValueDateTime timeValues = new ValueDateTime();
+
+            for (int i = 0; i < usersList.Count; i++)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                if (usersList[i].Shifts != null)
+                {
+                    int userShiftWorkingOut = 0;
+
+                    for(int j = 0; j < usersList[i].Shifts.Count; j++)
+                    {
+                        if (token.IsCancellationRequested)
+                        {
+                            break;
+                        }
+
+                        if (usersList[i].Shifts[j].Orders != null)
+                        {
+                            int day = Convert.ToDateTime(usersList[i].Shifts[j].ShiftDate).Day;
+                            int shiftNumber = usersList[i].Shifts[j].ShiftNumber;
+
+                            int timeWorkigOut = CalculateWorkTime(usersList[i].Shifts[j].Orders);
+
+                            userShiftWorkingOut += timeWorkigOut;
+
+                            float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
+
+                            int indexEquipsList = equipsList.FindIndex(
+                                                    (v) => v.Equip == usersList[i].Equip &&
+                                                           v.ShiftDate == usersList[i].Shifts[j].ShiftDate &&
+                                                           v.ShiftNumber == shiftNumber
+                                                           );
+
+                            if (indexEquipsList != -1)
+                            {
+                                equipsList[indexEquipsList].WorkingOut += timeWorkigOut;
+                            }
+                            else
+                            {
+                                equipsList.Add(new Equips(
+                                    usersList[i].Equip,
+                                    usersList[i].Shifts[j].ShiftDate,
+                                    shiftNumber
+                                    ));
+
+                                equipsList[equipsList.Count - 1].WorkingOut = timeWorkigOut;
+                            }
+
+                            Invoke(new Action(() =>
+                            {
+                                int index = listView2.Items.IndexOfKey(CreateNameListViewItem(usersList[i].Equip, usersList[i].Id));
+
+                                ListViewItem item = listView2.Items[index];
+
+                                if (item != null)
+                                {
+                                    item.SubItems[(day - 1) * countShifts + shiftNumber + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
+                                    //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
+                                }
+                            }));
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < equipsList.Count; i++)
+            {
+                //MessageBox.Show(equipsList.Count + ", " + equipsList[i].Equip + ", " + equipsList[i].WorkingOut);
+                int day = Convert.ToDateTime(equipsList[i].ShiftDate).Day;
+                int shiftNumber = equipsList[i].ShiftNumber;
+
+                int timeWorkigOut = equipsList[i].WorkingOut;
+
+                float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
+
+                Invoke(new Action(() =>
+                {
+                    int index = listView2.Items.IndexOfKey("e" + equipsList[i].Equip);
+
+                    ListViewItem item = listView2.Items[index];
+
+                    if (item != null)
+                    {
+                        item.SubItems[(day - 1) * countShifts + shiftNumber + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
+                        //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
+                    }
+                }));
+            }
+        }
+
+        private void AddWorkingTimeEquipsToListView(CancellationToken token)
+        {
+            equipsList = new List<Equips>();
+
+            ValueDateTime timeValues = new ValueDateTime();
+
+            for (int i = 0; i < usersList.Count; i++)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                if (usersList[i].Shifts != null)
+                {
+                    for (int j = 0; j < usersList[i].Shifts.Count; j++)
+                    {
+                        if (token.IsCancellationRequested)
+                        {
+                            break;
+                        }
+
+                        if (usersList[i].Shifts[j].Orders != null)
+                        {
+                            int day = Convert.ToDateTime(usersList[i].Shifts[j].ShiftDate).Day;
+                            int shiftNumber = usersList[i].Shifts[j].ShiftNumber;
+
+                            int timeWorkigOut = CalculateWorkTime(usersList[i].Shifts[j].Orders);
+
+                            int indexEquipsList = equipsList.FindIndex(
+                                                    (v) => v.Equip == usersList[i].Equip &&
+                                                           v.ShiftDate == usersList[i].Shifts[j].ShiftDate &&
+                                                           v.ShiftNumber == shiftNumber
+                                                           );
+
+                            if (indexEquipsList != -1)
+                            {
+                                equipsList[indexEquipsList].WorkingOut += timeWorkigOut;
+                            }
+                            else
+                            {
+                                equipsList.Add(new Equips(
+                                    usersList[i].Equip,
+                                    usersList[i].Shifts[j].ShiftDate,
+                                    shiftNumber
+                                    ));
+
+                                equipsList[equipsList.Count - 1].WorkingOut = timeWorkigOut;
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < equipsList.Count; i++)
+            {
+                //MessageBox.Show(equipsList.Count + ", " + equipsList[i].Equip + ", " + equipsList[i].WorkingOut);
+                int day = Convert.ToDateTime(equipsList[i].ShiftDate).Day;
+                int shiftNumber = equipsList[i].ShiftNumber;
+
+                int timeWorkigOut = equipsList[i].WorkingOut;
+
+                float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
+
+                Invoke(new Action(() =>
+                {
+                    int index = listView2.Items.IndexOfKey("e" + equipsList[i].Equip);
+
+                    ListViewItem item = listView2.Items[index];
+
+                    if (item != null)
+                    {
+                        item.SubItems[(day - 1) * countShifts + shiftNumber + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
+                        //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
+                    }
+                }));
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /*for (int i = 0; i < equipsList.Count; i++)
+            {
+                int day = Convert.ToDateTime(equipsList[i].ShiftDate).Day;
+                int shiftNumber = equipsList[i].ShiftNumber;
+
+                int timeWorkigOut = equipsList[i].WorkingOut;
+
+                float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
+
+                Invoke(new Action(() =>
+                {
+                    int index = listView2.Items.IndexOfKey("e" + equipsList[i].Equip);
+
+                    ListViewItem item = listView2.Items[index];
+
+                    if (item != null)
+                    {
+                        item.SubItems[(day - 1) * countShifts + shiftNumber + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
+                        //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
+                    }
+                }));
+            }*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /*List<int> equips = GetSelectegEquipsList();
+
+            for (int j = 0; j < equips.Count; j++)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                //int timeWorkigOut = 0;
+
+                for (int i = 0; i < usersList.Count; i++)
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        break;
+                    }
+                    int timeWorkigOut = 0;
+
+                    if (usersList[i].Equip == equips[j])
+                    {
+                        if (usersList[i].Shifts != null)
+                        {
+                            for (int k = 0; k < usersList[i].Shifts.Count; k++)
+                            {
+                                if (token.IsCancellationRequested)
+                                {
+                                    break;
+                                }
+
+                                if (usersList[i].Shifts[k].Orders != null)
+                                {
+                                    int day = Convert.ToDateTime(usersList[i].Shifts[k].ShiftDate).Day;
+                                    int shiftNumber = usersList[i].Shifts[k].ShiftNumber;
+
+                                    timeWorkigOut += CalculateWorkTime(usersList[i].Shifts[k].Orders);
+
+                                    float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
+
+                                    Invoke(new Action(() =>
+                                    {
+                                        int index = listView2.Items.IndexOfKey("e" + usersList[i].Equip);
+
+                                        ListViewItem item = listView2.Items[index];
+
+                                        if (item != null)
+                                        {
+                                            item.SubItems[(day - 1) * countShifts + shiftNumber + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
+                                            //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
+                                        }
+                                    }));
+                                }
+                            }
+                        }
+                    }
+                }
+            }*/
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         private void AddWorkTimeToLV(int day, int shifNum)
         {
-            DateTimeValues timeValues = new DateTimeValues();
+            ValueDateTime timeValues = new ValueDateTime();
 
             int year = GetYearFromComboBox();
             int month = GetMonthFromComboBox();
@@ -566,7 +934,7 @@ namespace Productivity
 
                             if (item != null)
                             {
-                                item.SubItems[day + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
+                                item.SubItems[(day - 1) * countShifts + shifNum + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
                                 //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
                             }
                         }
@@ -577,9 +945,70 @@ namespace Productivity
             }
         }
 
-        private int CalculateWorkTime(List<Order> order)
+        
+
+        private void AddWorkTimeUserToLV(int day, int shifNum)
         {
-            int workingOut = 0;
+            ValueDateTime timeValues = new ValueDateTime();
+
+            List<int> equips = GetSelectegEquipsList();
+
+            int year = GetYearFromComboBox();
+            int month = GetMonthFromComboBox();
+
+            string dateShift = day.ToString("D2") + "." + month.ToString("D2") + "." + year.ToString();
+
+            int indexFromUserListShifts = -1;
+
+            List<int> usersCurrent = new List<int>();
+
+            for (int i = 0; i < usersList.Count; i++)
+            {
+                if (!usersCurrent.Contains(usersList[i].Id))
+                {
+                    usersCurrent.Add(usersList[i].Id);
+                }
+            }
+
+            for (int j = 0; j < usersCurrent.Count; j++)
+            {
+                int timeWorkigOut = 0;
+
+                for (int i = 0; i < usersList.Count; i++)
+                {
+                    if (usersList[i].Shifts != null)
+                    {
+                        indexFromUserListShifts = usersList[i].Shifts.FindIndex(
+                                            (v) => v.ShiftDate == dateShift &&
+                                                   v.ShiftNumber == shifNum);
+
+                        //int index = listView2.Items.IndexOfKey(usersList[i].Id.ToString());
+                        int index = listView2.Items.IndexOfKey("u" + usersList[i].Id);
+                        //MessageBox.Show(index.ToString());
+                        if (index >= 0 && indexFromUserListShifts >= 0 && usersList[i].Id == usersCurrent[j])
+                        {
+                            if (usersList[i].Shifts[indexFromUserListShifts].Orders != null)
+                            {
+                                timeWorkigOut += CalculateWorkTime(usersList[i].Shifts[indexFromUserListShifts].Orders);
+                                float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
+
+                                ListViewItem item = listView2.Items[index];
+
+                                if (item != null)
+                                {
+                                    item.SubItems[(day - 1) * countShifts + shifNum + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
+                                    //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private int CalculateWorkTime(List<UserShiftOrder> order)
+        {
+            float workingOut = 0;
 
             for (int i = 0; i < order.Count; i++)
             {
@@ -592,7 +1021,7 @@ namespace Productivity
                 {
                     if (order[i].Normtime > 0)
                     {
-                        int norm = order[i].PlanOutQty / order[i].Normtime;
+                        float norm = order[i].PlanOutQty / order[i].Normtime;
 
                         if (norm > 0)
                         {
@@ -602,7 +1031,20 @@ namespace Productivity
                 }
             }
 
-            return workingOut;
+            /*for (int i = 0; i < order.Count; i++)
+            {
+                if (order[i].Normtime > 0)
+                {
+                    float norm = order[i].PlanOutQty / order[i].Normtime;
+
+                    if (norm > 0)
+                    {
+                        workingOut += order[i].FactOutQty / norm;
+                    }
+                }
+            }*/
+
+            return (int)workingOut;
         }
 
         private float GetPercentWorkingOut(int targetWorkingOut, int facticalWorkingOut)
@@ -621,6 +1063,12 @@ namespace Productivity
             equips.Add(9);
             equips.Add(15);
             equips.Add(38);
+            equips.Add(8);
+            equips.Add(11);
+            equips.Add(13);
+            equips.Add(3);
+            equips.Add(4);
+            equips.Add(5);
 
             return equips;
 
@@ -635,7 +1083,8 @@ namespace Productivity
 
             int countDaysFromSellectedMonth = DateTime.DaysInMonth(year, month);
 
-            CreateColomnsToListView(countDaysFromSellectedMonth);
+            CreateColomnsToListView(countDaysFromSellectedMonth, month);
+            AddShiftNumbersToListView(countDaysFromSellectedMonth);
 
 
 
@@ -666,6 +1115,18 @@ namespace Productivity
         private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
         {
             ChangeDate();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //int s = listView2.Items[0].SubItems[0].Bounds.Location.X;
+
+            listView3.TopItem.Position = new Point(listView2.TopItem.Position.X, listView2.TopItem.Position.Y);
+
+            listView2.TopItem.Position = new Point(0, listView2.TopItem.Position.Y - 500);
+
+
+            //MessageBox.Show(listView2.TopItem.Position.X.ToString());
         }
     }
 }

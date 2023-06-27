@@ -11,7 +11,8 @@ namespace Productivity
         //public int IdUser;
         public string ShiftDate;
         public int ShiftNumber;
-        public List<Order> Orders;
+        public List<UserShiftOrder> Orders;
+        public int WorkingOut;
 
         public UserShift(string shiftDate, int shiftNumber) 
         {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Productivity
 {
-    public class Order
+    public class UserShiftOrder
     {
         public string OrderNumber;
         public string OrderName;
@@ -20,7 +20,7 @@ namespace Productivity
         public int Normtime;
         public int IdManOrderJobItem;
 
-        public Order(string orderNumber, string orderName, int status, int flags, string dateBegin, string dateEnd, int duration, int factOutQty, int planOutQty, int normtime, int idManOrderJobItem)
+        public UserShiftOrder(string orderNumber, string orderName, int status, int flags, string dateBegin, string dateEnd, int duration, int factOutQty, int planOutQty, int normtime, int idManOrderJobItem)
         {
             this.OrderNumber = orderNumber;
             this.OrderName = orderName;

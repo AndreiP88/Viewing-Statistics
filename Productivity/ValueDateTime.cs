@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Productivity
 {
-    internal class DateTimeValues
+    internal class ValueDateTime
     {
         public string SelectStartDateTimeFromShiftNumberAndDate(DateTime date, int shiftNumber)
         {

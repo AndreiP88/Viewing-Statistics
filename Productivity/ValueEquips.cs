@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Productivity
 {
-    internal class EquipsValue
+    internal class ValueEquips
     {
         public Dictionary<int, string> LoadMachine()
         {
