@@ -29,6 +29,7 @@ namespace Productivity
         /*
          * 
          * Сделать прокрутку и сделать перерисовку ширины столбцов в зависимости от нижней таблицы 
+         * Добавить таймер
          listView4.Left = listView3.TopItem.Position.X - 4;
          listView4.Width = listView3.Width;
          */
