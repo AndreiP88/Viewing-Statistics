@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Equips.cs" />
+    <Compile Include="EquipsWorkingOut.cs" />
     <Compile Include="ValueDateTime.cs" />
     <Compile Include="DBConnection.cs" />
     <Compile Include="DBSQLUtils.cs" />
