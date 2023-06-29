@@ -652,7 +652,7 @@ namespace Productivity
 
             for (int i = 0; i < usersCurrent.Count; i++)
             {
-                int timeWorkigOut = 0;
+                int fullTimeWorkigOut = 0;
 
                 for (int j = 0; j < usersList.Count; j++)
                 {
@@ -665,6 +665,8 @@ namespace Productivity
 
                             int countDaysFromMonth = CountDaysFromMonth(usersList[j].Shifts[k].ShiftDate);
 
+                            int timeWorkigOut = 0;
+
                             //MessageBox.Show(index.ToString());
                             if (usersList[j].Id == usersCurrent[i])
                             {
@@ -672,6 +674,8 @@ namespace Productivity
                                 {
                                     timeWorkigOut += CalculateWorkTime(usersList[j].Shifts[k].Orders);
                                     float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
+
+                                    fullTimeWorkigOut += timeWorkigOut;
 
                                     Invoke(new Action(() =>
                                     {
