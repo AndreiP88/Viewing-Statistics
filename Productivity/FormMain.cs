@@ -584,12 +584,15 @@ namespace Productivity
                     {
                         int index = listView2.Items.IndexOfKey("e" + equipsList[i].Equip);
 
-                        ListViewItem item = listView2.Items[index];
-
-                        if (item != null)
+                        if (index >= 0)
                         {
-                            item.SubItems[(day - 1) * countShifts + shiftNumber + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
-                            //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
+                            ListViewItem item = listView2.Items[index];
+
+                            if (item != null)
+                            {
+                                item.SubItems[(day - 1) * countShifts + shiftNumber + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
+                                //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
+                            }
                         }
                     }));
                 }
@@ -600,12 +603,16 @@ namespace Productivity
                 {
                     int index = listView2.Items.IndexOfKey("e" + equipsList[i].Equip);
 
-                    ListViewItem item = listView2.Items[index];
-
-                    if (item != null)
+                    if (index >= 0)
                     {
-                        item.SubItems[countDaysFromMonth * countShifts + 2].Text = timeValues.MinuteToTimeString(equipsList[i].WorkingOut);
+                        ListViewItem item = listView2.Items[index];
+
+                        if (item != null)
+                        {
+                            item.SubItems[countDaysFromMonth * countShifts + 2].Text = timeValues.MinuteToTimeString(equipsList[i].WorkingOut);
+                        }
                     }
+                    
                 }));
 
 
@@ -670,12 +677,15 @@ namespace Productivity
                                     {
                                         int index = listView2.Items.IndexOfKey("u" + usersList[j].Id);
 
-                                        ListViewItem item = listView2.Items[index];
-
-                                        if (item != null)
+                                        if (index >= 0)
                                         {
-                                            item.SubItems[(day - 1) * countShifts + shiftNumber + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
-                                            //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
+                                            ListViewItem item = listView2.Items[index];
+
+                                            if (item != null)
+                                            {
+                                                item.SubItems[(day - 1) * countShifts + shiftNumber + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
+                                                //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
+                                            }
                                         }
                                     }));
                                 }
