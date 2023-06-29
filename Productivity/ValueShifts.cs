@@ -16,10 +16,10 @@ namespace Productivity
             
         }
 
-        public List<User> LoadShifts(List<User> ListUsers, DateTime selectDate, int countShifts)
+        public List<User> LoadShifts(List<User> listUsers, DateTime selectDate, int countShifts)
         {
             /*equipsList = new List<Equips>();*/
-            List<User> usersList = ListUsers;
+            List<User> usersList = listUsers;
 
             ValueDateTime timeValues = new ValueDateTime();
 

@@ -36,7 +36,7 @@ namespace Productivity
 
         CancellationTokenSource cancelTokenSource;
 
-        bool viewAllEquipsForUser = false;
+        bool viewAllEquipsForUser = true;
         int countShifts = 2;
 
         Dictionary<int, string> users = new Dictionary<int, string>();
@@ -372,7 +372,7 @@ namespace Productivity
             item.Text = text;
             item.SubItems.Add(subText);
 
-            for (int j = 1; j <= countDays * countShifts; j++)
+            for (int j = 1; j <= countDays * countShifts + 2; j++)
             {
                 item.SubItems.Add("");
             }
@@ -439,6 +439,7 @@ namespace Productivity
         private void AddWorkingTimeUsersToListView(CancellationToken token)
         {
             List<Equips> equipsList = new List<Equips>();
+            List<int> usersCurrent = new List<int>();
 
             ValueDateTime timeValues = new ValueDateTime();
 
@@ -458,12 +459,15 @@ namespace Productivity
                             break;
                         }
 
+                        int countDaysFromMonth = CountDaysFromMonth(usersList[i].Shifts[j].ShiftDate);
+
                         if (usersList[i].Shifts[j].Orders != null)
                         {
                             int day = Convert.ToDateTime(usersList[i].Shifts[j].ShiftDate).Day;
                             int shiftNumber = usersList[i].Shifts[j].ShiftNumber;
 
                             int timeWorkigOut = CalculateWorkTime(usersList[i].Shifts[j].Orders);
+                            usersList[i].WorkingOutUser += timeWorkigOut;
 
                             float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
 
@@ -476,6 +480,7 @@ namespace Productivity
                             if (indexEquipsList != -1)
                             {
                                 equipsList[indexEquipsList].WorkingOut += timeWorkigOut;
+                                usersList[i].WorkingOutEquip += timeWorkigOut;
                             }
                             else
                             {
@@ -486,6 +491,7 @@ namespace Productivity
                                     ));
 
                                 equipsList[equipsList.Count - 1].WorkingOut = timeWorkigOut;
+                                usersList[i].WorkingOutEquip += timeWorkigOut;
                             }
 
                             Invoke(new Action(() =>
@@ -498,6 +504,8 @@ namespace Productivity
                                 {
                                     item.SubItems[(day - 1) * countShifts + shiftNumber + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
                                     //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
+                                    //При группировке по сотруднику здесь отображается выраьботка для оборудования
+                                    item.SubItems[countDaysFromMonth * countShifts + 2].Text = timeValues.MinuteToTimeString(usersList[i].WorkingOutEquip);
                                 }
                             }));
                         }
@@ -904,6 +912,16 @@ namespace Productivity
 
             return equips;
         }
+
+        private int CountDaysFromMonth(string date)
+        {
+            DateTime selectDate = Convert.ToDateTime(date);
+
+            int countDaysFromSellectedMonth = DateTime.DaysInMonth(selectDate.Year, selectDate.Month);
+
+            return countDaysFromSellectedMonth;
+        }
+
 
         private void UpdateStatistics()
         {

@@ -11,7 +11,8 @@ namespace Productivity
         public int Id;
         public int Equip;
         public List<UserShift> Shifts;
-        public int WorkingOut;
+        public int WorkingOutUser;
+        public int WorkingOutEquip;
 
         public User(int id, int equip)
         {
