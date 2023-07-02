@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Productivity
 {
-    public class EquipsWorkingOut
+    public class WorkingOutValue
     {
         public string ShiftDate;
         public int ShiftNumber;
         public int WorkingOut;
 
-        public EquipsWorkingOut(string shiftDate, int shiftNumber, int workingOut)
+        public WorkingOutValue(string shiftDate, int shiftNumber, int workingOut)
         {
             ShiftDate = shiftDate;
             ShiftNumber = shiftNumber;

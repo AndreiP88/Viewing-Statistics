@@ -15,7 +15,7 @@ namespace Productivity
         {
             Dictionary<int, string> machines = new Dictionary<int, string>();
 
-            try
+            //try
             {
                 using (SqlConnection connection = DBConnection.GetDBConnection())
                 {
@@ -43,9 +43,9 @@ namespace Productivity
                     connection.Close();
                 }
             }
-            catch (Exception ex)
+            //catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка подключения");
+                //MessageBox.Show(ex.Message, "Ошибка подключения equip");
             }
 
             return machines;

@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace Productivity
 {
-    public class Equips
+    public class WorkingOut
     {
-        public int Equip;
+        public int Id;
         //public string ShiftDate;
         //public int ShiftNumber;
-        public List<EquipsWorkingOut> EquipsWOut;
-        public int WorkingOut;
+        public List<WorkingOutValue> WorkingOutList;
+        public int WorkingOutSumm;
 
         //public Equips(int equip,  string shiftDate, int shiftNumber)
-        public Equips(int equip)
+        public WorkingOut(int id)
         {
-            Equip = equip;
+            Id = id;
             //ShiftDate = shiftDate;
             //ShiftNumber = shiftNumber;
         }

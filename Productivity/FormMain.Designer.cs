@@ -37,7 +37,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("");
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("");
             this.metroSetTabControl1 = new MetroSet_UI.Controls.MetroSetTabControl();
             this.metroSetSetTabPage1 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -66,8 +66,8 @@
             this.metroSetSetTabPage3 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.metroSetControlBox1 = new MetroSet_UI.Controls.MetroSetControlBox();
             this.metroSetSetTabPage4 = new MetroSet_UI.Child.MetroSetSetTabPage();
+            this.metroSetControlBox1 = new MetroSet_UI.Controls.MetroSetControlBox();
             this.metroSetTabControl1.SuspendLayout();
             this.metroSetSetTabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -89,13 +89,13 @@
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage2);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage3);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage4);
-            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.metroSetTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroSetTabControl1.IsDerivedStyle = true;
             this.metroSetTabControl1.ItemSize = new System.Drawing.Size(130, 38);
             this.metroSetTabControl1.Location = new System.Drawing.Point(12, 90);
             this.metroSetTabControl1.Name = "metroSetTabControl1";
-            this.metroSetTabControl1.SelectedIndex = 2;
+            this.metroSetTabControl1.SelectedIndex = 1;
             this.metroSetTabControl1.SelectedTextColor = System.Drawing.Color.White;
             this.metroSetTabControl1.Size = new System.Drawing.Size(1279, 518);
             this.metroSetTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
@@ -107,6 +107,7 @@
             this.metroSetTabControl1.ThemeAuthor = "Narwin";
             this.metroSetTabControl1.ThemeName = "MetroLite";
             this.metroSetTabControl1.UnselectedTextColor = System.Drawing.Color.Gray;
+            this.metroSetTabControl1.UseAnimation = false;
             // 
             // metroSetSetTabPage1
             // 
@@ -405,7 +406,7 @@
             this.listView3.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listView3.HideSelection = false;
             this.listView3.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem3});
+            listViewItem1});
             this.listView3.Location = new System.Drawing.Point(3, 39);
             this.listView3.MultiSelect = false;
             this.listView3.Name = "listView3";
@@ -466,6 +467,25 @@
             this.dataGridView1.Size = new System.Drawing.Size(1265, 466);
             this.dataGridView1.TabIndex = 0;
             // 
+            // metroSetSetTabPage4
+            // 
+            this.metroSetSetTabPage4.BaseColor = System.Drawing.Color.White;
+            this.metroSetSetTabPage4.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.metroSetSetTabPage4.Font = null;
+            this.metroSetSetTabPage4.ImageIndex = 0;
+            this.metroSetSetTabPage4.ImageKey = null;
+            this.metroSetSetTabPage4.IsDerivedStyle = true;
+            this.metroSetSetTabPage4.Location = new System.Drawing.Point(4, 42);
+            this.metroSetSetTabPage4.Name = "metroSetSetTabPage4";
+            this.metroSetSetTabPage4.Size = new System.Drawing.Size(1271, 472);
+            this.metroSetSetTabPage4.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetSetTabPage4.StyleManager = null;
+            this.metroSetSetTabPage4.TabIndex = 3;
+            this.metroSetSetTabPage4.Text = "Параметры монитора";
+            this.metroSetSetTabPage4.ThemeAuthor = "Narwin";
+            this.metroSetSetTabPage4.ThemeName = "MetroLite";
+            this.metroSetSetTabPage4.ToolTipText = null;
+            // 
             // metroSetControlBox1
             // 
             this.metroSetControlBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -491,25 +511,6 @@
             this.metroSetControlBox1.Text = "metroSetControlBox1";
             this.metroSetControlBox1.ThemeAuthor = "Narwin";
             this.metroSetControlBox1.ThemeName = "MetroLite";
-            // 
-            // metroSetSetTabPage4
-            // 
-            this.metroSetSetTabPage4.BaseColor = System.Drawing.Color.White;
-            this.metroSetSetTabPage4.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.metroSetSetTabPage4.Font = null;
-            this.metroSetSetTabPage4.ImageIndex = 0;
-            this.metroSetSetTabPage4.ImageKey = null;
-            this.metroSetSetTabPage4.IsDerivedStyle = true;
-            this.metroSetSetTabPage4.Location = new System.Drawing.Point(4, 42);
-            this.metroSetSetTabPage4.Name = "metroSetSetTabPage4";
-            this.metroSetSetTabPage4.Size = new System.Drawing.Size(1271, 472);
-            this.metroSetSetTabPage4.Style = MetroSet_UI.Enums.Style.Light;
-            this.metroSetSetTabPage4.StyleManager = null;
-            this.metroSetSetTabPage4.TabIndex = 3;
-            this.metroSetSetTabPage4.Text = "Параметры монитора";
-            this.metroSetSetTabPage4.ThemeAuthor = "Narwin";
-            this.metroSetSetTabPage4.ThemeName = "MetroLite";
-            this.metroSetSetTabPage4.ToolTipText = null;
             // 
             // FormMain
             // 
