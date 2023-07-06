@@ -50,6 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HMergedCell.cs" />
+    <Compile Include="IniFiles.cs" />
+    <Compile Include="INISettings.cs" />
     <Compile Include="WorkingOut.cs" />
     <Compile Include="WorkingOutValue.cs" />
     <Compile Include="ValueDateTime.cs" />
