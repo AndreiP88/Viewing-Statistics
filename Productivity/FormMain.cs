@@ -189,19 +189,6 @@ namespace Productivity
                 for (int j = 1; j <= countShifts; j++)
                 {
                     listView2.Columns.Add(i.ToString("D2") + "." + month.ToString("D2"), w, HorizontalAlignment.Center);
-
-
-                    /*if (j == 1)
-                    {
-                        listView2.Columns.Add(i.ToString("D2"), w, HorizontalAlignment.Right);
-                    }
-                    if (j == countShifts)
-                    {
-                        listView2.Columns.Add(month.ToString("D2"), w, HorizontalAlignment.Left);
-                    }*/
-
-                    /*dataGridView1.Columns.Add(i.ToString("D2") + ": " + j.ToString(), i.ToString("D2") + ": " + j.ToString());
-                    dataGridView1.Columns[i].Width = w;*/
                 }
             }
 
