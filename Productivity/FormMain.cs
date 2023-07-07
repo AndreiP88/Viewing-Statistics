@@ -270,7 +270,7 @@ namespace Productivity
             dataGridView1.Rows[1].Frozen = true;
 
             AddCellToGrid(1, 0, 2);
-            dataGridView1.Rows[1].Cells[0].Value = "Фамилия Имя";
+            dataGridView1.Rows[1].Cells[0].Value = "Имя";
 
             AddCellToGrid(1, days * countShifts + 2);
             dataGridView1.Rows[1].Cells[days * countShifts + 2].Value = "Выработка";

@@ -50,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Category.cs" />
+    <Compile Include="Equip.cs" />
     <Compile Include="HMergedCell.cs" />
     <Compile Include="IniFiles.cs" />
     <Compile Include="INISettings.cs" />
