@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Threading;
 using System.Runtime.InteropServices;
 using OrderManager;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Productivity
 {
@@ -370,13 +371,36 @@ namespace Productivity
             return result;
         }
 
-        private void LoadUsersList(List<int> equips, DateTime date)
+        private List<int> CategoryEquipToListSelectedEquip(List<Category> categories)
+        {
+            List<int> equips = new List<int>();
+
+            for (int i = 0; i < categories.Count; i++)
+            {
+                if (categories[i].Selected)
+                {
+                    for (int j = 0; j < categories[i].Equips.Count; j++)
+                    {
+                        if (categories[i].Equips[j].Selected)
+                        {
+                            equips.Add(categories[i].Equips[j].Id);
+                        }
+                    }
+                }
+            }
+
+            return equips;
+        }
+
+        private void LoadUsersList(List<Category> categoryEquips, DateTime date)
         {
             try
             {
                 usersList = new List<User>();
 
                 ValueUsers usersValue = new ValueUsers();
+
+                List<int> equips = CategoryEquipToListSelectedEquip(categoryEquips);
 
                 //usersList = usersValue.LoadUsersList(equips, date);
                 usersList = usersValue.LoadUsersListFromSelectMonth(equips, date);
@@ -406,7 +430,10 @@ namespace Productivity
 
         private void AddUsersToListView(int countDaysFromSellectedMonth)
         {
-            List<int> equips = GetSelectegEquipsList();
+            List<Category> categoryEquip = GetSelectedCategoriesAndEquipsList();
+
+            List<int> equips = CategoryEquipToListSelectedEquip(categoryEquip);
+
             rowIndexes.Clear();
 
             if (comboBox4.SelectedIndex == 0)
@@ -1014,7 +1041,7 @@ namespace Productivity
             return result;
         }
 
-        private List<int> GetSelectegEquipsList()
+        /*private List<int> GetSelectegEquipsList()
         {
             INISettings iniSettings = new INISettings();
 
@@ -1027,7 +1054,7 @@ namespace Productivity
 
             //equips.AddRange(equipsArray);
 
-            /*equips.Add(9);
+            *//*equips.Add(9);
             equips.Add(15);
             equips.Add(38);
             equips.Add(8);
@@ -1035,9 +1062,83 @@ namespace Productivity
             equips.Add(13);
             equips.Add(3);
             equips.Add(4);
-            equips.Add(5);*/
+            equips.Add(5);*//*
 
             return equips;
+        }*/
+
+        private List<Category> GetSelectedCategoriesAndEquipsList()
+        {
+            List<Category> categories = new List<Category>();
+
+            string startStrSection = "category_";
+
+            IniFile ini = new IniFile("settings.ini");
+
+            string[] sections = ini.GetAllSections();
+
+            for (int i = 0; i < sections.Length; i++)
+            {
+                if (sections[i].StartsWith(startStrSection))
+                {
+                    string name = "";
+                    bool selected = false;
+                    string equipsStr = "";
+                    List<Equip> equipsForCategory = new List<Equip>();
+
+                    if (ini.KeyExists("name", sections[i]))
+                        name = ini.ReadString("name", sections[i]);
+
+                    if (ini.KeyExists("selected", sections[i]))
+                        selected = ini.ReadBool("selected", sections[i]);
+
+                    if (ini.KeyExists("equips", sections[i]))
+                    {
+                        equipsStr = ini.ReadString("equips", sections[i]);
+
+                        //equipsForCategory = equipsStr?.Split(';')?.Select(Int32.Parse)?.ToList();
+
+                        List<string> strings = equipsStr?.Split(';')?.ToList();
+
+                        for (int j = 0; j < strings.Count; j++)
+                        {
+                            bool selectedEquip;
+
+                            string[] stringsEquip = strings[j]?.Split(':');
+
+                            int idEquip = Convert.ToInt32(stringsEquip[0]);
+
+                            if (stringsEquip[1] == "1")
+                            {
+                                selectedEquip = true;
+                            }
+                            else
+                            {
+                                selectedEquip = false;
+                            }
+
+                            equipsForCategory.Add(new Equip(
+                                idEquip,
+                                selectedEquip
+                                ));
+                        }
+                    }
+
+                    int idCategory = Convert.ToInt32(sections[i].Substring(startStrSection.Length));
+
+                    categories.Add(new Category(
+                        idCategory,
+                        name,
+                        selected,
+                        equipsForCategory
+                        ));
+                }
+                //categoryes.Add(Convert.ToInt32(sections[i].Substring(startStrSection.Length)));
+            }
+
+            categories.Sort((v, s) => v.Id.CompareTo(s.Id));
+
+            return categories;
         }
 
         private int CountDaysFromMonth(string date)
@@ -1064,9 +1165,10 @@ namespace Productivity
 
 
 
-            List<int> equips = GetSelectegEquipsList();
+            //List<int> equips = GetSelectegEquipsList();
+            List<Category> categoryEquips = GetSelectedCategoriesAndEquipsList();
 
-            LoadUsersList(equips, selectDate);
+            LoadUsersList(categoryEquips, selectDate);
 
             AddUsersToListView(countDaysFromSellectedMonth);
 
