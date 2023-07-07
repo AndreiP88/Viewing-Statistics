@@ -489,16 +489,19 @@ namespace Productivity
                 List<int> usersCurrent = new List<int>();
                 List<int> equipsCurrent = new List<int>();
 
-                for (int i = 0; i < usersList.Count; i++)
+                for (int i = 0; i < equips.Count; i++)
                 {
-                    if (!usersCurrent.Contains(usersList[i].Id))
+                    for (int j = 0; j < usersList.Count; j++)
                     {
-                        usersCurrent.Add(usersList[i].Id);
-                    }
+                        if (!usersCurrent.Contains(usersList[j].Id) && usersList[j].Equip == equips[i])
+                        {
+                            usersCurrent.Add(usersList[j].Id);
+                        }
 
-                    if (viewAllEquipsForUser && !equipsCurrent.Contains(usersList[i].Equip))
-                    {
-                        equipsCurrent.Add(usersList[i].Equip);
+                        if (viewAllEquipsForUser && !equipsCurrent.Contains(usersList[j].Equip))
+                        {
+                            equipsCurrent.Add(usersList[j].Equip);
+                        }
                     }
                 }
 
