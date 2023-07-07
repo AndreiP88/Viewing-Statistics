@@ -80,6 +80,7 @@ namespace Productivity
             this.listView2 = new Productivity.FormMain.MyListView();
             this.metroSetSetTabPage4 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.metroSetControlBox1 = new MetroSet_UI.Controls.MetroSetControlBox();
+            this.metroSetListBox1 = new MetroSet_UI.Controls.MetroSetListBox();
             this.metroSetTabControl1.SuspendLayout();
             this.metroSetSetTabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -105,15 +106,15 @@ namespace Productivity
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage3);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage5);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage4);
-            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Default;
             this.metroSetTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroSetTabControl1.IsDerivedStyle = true;
             this.metroSetTabControl1.ItemSize = new System.Drawing.Size(130, 38);
             this.metroSetTabControl1.Location = new System.Drawing.Point(12, 90);
             this.metroSetTabControl1.Name = "metroSetTabControl1";
-            this.metroSetTabControl1.SelectedIndex = 0;
+            this.metroSetTabControl1.SelectedIndex = 2;
             this.metroSetTabControl1.SelectedTextColor = System.Drawing.Color.White;
-            this.metroSetTabControl1.Size = new System.Drawing.Size(1279, 518);
+            this.metroSetTabControl1.Size = new System.Drawing.Size(1276, 518);
             this.metroSetTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.metroSetTabControl1.Speed = 100;
             this.metroSetTabControl1.Style = MetroSet_UI.Enums.Style.Light;
@@ -136,7 +137,7 @@ namespace Productivity
             this.metroSetSetTabPage1.IsDerivedStyle = true;
             this.metroSetSetTabPage1.Location = new System.Drawing.Point(4, 42);
             this.metroSetSetTabPage1.Name = "metroSetSetTabPage1";
-            this.metroSetSetTabPage1.Size = new System.Drawing.Size(1271, 472);
+            this.metroSetSetTabPage1.Size = new System.Drawing.Size(1268, 472);
             this.metroSetSetTabPage1.Style = MetroSet_UI.Enums.Style.Light;
             this.metroSetSetTabPage1.StyleManager = null;
             this.metroSetSetTabPage1.TabIndex = 0;
@@ -159,7 +160,7 @@ namespace Productivity
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1271, 472);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1268, 472);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // listView1
@@ -183,7 +184,7 @@ namespace Productivity
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.ShowItemToolTips = true;
-            this.listView1.Size = new System.Drawing.Size(1265, 430);
+            this.listView1.Size = new System.Drawing.Size(1262, 430);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -248,7 +249,7 @@ namespace Productivity
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1265, 30);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1262, 30);
             this.tableLayoutPanel2.TabIndex = 1;
             // 
             // dateTimePicker1
@@ -437,7 +438,7 @@ namespace Productivity
             this.metroSetSetTabPage3.IsDerivedStyle = true;
             this.metroSetSetTabPage3.Location = new System.Drawing.Point(4, 42);
             this.metroSetSetTabPage3.Name = "metroSetSetTabPage3";
-            this.metroSetSetTabPage3.Size = new System.Drawing.Size(1271, 472);
+            this.metroSetSetTabPage3.Size = new System.Drawing.Size(1268, 472);
             this.metroSetSetTabPage3.Style = MetroSet_UI.Enums.Style.Light;
             this.metroSetSetTabPage3.StyleManager = null;
             this.metroSetSetTabPage3.TabIndex = 2;
@@ -459,7 +460,7 @@ namespace Productivity
             this.tableLayoutPanel5.RowCount = 1;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 472F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(1271, 472);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(1268, 472);
             this.tableLayoutPanel5.TabIndex = 0;
             // 
             // tableLayoutPanel7
@@ -469,13 +470,14 @@ namespace Productivity
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tableLayoutPanel7.Controls.Add(this.ListViewEquips, 0, 0);
+            this.tableLayoutPanel7.Controls.Add(this.metroSetListBox1, 1, 0);
             this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel7.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
             this.tableLayoutPanel7.RowCount = 2;
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 42F));
-            this.tableLayoutPanel7.Size = new System.Drawing.Size(1265, 466);
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(1262, 466);
             this.tableLayoutPanel7.TabIndex = 0;
             // 
             // ListViewEquips
@@ -493,10 +495,10 @@ namespace Productivity
             this.ListViewEquips.MultiSelect = false;
             this.ListViewEquips.Name = "ListViewEquips";
             this.ListViewEquips.ShowItemToolTips = true;
-            this.ListViewEquips.Size = new System.Drawing.Size(373, 418);
+            this.ListViewEquips.Size = new System.Drawing.Size(372, 418);
             this.ListViewEquips.TabIndex = 1;
             this.ListViewEquips.UseCompatibleStateImageBehavior = false;
-            this.ListViewEquips.View = System.Windows.Forms.View.Details;
+            this.ListViewEquips.View = System.Windows.Forms.View.SmallIcon;
             // 
             // columnHeader5
             // 
@@ -601,12 +603,47 @@ namespace Productivity
             this.metroSetControlBox1.ThemeAuthor = "Narwin";
             this.metroSetControlBox1.ThemeName = "MetroLite";
             // 
+            // metroSetListBox1
+            // 
+            this.metroSetListBox1.BackColor = System.Drawing.Color.White;
+            this.metroSetListBox1.BorderColor = System.Drawing.Color.LightGray;
+            this.metroSetListBox1.DisabledBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            this.metroSetListBox1.DisabledForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(136)))), ((int)(((byte)(136)))), ((int)(((byte)(136)))));
+            this.metroSetListBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroSetListBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.metroSetListBox1.HoveredItemBackColor = System.Drawing.Color.LightGray;
+            this.metroSetListBox1.HoveredItemColor = System.Drawing.Color.DimGray;
+            this.metroSetListBox1.IsDerivedStyle = true;
+            this.metroSetListBox1.ItemHeight = 30;
+            this.metroSetListBox1.Items.Add("1");
+            this.metroSetListBox1.Items.Add("2");
+            this.metroSetListBox1.Items.Add("3");
+            this.metroSetListBox1.Items.Add("4");
+            this.metroSetListBox1.Items.Add("5");
+            this.metroSetListBox1.Location = new System.Drawing.Point(381, 3);
+            this.metroSetListBox1.MultiSelect = false;
+            this.metroSetListBox1.Name = "metroSetListBox1";
+            this.metroSetListBox1.SelectedIndex = -1;
+            this.metroSetListBox1.SelectedItem = null;
+            this.metroSetListBox1.SelectedItemBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.metroSetListBox1.SelectedItemColor = System.Drawing.Color.White;
+            this.metroSetListBox1.SelectedText = null;
+            this.metroSetListBox1.SelectedValue = null;
+            this.metroSetListBox1.ShowBorder = false;
+            this.metroSetListBox1.ShowScrollBar = false;
+            this.metroSetListBox1.Size = new System.Drawing.Size(372, 418);
+            this.metroSetListBox1.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetListBox1.StyleManager = null;
+            this.metroSetListBox1.TabIndex = 2;
+            this.metroSetListBox1.ThemeAuthor = "Narwin";
+            this.metroSetListBox1.ThemeName = "MetroLite";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1303, 620);
+            this.ClientSize = new System.Drawing.Size(1300, 620);
             this.Controls.Add(this.metroSetControlBox1);
             this.Controls.Add(this.metroSetTabControl1);
             this.Name = "FormMain";
@@ -673,6 +710,7 @@ namespace Productivity
         private ColumnHeader columnHeader5;
         private ColumnHeader columnHeader17;
         private ColumnHeader columnHeader10;
+        private MetroSet_UI.Controls.MetroSetListBox metroSetListBox1;
     }
 }
 
