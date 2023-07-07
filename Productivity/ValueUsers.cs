@@ -13,6 +13,7 @@ namespace Productivity
 {
     internal class ValueUsers
     {
+        //Не используемый метод
         public List<User> LoadUsersList(List<int> equips, DateTime date)
         {
             List<User> usersList = new List<User>();
@@ -48,13 +49,14 @@ namespace Productivity
                 while (sqlReader.Read())
                 {
                     int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
+                    int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
 
                     if (equips.Contains(loadEquip))
                     {
-                        int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
+                        //int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
 
-                        if (usersList.FindIndex((v) => v.Id == loadUser &&
-                                                       v.Equip == loadEquip) == -1)
+                        if (usersList.FindIndex((v) => v.Id == loadUser && v.Equip == loadEquip) == -1)
+                        //if (usersList.FindIndex((v) => v.Id == loadUser) == -1)
                         {
                             usersList.Add(new User(loadUser, loadEquip));
                             usersList[usersList.Count - 1].Shifts = new List<UserShift>();
@@ -66,7 +68,7 @@ namespace Productivity
             }
 
             return usersList;
-        }
+        }//
 
         /// <summary>
         /// Получить список сотрудников с оборудованием за выбранный месяц
@@ -79,8 +81,11 @@ namespace Productivity
             /*string startDate = date.ToString("yyyy-MM") + "-01T07:40:00.000";
             string endDate = date.AddMonths(1).ToString("yyyy-MM") + "-01T07:10:00.000";*/
 
-            DateTime startDate = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1);
-            DateTime endDate = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month);
+            DateTime dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1);
+            DateTime dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month);
+
+            string startDate = dateStart.ToString("yyyy-MM-dd") + "T07:40:00.000";
+            string endDate = dateEnd.ToString("yyyy-MM-dd") + "T07:10:00.000";
 
             List<int> users = LoadUsersIncludedAllEquips(equips, startDate, endDate);
 
@@ -89,12 +94,9 @@ namespace Productivity
             return usersList;
         }
 
-        private List<User> LoadUsersList(List<int> users, DateTime dateStart, DateTime dateEnd)
+        private List<User> LoadUsersList(List<int> users, string startDate, string endDate)
         {
             List<User> usersList = new List<User>();
-
-            string startDate = dateStart.ToString("yyyy-MM-dd") + "T07:40:00.000";
-            string endDate = dateEnd.AddMonths(1).ToString("yyyy-MM-dd") + "T07:10:00.000";
 
             using (SqlConnection connection = DBConnection.GetDBConnection())
             {
@@ -143,12 +145,9 @@ namespace Productivity
             return usersList;
         }
 
-        private List<int> LoadUsersIncludedAllEquips(List<int> equips, DateTime dateStart, DateTime dateEnd)
+        private List<int> LoadUsersIncludedAllEquips(List<int> equips, string startDate, string endDate)
         {
             List<int> users = new List<int>();
-
-            string startDate = dateStart.ToString("yyyy-MM-dd") + "T07:40:00.000";
-            string endDate = dateEnd.AddMonths(1).ToString("yyyy-MM-dd") + "T07:10:00.000";
 
             using (SqlConnection connection = DBConnection.GetDBConnection())
             {

@@ -43,8 +43,18 @@ namespace Productivity
         public string MinuteToTimeString(int totalMinutes)
         {
             string result = "00:00";
+            string sign = "";
 
             int absMinutes = Math.Abs(totalMinutes);
+
+            if (totalMinutes  >= 0)
+            {
+                sign = "";
+            }
+            else
+            {
+                sign = "-";
+            }
 
             int hours = 0;
             int minutes = absMinutes % 60;
@@ -54,7 +64,7 @@ namespace Productivity
                 hours = absMinutes / 60;
             }
 
-            result = hours.ToString("D2") + ":" + minutes.ToString("D2");
+            result = sign + hours.ToString("D2") + ":" + minutes.ToString("D2");
 
             return result;
         }
