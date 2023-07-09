@@ -52,6 +52,12 @@
   <ItemGroup>
     <Compile Include="Category.cs" />
     <Compile Include="Equip.cs" />
+    <Compile Include="FormAddEditCategory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormAddEditCategory.Designer.cs">
+      <DependentUpon>FormAddEditCategory.cs</DependentUpon>
+    </Compile>
     <Compile Include="HMergedCell.cs" />
     <Compile Include="IniFiles.cs" />
     <Compile Include="INISettings.cs" />
@@ -74,6 +80,9 @@
     <Compile Include="UserShift.cs" />
     <Compile Include="ValueUsers.cs" />
     <Compile Include="ValueShifts.cs" />
+    <EmbeddedResource Include="FormAddEditCategory.resx">
+      <DependentUpon>FormAddEditCategory.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>

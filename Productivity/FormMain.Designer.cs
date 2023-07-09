@@ -78,13 +78,19 @@ namespace Productivity
             this.listViewEquips = new Productivity.FormMain.MyListView();
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader17 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.metroSetSetTabPage5 = new MetroSet_UI.Child.MetroSetSetTabPage();
-            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
-            this.listView2 = new Productivity.FormMain.MyListView();
             this.metroSetSetTabPage4 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.metroSetControlBox1 = new MetroSet_UI.Controls.MetroSetControlBox();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonAddCat = new System.Windows.Forms.Button();
+            this.buttonEditCat = new System.Windows.Forms.Button();
+            this.buttonDeleteCat = new System.Windows.Forms.Button();
+            this.buttonUpCat = new System.Windows.Forms.Button();
+            this.buttonDownCat = new System.Windows.Forms.Button();
+            this.buttonAddEquip = new System.Windows.Forms.Button();
+            this.buttonDelEquip = new System.Windows.Forms.Button();
+            this.buttonUpEquip = new System.Windows.Forms.Button();
+            this.buttonDownEquip = new System.Windows.Forms.Button();
             this.metroSetTabControl1.SuspendLayout();
             this.metroSetSetTabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -96,8 +102,8 @@ namespace Productivity
             this.metroSetSetTabPage3.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel7.SuspendLayout();
-            this.metroSetSetTabPage5.SuspendLayout();
-            this.tableLayoutPanel6.SuspendLayout();
+            this.tableLayoutPanel8.SuspendLayout();
+            this.tableLayoutPanel9.SuspendLayout();
             this.SuspendLayout();
             // 
             // metroSetTabControl1
@@ -108,7 +114,6 @@ namespace Productivity
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage1);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage2);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage3);
-            this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage5);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage4);
             this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Default;
             this.metroSetTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -547,54 +552,6 @@ namespace Productivity
             this.columnHeader17.Text = "Оборудование";
             this.columnHeader17.Width = 297;
             // 
-            // metroSetSetTabPage5
-            // 
-            this.metroSetSetTabPage5.BaseColor = System.Drawing.Color.White;
-            this.metroSetSetTabPage5.Controls.Add(this.tableLayoutPanel6);
-            this.metroSetSetTabPage5.Font = null;
-            this.metroSetSetTabPage5.ImageIndex = 0;
-            this.metroSetSetTabPage5.ImageKey = null;
-            this.metroSetSetTabPage5.IsDerivedStyle = true;
-            this.metroSetSetTabPage5.Location = new System.Drawing.Point(4, 42);
-            this.metroSetSetTabPage5.Name = "metroSetSetTabPage5";
-            this.metroSetSetTabPage5.Size = new System.Drawing.Size(1268, 472);
-            this.metroSetSetTabPage5.Style = MetroSet_UI.Enums.Style.Light;
-            this.metroSetSetTabPage5.StyleManager = null;
-            this.metroSetSetTabPage5.TabIndex = 4;
-            this.metroSetSetTabPage5.Text = "test";
-            this.metroSetSetTabPage5.ThemeAuthor = "Narwin";
-            this.metroSetSetTabPage5.ThemeName = "MetroLite";
-            this.metroSetSetTabPage5.ToolTipText = null;
-            // 
-            // tableLayoutPanel6
-            // 
-            this.tableLayoutPanel6.ColumnCount = 1;
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel6.Controls.Add(this.listView2, 0, 0);
-            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel6.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
-            this.tableLayoutPanel6.RowCount = 1;
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(1268, 472);
-            this.tableLayoutPanel6.TabIndex = 0;
-            // 
-            // listView2
-            // 
-            this.listView2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView2.FullRowSelect = true;
-            this.listView2.GridLines = true;
-            this.listView2.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listView2.HideSelection = false;
-            this.listView2.Location = new System.Drawing.Point(3, 3);
-            this.listView2.MultiSelect = false;
-            this.listView2.Name = "listView2";
-            this.listView2.ShowItemToolTips = true;
-            this.listView2.Size = new System.Drawing.Size(1262, 466);
-            this.listView2.TabIndex = 2;
-            this.listView2.UseCompatibleStateImageBehavior = false;
-            this.listView2.View = System.Windows.Forms.View.Details;
-            // 
             // metroSetSetTabPage4
             // 
             this.metroSetSetTabPage4.BaseColor = System.Drawing.Color.White;
@@ -642,11 +599,17 @@ namespace Productivity
             // 
             // tableLayoutPanel8
             // 
-            this.tableLayoutPanel8.ColumnCount = 4;
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel8.ColumnCount = 5;
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel8.Controls.Add(this.buttonDownCat, 4, 0);
+            this.tableLayoutPanel8.Controls.Add(this.buttonAddCat, 0, 0);
+            this.tableLayoutPanel8.Controls.Add(this.buttonEditCat, 1, 0);
+            this.tableLayoutPanel8.Controls.Add(this.buttonDeleteCat, 2, 0);
+            this.tableLayoutPanel8.Controls.Add(this.buttonUpCat, 3, 0);
             this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel8.Location = new System.Drawing.Point(3, 427);
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
@@ -662,6 +625,10 @@ namespace Productivity
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel9.Controls.Add(this.buttonAddEquip, 0, 0);
+            this.tableLayoutPanel9.Controls.Add(this.buttonDelEquip, 1, 0);
+            this.tableLayoutPanel9.Controls.Add(this.buttonUpEquip, 2, 0);
+            this.tableLayoutPanel9.Controls.Add(this.buttonDownEquip, 3, 0);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel9.Location = new System.Drawing.Point(353, 427);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
@@ -669,6 +636,104 @@ namespace Productivity
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel9.Size = new System.Drawing.Size(344, 36);
             this.tableLayoutPanel9.TabIndex = 4;
+            // 
+            // buttonAddCat
+            // 
+            this.buttonAddCat.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonAddCat.Location = new System.Drawing.Point(3, 3);
+            this.buttonAddCat.Name = "buttonAddCat";
+            this.buttonAddCat.Size = new System.Drawing.Size(62, 30);
+            this.buttonAddCat.TabIndex = 0;
+            this.buttonAddCat.Text = "Add";
+            this.buttonAddCat.UseVisualStyleBackColor = true;
+            this.buttonAddCat.Click += new System.EventHandler(this.buttonAddCat_Click);
+            // 
+            // buttonEditCat
+            // 
+            this.buttonEditCat.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonEditCat.Enabled = false;
+            this.buttonEditCat.Location = new System.Drawing.Point(71, 3);
+            this.buttonEditCat.Name = "buttonEditCat";
+            this.buttonEditCat.Size = new System.Drawing.Size(62, 30);
+            this.buttonEditCat.TabIndex = 1;
+            this.buttonEditCat.Text = "Edit";
+            this.buttonEditCat.UseVisualStyleBackColor = true;
+            // 
+            // buttonDeleteCat
+            // 
+            this.buttonDeleteCat.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonDeleteCat.Enabled = false;
+            this.buttonDeleteCat.Location = new System.Drawing.Point(139, 3);
+            this.buttonDeleteCat.Name = "buttonDeleteCat";
+            this.buttonDeleteCat.Size = new System.Drawing.Size(62, 30);
+            this.buttonDeleteCat.TabIndex = 2;
+            this.buttonDeleteCat.Text = "Del";
+            this.buttonDeleteCat.UseVisualStyleBackColor = true;
+            // 
+            // buttonUpCat
+            // 
+            this.buttonUpCat.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonUpCat.Enabled = false;
+            this.buttonUpCat.Location = new System.Drawing.Point(207, 3);
+            this.buttonUpCat.Name = "buttonUpCat";
+            this.buttonUpCat.Size = new System.Drawing.Size(62, 30);
+            this.buttonUpCat.TabIndex = 3;
+            this.buttonUpCat.Text = "Up";
+            this.buttonUpCat.UseVisualStyleBackColor = true;
+            // 
+            // buttonDownCat
+            // 
+            this.buttonDownCat.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonDownCat.Enabled = false;
+            this.buttonDownCat.Location = new System.Drawing.Point(275, 3);
+            this.buttonDownCat.Name = "buttonDownCat";
+            this.buttonDownCat.Size = new System.Drawing.Size(66, 30);
+            this.buttonDownCat.TabIndex = 0;
+            this.buttonDownCat.Text = "Down";
+            this.buttonDownCat.UseVisualStyleBackColor = true;
+            // 
+            // buttonAddEquip
+            // 
+            this.buttonAddEquip.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonAddEquip.Location = new System.Drawing.Point(3, 3);
+            this.buttonAddEquip.Name = "buttonAddEquip";
+            this.buttonAddEquip.Size = new System.Drawing.Size(80, 30);
+            this.buttonAddEquip.TabIndex = 1;
+            this.buttonAddEquip.Text = "Add";
+            this.buttonAddEquip.UseVisualStyleBackColor = true;
+            // 
+            // buttonDelEquip
+            // 
+            this.buttonDelEquip.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonDelEquip.Enabled = false;
+            this.buttonDelEquip.Location = new System.Drawing.Point(89, 3);
+            this.buttonDelEquip.Name = "buttonDelEquip";
+            this.buttonDelEquip.Size = new System.Drawing.Size(80, 30);
+            this.buttonDelEquip.TabIndex = 2;
+            this.buttonDelEquip.Text = "Del";
+            this.buttonDelEquip.UseVisualStyleBackColor = true;
+            // 
+            // buttonUpEquip
+            // 
+            this.buttonUpEquip.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonUpEquip.Enabled = false;
+            this.buttonUpEquip.Location = new System.Drawing.Point(175, 3);
+            this.buttonUpEquip.Name = "buttonUpEquip";
+            this.buttonUpEquip.Size = new System.Drawing.Size(80, 30);
+            this.buttonUpEquip.TabIndex = 3;
+            this.buttonUpEquip.Text = "Up";
+            this.buttonUpEquip.UseVisualStyleBackColor = true;
+            // 
+            // buttonDownEquip
+            // 
+            this.buttonDownEquip.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonDownEquip.Enabled = false;
+            this.buttonDownEquip.Location = new System.Drawing.Point(261, 3);
+            this.buttonDownEquip.Name = "buttonDownEquip";
+            this.buttonDownEquip.Size = new System.Drawing.Size(80, 30);
+            this.buttonDownEquip.TabIndex = 4;
+            this.buttonDownEquip.Text = "Down";
+            this.buttonDownEquip.UseVisualStyleBackColor = true;
             // 
             // FormMain
             // 
@@ -698,8 +763,8 @@ namespace Productivity
             this.metroSetSetTabPage3.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel7.ResumeLayout(false);
-            this.metroSetSetTabPage5.ResumeLayout(false);
-            this.tableLayoutPanel6.ResumeLayout(false);
+            this.tableLayoutPanel8.ResumeLayout(false);
+            this.tableLayoutPanel9.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -733,9 +798,6 @@ namespace Productivity
         private System.Windows.Forms.Button button1;
         private MyListView listView1;
         private MetroSet_UI.Child.MetroSetSetTabPage metroSetSetTabPage4;
-        private MetroSet_UI.Child.MetroSetSetTabPage metroSetSetTabPage5;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
-        private MyListView listView2;
         private DoubleBufferedDataGridView dataGridView1;
         private TableLayoutPanel tableLayoutPanel7;
         private MyListView listViewEquips;
@@ -747,6 +809,15 @@ namespace Productivity
         private ColumnHeader columnHeader12;
         private TableLayoutPanel tableLayoutPanel8;
         private TableLayoutPanel tableLayoutPanel9;
+        private Button buttonAddCat;
+        private Button buttonEditCat;
+        private Button buttonDeleteCat;
+        private Button buttonUpCat;
+        private Button buttonDownCat;
+        private Button buttonAddEquip;
+        private Button buttonDelEquip;
+        private Button buttonUpEquip;
+        private Button buttonDownEquip;
     }
 }
 

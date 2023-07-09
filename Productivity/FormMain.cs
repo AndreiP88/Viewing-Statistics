@@ -245,6 +245,35 @@ namespace Productivity
             ini.Write("equips", outputStr, section);
         }
 
+        private void AddNewCategory(string name)
+        {
+            ListViewItem item = new ListViewItem();
+
+            int id = listViewCategory.Items.Count + 1;
+
+            while (true)
+            {
+                if (listViewCategory.Items.IndexOfKey(id.ToString()) == -1)
+                {
+                    break;
+                }
+                else
+                {
+                    id++;
+                }
+            }
+
+            item.Name = id.ToString();
+            item.Text = (listViewCategory.Items.Count + 1).ToString();
+            item.SubItems.Add(name);
+
+            item.Checked = false;
+
+            listViewCategory.Items.Add(item);
+
+            SaveCategoryToIniFile();
+        }
+
         private void AddYearsToComboBox(int yearStart, int yearEnd)
         {
             comboBox3.Items.Clear();
@@ -274,32 +303,6 @@ namespace Productivity
         {
             comboBox3.Text = DateTime.Now.AddMonths(-1).Year.ToString();
             comboBox2.SelectedIndex = DateTime.Now.AddMonths(-1).Month;
-        }
-
-        private void CreateColomnsToListView(int days, int month)
-        {
-            listView2.Items.Clear();
-            listView2.Columns.Clear();
-
-            int width = listView2.Width;
-
-            int w = 50;//(width - 560) / (days);
-
-            listView2.Columns.Add("№", 40, HorizontalAlignment.Center);
-            listView2.Columns.Add("Имя", 300);
-
-            for (int i = 1; i <= days; i++)
-            {
-                for (int j = 1; j <= countShifts; j++)
-                {
-                    listView2.Columns.Add(i.ToString("D2") + "." + month.ToString("D2"), w, HorizontalAlignment.Center);
-                }
-            }
-
-            listView2.Columns.Add("Выработка", 90, HorizontalAlignment.Center);
-            listView2.Columns.Add("Отставание", 95, HorizontalAlignment.Center);
-
-            CreateColomnsToDataGrid(days, month);
         }
 
         private void CreateColomnsToDataGrid(int days, int month)
@@ -543,7 +546,6 @@ namespace Productivity
                         machine = "Оборудование " + machines[i];
                     }
 
-                    AddItemToListView("e" + equips[i], "", machine, countDaysFromSellectedMonth, Color.Gray);
                     AddItemToGrid("e" + equips[i], "", machine, Color.Gray);
 
                     for (int j = 0; j < usersList.Count; j++)
@@ -569,7 +571,6 @@ namespace Productivity
                                 color = Color.LightGray;
                             }
 
-                            AddItemToListView(CreateNameListViewItem(equips[i], usersList[j].Id), countUserForCurrentEquip.ToString(), user, countDaysFromSellectedMonth, color);
                             AddItemToGrid(CreateNameListViewItem(equips[i], usersList[j].Id), countUserForCurrentEquip.ToString(), user, color);
                         }
                     }
@@ -614,7 +615,6 @@ namespace Productivity
                         user += "Работник " + usersCurrent[i];
                     }
 
-                    AddItemToListView("u" + usersCurrent[i], "", user, countDaysFromSellectedMonth, Color.Gray);
                     AddItemToGrid("u" + usersCurrent[i], "", user, Color.Gray);
 
                     int countEquipForCurrentUser = 0;
@@ -646,33 +646,11 @@ namespace Productivity
                                 color = Color.LightGray;
                             }
 
-                            AddItemToListView(CreateNameListViewItem(equipsCurrent[j], usersList[index].Id), countEquipForCurrentUser.ToString(), machine, countDaysFromSellectedMonth, color);
                             AddItemToGrid(CreateNameListViewItem(equipsCurrent[j], usersList[index].Id), countEquipForCurrentUser.ToString(), machine, color);
                         }
                     }
                 }
             }
-        }
-
-        private void AddItemToListView(string name, string text, string subText, int countDays, Color color)
-        {
-            ListViewItem item = new ListViewItem();
-
-            item.Name = name;
-            item.Text = text;
-            item.SubItems.Add(subText);
-
-            for (int j = 1; j <= countDays * countShifts + 2; j++)
-            {
-                item.SubItems.Add("");
-            }
-
-            item.BackColor = color;
-
-            if (text == "")
-                item.Font = new Font(item.Font, FontStyle.Bold);
-
-            listView2.Items.Add(item);
         }
 
         private void AddItemToGrid(string name, string text, string subText, Color color, int colSpan = 1)
@@ -697,27 +675,6 @@ namespace Productivity
             {
                 dataGridView1.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
             }
-        }
-
-        private void AddShiftNumbersToListView(int days)
-        {
-            ListViewItem item = new ListViewItem();
-
-            item.Name = "";
-            item.Text = "";
-            item.SubItems.Add("");
-
-            for (int i = 1; i <= days; i++)
-            {
-                for (int j = 1; j <= countShifts; j++)
-                {
-                    item.SubItems.Add(j.ToString());
-                }
-            }
-
-            item.Font = new Font(item.Font, FontStyle.Bold);
-
-            listView2.Items.Add(item);
         }
 
         private string CreateNameListViewItem(int equip, int user)
@@ -885,21 +842,6 @@ namespace Productivity
 
                             Invoke(new Action(() =>
                             {
-                                int index = listView2.Items.IndexOfKey(CreateNameListViewItem(usersList[i].Equip, usersList[i].Id));
-
-                                if (index >= 0)
-                                {
-                                    ListViewItem item = listView2.Items[index];
-
-                                    if (item != null)
-                                    {
-                                        item.SubItems[(day - 1) * countShifts + shiftNumber + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
-                                        //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
-                                        item.SubItems[countDaysFromMonth * countShifts + 2].Text = timeValues.MinuteToTimeString(usersList[i].WorkingOutUser);
-                                        item.SubItems[countDaysFromMonth * countShifts + 3].Text = timeValues.MinuteToTimeString(usersList[i].WorkingOutBacklog);
-                                    }
-                                }
-                                
                                 string key = CreateNameListViewItem(usersList[i].Equip, usersList[i].Id);
 
                                 if (rowIndexes.ContainsKey(key))
@@ -934,19 +876,6 @@ namespace Productivity
 
                     Invoke(new Action(() =>
                     {
-                        int index = listView2.Items.IndexOfKey("e" + equipsListWorkingOut[i].Id);
-
-                        if (index >= 0)
-                        {
-                            ListViewItem item = listView2.Items[index];
-
-                            if (item != null)
-                            {
-                                item.SubItems[(day - 1) * countShifts + shiftNumber + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
-                                //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
-                            }
-                        }
-
                         string key = "e" + equipsListWorkingOut[i].Id;
 
                         if (rowIndexes.ContainsKey(key))
@@ -962,20 +891,6 @@ namespace Productivity
 
                 Invoke(new Action(() =>
                 {
-                    int index = listView2.Items.IndexOfKey("e" + equipsListWorkingOut[i].Id);
-
-                    if (index >= 0)
-                    {
-                        ListViewItem item = listView2.Items[index];
-
-                        if (item != null)
-                        {
-                            item.SubItems[countDaysFromMonth * countShifts + 2].Text = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutSumm);
-                            //item.SubItems[countDaysFromMonth * countShifts + 3].Text = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutBacklog);
-                            item.SubItems[countDaysFromMonth * countShifts + 3].Text = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutList.Count * fullOutput - equipsListWorkingOut[i].WorkingOutSumm);
-                        }
-                    }
-
                     string key = "e" + equipsListWorkingOut[i].Id;
 
                     if (rowIndexes.ContainsKey(key))
@@ -1008,19 +923,6 @@ namespace Productivity
 
                     Invoke(new Action(() =>
                     {
-                        int index = listView2.Items.IndexOfKey("u" + usersListWorkingOut[i].Id);
-
-                        if (index >= 0)
-                        {
-                            ListViewItem item = listView2.Items[index];
-
-                            if (item != null)
-                            {
-                                item.SubItems[(day - 1) * countShifts + shiftNumber + 1].Text = timeValues.MinuteToTimeString(timeWorkigOut);
-                                //item.SubItems[day + 1].Text = percentWorkingOut.ToString("P1");
-                            }
-                        }
-
                         string key = "u" + usersListWorkingOut[i].Id;
 
                         if (rowIndexes.ContainsKey(key))
@@ -1036,20 +938,6 @@ namespace Productivity
 
                 Invoke(new Action(() =>
                 {
-                    int index = listView2.Items.IndexOfKey("u" + usersListWorkingOut[i].Id);
-
-                    if (index >= 0)
-                    {
-                        ListViewItem item = listView2.Items[index];
-
-                        if (item != null)
-                        {
-                            item.SubItems[countDaysFromMonth * countShifts + 2].Text = timeValues.MinuteToTimeString(usersListWorkingOut[i].WorkingOutSumm);
-                            //item.SubItems[countDaysFromMonth * countShifts + 3].Text = timeValues.MinuteToTimeString(usersListWorkingOut[i].WorkingOutBacklog);
-                            item.SubItems[countDaysFromMonth * countShifts + 3].Text = timeValues.MinuteToTimeString(usersListWorkingOut[i].WorkingOutList.Count * fullOutput - usersListWorkingOut[i].WorkingOutSumm);
-                        }
-                    }
-
                     string key = "u" + usersListWorkingOut[i].Id;
 
                     if (rowIndexes.ContainsKey(key))
@@ -1233,10 +1121,7 @@ namespace Productivity
 
             int countDaysFromSellectedMonth = DateTime.DaysInMonth(year, month);
 
-            CreateColomnsToListView(countDaysFromSellectedMonth, month);
-            AddShiftNumbersToListView(countDaysFromSellectedMonth);
-
-
+            CreateColomnsToDataGrid(countDaysFromSellectedMonth, month);
 
             //List<int> equips = GetSelectegEquipsList();
             List<Category> categoryEquips = GetSelectedCategoriesAndEquipsList();
@@ -1323,6 +1208,8 @@ namespace Productivity
                 }
 
                 SaveCategoryToIniFile();
+
+                listViewEquips.Items.Clear();
             }
 
             if (metroSetTabControl1.SelectedIndex == 1)
@@ -1362,6 +1249,17 @@ namespace Productivity
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadOrdersSelectedDateAndShift();
+        }
+
+        private void buttonAddCat_Click(object sender, EventArgs e)
+        {
+            FormAddEditCategory fm = new FormAddEditCategory();
+            fm.ShowDialog();
+
+            if (fm.NewValue)
+            {
+                AddNewCategory(fm.NameCategory);
+            }
         }
     }
 }
