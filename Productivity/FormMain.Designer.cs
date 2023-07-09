@@ -72,15 +72,19 @@ namespace Productivity
             this.metroSetSetTabPage3 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
-            this.ListViewEquips = new Productivity.FormMain.MyListView();
+            this.listViewCategory = new Productivity.FormMain.MyListView();
+            this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.listViewEquips = new Productivity.FormMain.MyListView();
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader17 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.metroSetListBox1 = new MetroSet_UI.Controls.MetroSetListBox();
             this.metroSetSetTabPage5 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.listView2 = new Productivity.FormMain.MyListView();
             this.metroSetSetTabPage4 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.metroSetControlBox1 = new MetroSet_UI.Controls.MetroSetControlBox();
+            this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
             this.metroSetTabControl1.SuspendLayout();
             this.metroSetSetTabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -466,11 +470,13 @@ namespace Productivity
             // tableLayoutPanel7
             // 
             this.tableLayoutPanel7.ColumnCount = 3;
-            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.tableLayoutPanel7.Controls.Add(this.ListViewEquips, 0, 0);
-            this.tableLayoutPanel7.Controls.Add(this.metroSetListBox1, 1, 0);
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.77778F));
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.77778F));
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 44.44444F));
+            this.tableLayoutPanel7.Controls.Add(this.listViewCategory, 0, 0);
+            this.tableLayoutPanel7.Controls.Add(this.listViewEquips, 1, 0);
+            this.tableLayoutPanel7.Controls.Add(this.tableLayoutPanel8, 0, 1);
+            this.tableLayoutPanel7.Controls.Add(this.tableLayoutPanel9, 1, 1);
             this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel7.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
@@ -480,70 +486,66 @@ namespace Productivity
             this.tableLayoutPanel7.Size = new System.Drawing.Size(1262, 466);
             this.tableLayoutPanel7.TabIndex = 0;
             // 
-            // ListViewEquips
+            // listViewCategory
             // 
-            this.ListViewEquips.CheckBoxes = true;
-            this.ListViewEquips.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.listViewCategory.CheckBoxes = true;
+            this.listViewCategory.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader11,
+            this.columnHeader12});
+            this.listViewCategory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewCategory.FullRowSelect = true;
+            this.listViewCategory.GridLines = true;
+            this.listViewCategory.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listViewCategory.HideSelection = false;
+            this.listViewCategory.Location = new System.Drawing.Point(3, 3);
+            this.listViewCategory.MultiSelect = false;
+            this.listViewCategory.Name = "listViewCategory";
+            this.listViewCategory.ShowItemToolTips = true;
+            this.listViewCategory.Size = new System.Drawing.Size(344, 418);
+            this.listViewCategory.TabIndex = 2;
+            this.listViewCategory.UseCompatibleStateImageBehavior = false;
+            this.listViewCategory.View = System.Windows.Forms.View.Details;
+            this.listViewCategory.SelectedIndexChanged += new System.EventHandler(this.listViewCategory_SelectedIndexChanged);
+            // 
+            // columnHeader11
+            // 
+            this.columnHeader11.Text = "№";
+            this.columnHeader11.Width = 42;
+            // 
+            // columnHeader12
+            // 
+            this.columnHeader12.Text = "Категория";
+            this.columnHeader12.Width = 297;
+            // 
+            // listViewEquips
+            // 
+            this.listViewEquips.CheckBoxes = true;
+            this.listViewEquips.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader5,
             this.columnHeader17});
-            this.ListViewEquips.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ListViewEquips.FullRowSelect = true;
-            this.ListViewEquips.GridLines = true;
-            this.ListViewEquips.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.ListViewEquips.HideSelection = false;
-            this.ListViewEquips.Location = new System.Drawing.Point(3, 3);
-            this.ListViewEquips.MultiSelect = false;
-            this.ListViewEquips.Name = "ListViewEquips";
-            this.ListViewEquips.ShowItemToolTips = true;
-            this.ListViewEquips.Size = new System.Drawing.Size(372, 418);
-            this.ListViewEquips.TabIndex = 1;
-            this.ListViewEquips.UseCompatibleStateImageBehavior = false;
-            this.ListViewEquips.View = System.Windows.Forms.View.SmallIcon;
+            this.listViewEquips.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewEquips.FullRowSelect = true;
+            this.listViewEquips.GridLines = true;
+            this.listViewEquips.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listViewEquips.HideSelection = false;
+            this.listViewEquips.Location = new System.Drawing.Point(353, 3);
+            this.listViewEquips.MultiSelect = false;
+            this.listViewEquips.Name = "listViewEquips";
+            this.listViewEquips.ShowItemToolTips = true;
+            this.listViewEquips.Size = new System.Drawing.Size(344, 418);
+            this.listViewEquips.TabIndex = 1;
+            this.listViewEquips.UseCompatibleStateImageBehavior = false;
+            this.listViewEquips.View = System.Windows.Forms.View.Details;
             // 
             // columnHeader5
             // 
             this.columnHeader5.Text = "№";
-            this.columnHeader5.Width = 55;
+            this.columnHeader5.Width = 42;
             // 
             // columnHeader17
             // 
             this.columnHeader17.Text = "Оборудование";
             this.columnHeader17.Width = 297;
-            // 
-            // metroSetListBox1
-            // 
-            this.metroSetListBox1.BackColor = System.Drawing.Color.White;
-            this.metroSetListBox1.BorderColor = System.Drawing.Color.LightGray;
-            this.metroSetListBox1.DisabledBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
-            this.metroSetListBox1.DisabledForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(136)))), ((int)(((byte)(136)))), ((int)(((byte)(136)))));
-            this.metroSetListBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroSetListBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.metroSetListBox1.HoveredItemBackColor = System.Drawing.Color.LightGray;
-            this.metroSetListBox1.HoveredItemColor = System.Drawing.Color.DimGray;
-            this.metroSetListBox1.IsDerivedStyle = true;
-            this.metroSetListBox1.ItemHeight = 30;
-            this.metroSetListBox1.Items.Add("1");
-            this.metroSetListBox1.Items.Add("2");
-            this.metroSetListBox1.Items.Add("3");
-            this.metroSetListBox1.Items.Add("4");
-            this.metroSetListBox1.Items.Add("5");
-            this.metroSetListBox1.Location = new System.Drawing.Point(381, 3);
-            this.metroSetListBox1.MultiSelect = false;
-            this.metroSetListBox1.Name = "metroSetListBox1";
-            this.metroSetListBox1.SelectedIndex = -1;
-            this.metroSetListBox1.SelectedItem = null;
-            this.metroSetListBox1.SelectedItemBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.metroSetListBox1.SelectedItemColor = System.Drawing.Color.White;
-            this.metroSetListBox1.SelectedText = null;
-            this.metroSetListBox1.SelectedValue = null;
-            this.metroSetListBox1.ShowBorder = false;
-            this.metroSetListBox1.ShowScrollBar = false;
-            this.metroSetListBox1.Size = new System.Drawing.Size(372, 418);
-            this.metroSetListBox1.Style = MetroSet_UI.Enums.Style.Light;
-            this.metroSetListBox1.StyleManager = null;
-            this.metroSetListBox1.TabIndex = 2;
-            this.metroSetListBox1.ThemeAuthor = "Narwin";
-            this.metroSetListBox1.ThemeName = "MetroLite";
             // 
             // metroSetSetTabPage5
             // 
@@ -638,6 +640,36 @@ namespace Productivity
             this.metroSetControlBox1.ThemeAuthor = "Narwin";
             this.metroSetControlBox1.ThemeName = "MetroLite";
             // 
+            // tableLayoutPanel8
+            // 
+            this.tableLayoutPanel8.ColumnCount = 4;
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel8.Location = new System.Drawing.Point(3, 427);
+            this.tableLayoutPanel8.Name = "tableLayoutPanel8";
+            this.tableLayoutPanel8.RowCount = 1;
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(344, 36);
+            this.tableLayoutPanel8.TabIndex = 3;
+            // 
+            // tableLayoutPanel9
+            // 
+            this.tableLayoutPanel9.ColumnCount = 4;
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel9.Location = new System.Drawing.Point(353, 427);
+            this.tableLayoutPanel9.Name = "tableLayoutPanel9";
+            this.tableLayoutPanel9.RowCount = 1;
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel9.Size = new System.Drawing.Size(344, 36);
+            this.tableLayoutPanel9.TabIndex = 4;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
@@ -706,11 +738,15 @@ namespace Productivity
         private MyListView listView2;
         private DoubleBufferedDataGridView dataGridView1;
         private TableLayoutPanel tableLayoutPanel7;
-        private MyListView ListViewEquips;
+        private MyListView listViewEquips;
         private ColumnHeader columnHeader5;
         private ColumnHeader columnHeader17;
         private ColumnHeader columnHeader10;
-        private MetroSet_UI.Controls.MetroSetListBox metroSetListBox1;
+        private MyListView listViewCategory;
+        private ColumnHeader columnHeader11;
+        private ColumnHeader columnHeader12;
+        private TableLayoutPanel tableLayoutPanel8;
+        private TableLayoutPanel tableLayoutPanel9;
     }
 }
 

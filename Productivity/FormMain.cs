@@ -40,6 +40,7 @@ namespace Productivity
         CancellationTokenSource cancelTokenSource;
 
         int metroSetTabControlPreviousIndex = -1;
+        int listViewCategoryPreviousIndex = -1;
 
         bool viewAllEquipsForUser = true;
         int countShifts = 2;
@@ -74,7 +75,7 @@ namespace Productivity
 
                 machines = equipsValue.LoadMachine();
 
-                foreach(KeyValuePair<int, string> equip in machines)
+                /*foreach(KeyValuePair<int, string> equip in machines)
                 {
                     ListViewItem item = new ListViewItem();
 
@@ -83,7 +84,7 @@ namespace Productivity
                     item.SubItems.Add(equip.Value);
 
                     ListViewEquips.Items.Add(item);
-                }
+                }*/
             }
             catch (Exception ex)
             {
@@ -91,7 +92,7 @@ namespace Productivity
             }
         }
 
-        private void LoadCheckedEquipsFromIniFile()
+        /*private void LoadCheckedEquipsFromIniFile()
         {
             INISettings iniSettings = new INISettings();
 
@@ -108,9 +109,9 @@ namespace Productivity
                     ListViewEquips.Items[index].Checked = true;
                 }
             }
-        }
+        }*/
 
-        private void SaveCheckedEquipsToIniFile()
+        /*private void SaveCheckedEquipsToIniFile()
         {
             INISettings iniSettings = new INISettings();
 
@@ -139,6 +140,109 @@ namespace Productivity
             }
 
             iniSettings.SetViewedEquipment(outputStr);
+        }*/
+
+        private void LoadCategoryToListView()
+        {
+            List<Category> categories = GetSelectedCategoriesAndEquipsList();
+
+            listViewCategory.Items.Clear();
+
+            for (int i = 0; i < categories.Count; i++)
+            {
+                ListViewItem item = new ListViewItem();
+
+                item.Name = categories[i].Id.ToString();
+                item.Text = (listViewCategory.Items.Count + 1).ToString();
+                item.SubItems.Add(categories[i].Name);
+
+                item.Checked = categories[i].Selected;
+
+                listViewCategory.Items.Add(item);
+            }
+        }
+
+        private void LoadEquipsFromCategoryToListView(int idCategory)
+        {
+            List<Category> categories = GetSelectedCategoriesAndEquipsList();
+
+            listViewEquips.Items.Clear();
+
+            int index = categories.FindIndex((v) => v.Id == idCategory);
+
+            if (index != -1)
+            {
+                for (int i = 0; i < categories[index].Equips.Count; i++)
+                {
+                    ListViewItem item = new ListViewItem();
+
+                    string equip = "";
+
+                    if (machines.ContainsKey(categories[index].Equips[i].Id))
+                    {
+                        equip = machines[categories[index].Equips[i].Id];
+                    }
+
+                    item.Name = categories[index].Equips[i].Id.ToString();
+                    item.Text = (listViewEquips.Items.Count + 1).ToString();
+                    item.SubItems.Add(equip);
+
+                    item.Checked = categories[index].Equips[i].Selected;
+
+                    listViewEquips.Items.Add(item);
+                }
+            }
+        }
+
+        private void SaveCategoryToIniFile()
+        {
+            IniFile ini = new IniFile("settings.ini");
+
+            for (int i = 0; i < listViewCategory.Items.Count; i++)
+            {
+                string name = listViewCategory.Items[i].SubItems[1].Text;
+
+                bool selected = listViewCategory.Items[i].Checked;
+
+                string section = "category_" + listViewCategory.Items[i].Name;
+
+                ini.Write("name", name, section);
+                ini.Write("selected", selected.ToString(), section);
+            }
+        }
+
+        private void SaveEquipsFromCategoryToIniFile(int idCategory)
+        {
+            IniFile ini = new IniFile("settings.ini");
+
+            string outputStr = "";
+
+            for (int i = 0; i < listViewEquips.Items.Count; i++)
+            {
+                int selected = 0;
+
+                if (listViewEquips.Items[i].Checked)
+                {
+                    selected = 1;
+                }
+                else
+                {
+                    selected = 0;
+                }
+
+                if (i < listViewEquips.Items.Count - 1)
+                {
+                    outputStr += listViewEquips.Items[i].Name + ":" + selected + ";";
+                }
+                else
+                {
+                    outputStr += listViewEquips.Items[i].Name + ":" + selected;
+                }
+            }
+
+            string section = "category_" + idCategory;
+
+            ini.Write("equips", outputStr, section);
         }
 
         private void AddYearsToComboBox(int yearStart, int yearEnd)
@@ -593,27 +697,6 @@ namespace Productivity
             {
                 dataGridView1.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
             }
-            
-
-            //AddCellToGrid();
-
-            /*ListViewItem item = new ListViewItem();
-
-            item.Name = name;
-            item.Text = text;
-            item.SubItems.Add(subText);
-
-            for (int j = 1; j <= countDays * countShifts + 2; j++)
-            {
-                item.SubItems.Add("");
-            }
-
-            item.BackColor = color;
-
-            if (text == "")
-                item.Font = new Font(item.Font, FontStyle.Bold);
-
-            listView2.Items.Add(item);*/
         }
 
         private void AddShiftNumbersToListView(int days)
@@ -1234,7 +1317,12 @@ namespace Productivity
         {
             if (metroSetTabControlPreviousIndex == 2)
             {
-                SaveCheckedEquipsToIniFile();
+                if (listViewCategoryPreviousIndex != -1)
+                {
+                    SaveEquipsFromCategoryToIniFile(listViewCategoryPreviousIndex);
+                }
+
+                SaveCategoryToIniFile();
             }
 
             if (metroSetTabControl1.SelectedIndex == 1)
@@ -1244,12 +1332,31 @@ namespace Productivity
 
             if (metroSetTabControl1.SelectedIndex == 2)
             {
-                LoadCheckedEquipsFromIniFile();
+                LoadCategoryToListView();
             }
 
             
 
             metroSetTabControlPreviousIndex = metroSetTabControl1.SelectedIndex;
+            listViewCategoryPreviousIndex = -1;
+        }
+
+        private void listViewCategory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listViewCategory.SelectedItems.Count > 0)
+            {
+                int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
+
+                if (listViewCategoryPreviousIndex != -1)
+                {
+                    SaveEquipsFromCategoryToIniFile(listViewCategoryPreviousIndex);
+                    //SaveCategoryToIniFile();
+                }
+
+                listViewCategoryPreviousIndex = idCategory;
+
+                LoadEquipsFromCategoryToListView(idCategory);
+            }
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
