@@ -1,23 +1,13 @@
 ﻿using MetroSet_UI.Forms;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
-using System.Xml.Linq;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Reflection;
 using System.Threading;
-using System.Runtime.InteropServices;
-using OrderManager;
-using static System.Collections.Specialized.BitVector32;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
+using System.Xml.Linq;
 
 namespace Productivity
 {
@@ -247,7 +237,36 @@ namespace Productivity
 
         private void AddNewCategory(string name)
         {
-            ListViewItem item = new ListViewItem();
+            List<Category> categories = GetSelectedCategoriesAndEquipsList();
+
+            IniFile ini = new IniFile("settings.ini");
+
+            int id = categories.Count + 1;
+
+            while (true)
+            {
+                if (categories.FindIndex((v) => v.Id == id) == -1)
+                {
+                    break;
+                }
+                else
+                {
+                    id++;
+                }
+            }
+
+            string section = "category_" + id;
+
+            ini.Write("name", name, section);
+            ini.Write("selected", false.ToString(), section);
+            ini.Write("equips", "", section);
+
+            LoadCategoryToListView();
+
+
+
+
+            /*ListViewItem item = new ListViewItem();
 
             int id = listViewCategory.Items.Count + 1;
 
@@ -271,7 +290,29 @@ namespace Productivity
 
             listViewCategory.Items.Add(item);
 
-            SaveCategoryToIniFile();
+            SaveCategoryToIniFile();*/
+        }
+
+        private void EditNameCategory(int categoryId, string newName)
+        {
+            IniFile ini = new IniFile("settings.ini");
+
+            string section = "category_" + categoryId;
+
+            ini.Write("name", newName, section);
+
+            LoadCategoryToListView();
+        }
+
+        private void DeleteCategory(int categoryId)
+        {
+            IniFile ini = new IniFile("settings.ini");
+
+            string section = "category_" + categoryId;
+
+            ini.DeleteSection(section);
+
+            LoadCategoryToListView();
         }
 
         private void AddYearsToComboBox(int yearStart, int yearEnd)
@@ -1133,6 +1174,40 @@ namespace Productivity
             LoadShifts();
         }
 
+        private void EnabledButtonsForCategory(int item, int itemsCount)
+        {
+            if (item >= 0)
+            {
+                buttonCatEdit.Enabled = true;
+                buttonCatDelete.Enabled = true;
+
+                if (item == 0)
+                {
+                    buttonCatUp.Enabled = false;
+                }
+                else
+                {
+                    buttonCatUp.Enabled = true;
+                }
+
+                if (item == itemsCount - 1)
+                {
+                    buttonCatDown.Enabled = false;
+                }
+                else
+                {
+                    buttonCatDown.Enabled = true;
+                }
+            }
+            else
+            {
+                buttonCatEdit.Enabled = false;
+                buttonCatDelete.Enabled = false;
+                buttonCatUp.Enabled = false;
+                buttonCatDown.Enabled = false;
+            }
+        }
+
         private void LoadOrdersSelectedDateAndShift()
         {
             listView1.Items.Clear();
@@ -1172,6 +1247,16 @@ namespace Productivity
 
             
         }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            LoadOrdersSelectedDateAndShift();
+        }
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadOrdersSelectedDateAndShift();
+        }
+
 
         private void FormMain_Load(object sender, EventArgs e)
         {
@@ -1222,8 +1307,6 @@ namespace Productivity
                 LoadCategoryToListView();
             }
 
-            
-
             metroSetTabControlPreviousIndex = metroSetTabControl1.SelectedIndex;
             listViewCategoryPreviousIndex = -1;
         }
@@ -1242,13 +1325,15 @@ namespace Productivity
 
                 listViewCategoryPreviousIndex = idCategory;
 
-                LoadEquipsFromCategoryToListView(idCategory);
+                //LoadEquipsFromCategoryToListView(idCategory);
+                EnabledButtonsForCategory(listViewCategory.SelectedIndices[0], listViewCategory.Items.Count);
             }
-        }
+            else
+            {
+                EnabledButtonsForCategory(-1, listViewCategory.Items.Count);
+            }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            LoadOrdersSelectedDateAndShift();
+            
         }
 
         private void buttonAddCat_Click(object sender, EventArgs e)
@@ -1260,6 +1345,60 @@ namespace Productivity
             {
                 AddNewCategory(fm.NameCategory);
             }
+        }
+
+        private void listViewCategory_Click(object sender, EventArgs e)
+        {
+            if (listViewCategory.SelectedItems.Count > 0)
+            {
+                int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
+
+                //SaveEquipsFromCategoryToIniFile(idCategory);
+
+                LoadEquipsFromCategoryToListView(idCategory);
+            }
+
+            //EnabledButtonsForCategory(listViewCategory.SelectedIndices[0], listViewCategory.Items.Count);
+        }
+
+        private void buttonCatEdit_Click(object sender, EventArgs e)
+        {
+            if (listViewCategory.SelectedItems.Count > 0)
+            {
+                int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
+
+                FormAddEditCategory fm = new FormAddEditCategory(listViewCategory.SelectedItems[0].SubItems[1].Text);
+                fm.ShowDialog();
+
+                if (fm.NewValue)
+                {
+                    EditNameCategory(idCategory, fm.NameCategory);
+                }
+            }
+        }
+
+        private void buttonCatDelete_Click(object sender, EventArgs e)
+        {
+            if (listViewCategory.SelectedItems.Count > 0)
+            {
+                DialogResult result;
+
+                result = MessageBox.Show("Вы действительно хотите удалить участок: " + listViewCategory.SelectedItems[0].SubItems[1].Text + "?", "Удаление участка", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
+
+                    DeleteCategory(idCategory);
+
+                    listViewCategoryPreviousIndex = -1;
+                }
+            }
+        }
+
+        private void buttonCatUp_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

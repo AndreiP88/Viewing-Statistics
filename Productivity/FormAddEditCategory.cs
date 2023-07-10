@@ -12,20 +12,16 @@ namespace Productivity
 {
     public partial class FormAddEditCategory : Form
     {
-        bool _edit = false;
-        int idCategory = -1;
-
         public FormAddEditCategory()
         {
             InitializeComponent();
         }
 
-        public FormAddEditCategory(int idCategory)
+        public FormAddEditCategory(string oldName)
         {
             InitializeComponent();
 
-            _edit = true;
-            this.idCategory = idCategory;
+            this.textBox1.Text = oldName;
         }
 
         bool accept = false;
