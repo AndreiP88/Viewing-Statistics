@@ -1548,6 +1548,7 @@ namespace Productivity
             else
             {
                 EnabledButtonsForCategory(-1, listViewCategory.Items.Count);
+                EnabledButtonsForEquips(-1, listViewEquips.Items.Count);
                 listViewEquips.Items.Clear();
             }
         }
@@ -1644,7 +1645,7 @@ namespace Productivity
             }
             else
             {
-                EnabledButtonsForCategory(-1, listViewEquips.Items.Count);
+                EnabledButtonsForEquips(-1, listViewEquips.Items.Count);
             }
         }
 
