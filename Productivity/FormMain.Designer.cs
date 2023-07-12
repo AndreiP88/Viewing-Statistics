@@ -91,6 +91,7 @@ namespace Productivity
             this.buttonEquipDown = new System.Windows.Forms.Button();
             this.metroSetSetTabPage4 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.metroSetControlBox1 = new MetroSet_UI.Controls.MetroSetControlBox();
+            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.metroSetTabControl1.SuspendLayout();
             this.metroSetSetTabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -483,6 +484,7 @@ namespace Productivity
             this.tableLayoutPanel7.Controls.Add(this.listViewEquips, 1, 0);
             this.tableLayoutPanel7.Controls.Add(this.tableLayoutPanel8, 0, 1);
             this.tableLayoutPanel7.Controls.Add(this.tableLayoutPanel9, 1, 1);
+            this.tableLayoutPanel7.Controls.Add(this.tableLayoutPanel6, 2, 0);
             this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel7.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
@@ -512,12 +514,13 @@ namespace Productivity
             this.listViewCategory.UseCompatibleStateImageBehavior = false;
             this.listViewCategory.View = System.Windows.Forms.View.Details;
             this.listViewCategory.SelectedIndexChanged += new System.EventHandler(this.listViewCategory_SelectedIndexChanged);
+            this.listViewCategory.SizeChanged += new System.EventHandler(this.listViewCategory_SizeChanged);
             this.listViewCategory.Click += new System.EventHandler(this.listViewCategory_Click);
             // 
             // columnHeader11
             // 
             this.columnHeader11.Text = "№";
-            this.columnHeader11.Width = 42;
+            this.columnHeader11.Width = 40;
             // 
             // columnHeader12
             // 
@@ -545,11 +548,12 @@ namespace Productivity
             this.listViewEquips.View = System.Windows.Forms.View.Details;
             this.listViewEquips.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listViewEquips_ItemChecked);
             this.listViewEquips.SelectedIndexChanged += new System.EventHandler(this.listViewEquips_SelectedIndexChanged);
+            this.listViewEquips.SizeChanged += new System.EventHandler(this.listViewEquips_SizeChanged);
             // 
             // columnHeader5
             // 
             this.columnHeader5.Text = "№";
-            this.columnHeader5.Width = 42;
+            this.columnHeader5.Width = 40;
             // 
             // columnHeader17
             // 
@@ -748,6 +752,20 @@ namespace Productivity
             this.metroSetControlBox1.ThemeAuthor = "Narwin";
             this.metroSetControlBox1.ThemeName = "MetroLite";
             // 
+            // tableLayoutPanel6
+            // 
+            this.tableLayoutPanel6.ColumnCount = 2;
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(703, 3);
+            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
+            this.tableLayoutPanel6.RowCount = 2;
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 21.77033F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 78.22967F));
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(556, 418);
+            this.tableLayoutPanel6.TabIndex = 5;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
@@ -831,6 +849,7 @@ namespace Productivity
         private Button buttonEquipDel;
         private Button buttonEquipUp;
         private Button buttonEquipDown;
+        private TableLayoutPanel tableLayoutPanel6;
     }
 }
 

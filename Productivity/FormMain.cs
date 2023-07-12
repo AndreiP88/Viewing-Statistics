@@ -1238,106 +1238,6 @@ namespace Productivity
             return result;
         }
 
-        /*private List<int> GetSelectegEquipsList()
-        {
-            INISettings iniSettings = new INISettings();
-
-            List<int> equips = new List<int>();
-
-            string equipStr = iniSettings.GetViewedEquipment();
-
-            //var numbers = sNumbers?.Split(',')?.Select(Int32.Parse)?.ToList();
-            equips = equipStr?.Split(';')?.Select(Int32.Parse)?.ToList();
-
-            //equips.AddRange(equipsArray);
-
-            *//*equips.Add(9);
-            equips.Add(15);
-            equips.Add(38);
-            equips.Add(8);
-            equips.Add(11);
-            equips.Add(13);
-            equips.Add(3);
-            equips.Add(4);
-            equips.Add(5);*//*
-
-            return equips;
-        }*/
-
-        /*private List<Category> GetSelectedCategoriesAndEquipsList()
-        {
-            List<Category> categories = new List<Category>();
-
-            string startStrSection = "category_";
-
-            IniFile ini = new IniFile("settings.ini");
-
-            string[] sections = ini.GetAllSections();
-
-            for (int i = 0; i < sections.Length; i++)
-            {
-                if (sections[i].StartsWith(startStrSection))
-                {
-                    string name = "";
-                    bool selected = false;
-                    string equipsStr = "";
-                    List<Equip> equipsForCategory = new List<Equip>();
-
-                    if (ini.KeyExists("name", sections[i]))
-                        name = ini.ReadString("name", sections[i]);
-
-                    if (ini.KeyExists("selected", sections[i]))
-                        selected = ini.ReadBool("selected", sections[i]);
-
-                    if (ini.KeyExists("equips", sections[i]))
-                    {
-                        equipsStr = ini.ReadString("equips", sections[i]);
-
-                        //equipsForCategory = equipsStr?.Split(';')?.Select(Int32.Parse)?.ToList();
-
-                        List<string> strings = equipsStr?.Split(';')?.ToList();
-
-                        for (int j = 0; j < strings.Count; j++)
-                        {
-                            bool selectedEquip;
-
-                            string[] stringsEquip = strings[j]?.Split(':');
-
-                            int idEquip = Convert.ToInt32(stringsEquip[0]);
-
-                            if (stringsEquip[1] == "1")
-                            {
-                                selectedEquip = true;
-                            }
-                            else
-                            {
-                                selectedEquip = false;
-                            }
-
-                            equipsForCategory.Add(new Equip(
-                                idEquip,
-                                selectedEquip
-                                ));
-                        }
-                    }
-
-                    int idCategory = Convert.ToInt32(sections[i].Substring(startStrSection.Length));
-
-                    categories.Add(new Category(
-                        idCategory,
-                        name,
-                        selected,
-                        equipsForCategory
-                        ));
-                }
-                //categoryes.Add(Convert.ToInt32(sections[i].Substring(startStrSection.Length)));
-            }
-
-            categories.Sort((v, s) => v.Id.CompareTo(s.Id));
-
-            return categories;
-        }*/
-
         private int CountDaysFromMonth(string date)
         {
             DateTime selectDate = Convert.ToDateTime(date);
@@ -1708,6 +1608,18 @@ namespace Productivity
 
                 listViewEquips.Items[index + 1].Selected = true;
             }
+        }
+
+        private void listViewCategory_SizeChanged(object sender, EventArgs e)
+        {
+            listViewCategory.Columns[1].Width = listViewCategory.Width - 65;
+            listViewCategory.Refresh();
+        }
+
+        private void listViewEquips_SizeChanged(object sender, EventArgs e)
+        {
+            listViewEquips.Columns[1].Width = listViewEquips.Width - 65;
+            listViewEquips.Refresh();
         }
     }
 }
