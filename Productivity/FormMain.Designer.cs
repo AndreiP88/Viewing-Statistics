@@ -543,6 +543,8 @@ namespace Productivity
             this.listViewEquips.TabIndex = 1;
             this.listViewEquips.UseCompatibleStateImageBehavior = false;
             this.listViewEquips.View = System.Windows.Forms.View.Details;
+            this.listViewEquips.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listViewEquips_ItemChecked);
+            this.listViewEquips.SelectedIndexChanged += new System.EventHandler(this.listViewEquips_SelectedIndexChanged);
             // 
             // columnHeader5
             // 
@@ -585,6 +587,7 @@ namespace Productivity
             this.buttonCatDown.TabIndex = 0;
             this.buttonCatDown.Text = "Down";
             this.buttonCatDown.UseVisualStyleBackColor = true;
+            this.buttonCatDown.Click += new System.EventHandler(this.buttonCatDown_Click);
             // 
             // buttonCatAdd
             // 
@@ -655,12 +658,14 @@ namespace Productivity
             // buttonEquipAdd
             // 
             this.buttonEquipAdd.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonEquipAdd.Enabled = false;
             this.buttonEquipAdd.Location = new System.Drawing.Point(3, 3);
             this.buttonEquipAdd.Name = "buttonEquipAdd";
             this.buttonEquipAdd.Size = new System.Drawing.Size(80, 30);
             this.buttonEquipAdd.TabIndex = 1;
             this.buttonEquipAdd.Text = "Add";
             this.buttonEquipAdd.UseVisualStyleBackColor = true;
+            this.buttonEquipAdd.Click += new System.EventHandler(this.buttonEquipAdd_Click);
             // 
             // buttonEquipDel
             // 
@@ -672,6 +677,7 @@ namespace Productivity
             this.buttonEquipDel.TabIndex = 2;
             this.buttonEquipDel.Text = "Del";
             this.buttonEquipDel.UseVisualStyleBackColor = true;
+            this.buttonEquipDel.Click += new System.EventHandler(this.buttonEquipDel_Click);
             // 
             // buttonEquipUp
             // 
@@ -683,6 +689,7 @@ namespace Productivity
             this.buttonEquipUp.TabIndex = 3;
             this.buttonEquipUp.Text = "Up";
             this.buttonEquipUp.UseVisualStyleBackColor = true;
+            this.buttonEquipUp.Click += new System.EventHandler(this.buttonEquipUp_Click);
             // 
             // buttonEquipDown
             // 
@@ -694,6 +701,7 @@ namespace Productivity
             this.buttonEquipDown.TabIndex = 4;
             this.buttonEquipDown.Text = "Down";
             this.buttonEquipDown.UseVisualStyleBackColor = true;
+            this.buttonEquipDown.Click += new System.EventHandler(this.buttonEquipDown_Click);
             // 
             // metroSetSetTabPage4
             // 

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Threading;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
 using System.Xml.Linq;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Productivity
 {
@@ -30,7 +31,7 @@ namespace Productivity
         CancellationTokenSource cancelTokenSource;
 
         int metroSetTabControlPreviousIndex = -1;
-        int listViewCategoryPreviousIndex = -1;
+        bool loadCategoryList = true;
 
         bool viewAllEquipsForUser = true;
         int countShifts = 2;
@@ -134,7 +135,10 @@ namespace Productivity
 
         private void LoadCategoryToListView()
         {
-            List<Category> categories = GetSelectedCategoriesAndEquipsList();
+            ValueCategoryes valueCategoryes = new ValueCategoryes();
+            List<Category> categories = valueCategoryes.GetSelectedCategoriesAndEquipsList();
+
+            loadCategoryList = true;
 
             listViewCategory.Items.Clear();
 
@@ -150,11 +154,14 @@ namespace Productivity
 
                 listViewCategory.Items.Add(item);
             }
+
+            loadCategoryList = false;
         }
 
         private void LoadEquipsFromCategoryToListView(int idCategory)
         {
-            List<Category> categories = GetSelectedCategoriesAndEquipsList();
+            ValueCategoryes valueCategoryes = new ValueCategoryes();
+            List<Category> categories = valueCategoryes.GetSelectedCategoriesAndEquipsList();
 
             listViewEquips.Items.Clear();
 
@@ -237,7 +244,8 @@ namespace Productivity
 
         private void AddNewCategory(string name)
         {
-            List<Category> categories = GetSelectedCategoriesAndEquipsList();
+            ValueCategoryes valueCategoryes = new ValueCategoryes();
+            List<Category> categories = valueCategoryes.GetSelectedCategoriesAndEquipsList();
 
             IniFile ini = new IniFile("settings.ini");
 
@@ -306,13 +314,198 @@ namespace Productivity
 
         private void DeleteCategory(int categoryId)
         {
+            ValueCategoryes valueCategoryes = new ValueCategoryes();
             IniFile ini = new IniFile("settings.ini");
 
             string section = "category_" + categoryId;
 
-            ini.DeleteSection(section);
+            //ini.DeleteSection(section);
+
+            List<Category> categories = valueCategoryes.GetSelectedCategoriesAndEquipsList();
+
+            string sectionLast = "category_" + categories.Count;
+
+            for (int i = categoryId + 1; i <= categories.Count; i++)
+            {
+                ChangeCategoryID(i, i - 1);
+            }
+
+            ini.DeleteSection(sectionLast);
 
             LoadCategoryToListView();
+            listViewEquips.Items.Clear();
+        }
+
+        private void MoveCategoryUp(int categoryId)
+        {
+            SwapCategory(categoryId, categoryId - 1);
+
+            LoadCategoryToListView();
+        }
+
+        private void MoveCategoryDown(int categoryId)
+        {
+            SwapCategory(categoryId, categoryId + 1);
+
+            LoadCategoryToListView();
+        }
+
+        private void SwapCategory(int firstCategory, int secondCategory)
+        {
+            IniFile ini = new IniFile("settings.ini");
+
+            string firstSection = "category_" + firstCategory;
+            string secondSection = "category_" + secondCategory;
+
+            string firstName = "";
+            bool firstSelected = false;
+            string firstEquipsStr = "";
+
+            if (ini.KeyExists("name", firstSection))
+                firstName = ini.ReadString("name", firstSection);
+
+            if (ini.KeyExists("selected", firstSection))
+                firstSelected = ini.ReadBool("selected", firstSection);
+
+            if (ini.KeyExists("equips", firstSection))
+                firstEquipsStr = ini.ReadString("equips", firstSection);
+
+            string secondName = "";
+            bool secondSelected = false;
+            string secondEquipsStr = "";
+
+            if (ini.KeyExists("name", secondSection))
+                secondName = ini.ReadString("name", secondSection);
+
+            if (ini.KeyExists("selected", secondSection))
+                secondSelected = ini.ReadBool("selected", secondSection);
+
+            if (ini.KeyExists("equips", secondSection))
+                secondEquipsStr = ini.ReadString("equips", secondSection);
+
+            //ini.DeleteSection(oldSection);
+
+            ini.Write("name", secondName, firstSection);
+            ini.Write("selected", secondSelected.ToString(), firstSection);
+            ini.Write("equips", secondEquipsStr, firstSection);
+
+            ini.Write("name", firstName, secondSection);
+            ini.Write("selected", firstSelected.ToString(), secondSection);
+            ini.Write("equips", firstEquipsStr, secondSection);
+        }
+
+        private void ChangeCategoryID(int oldCategoryId, int newCategoryId)
+        {
+            IniFile ini = new IniFile("settings.ini");
+
+            string oldSection = "category_" + oldCategoryId;
+            string newSection = "category_" + newCategoryId;
+
+            string name = "";
+            bool selected = false;
+            string equipsStr = "";
+
+            if (ini.KeyExists("name", oldSection))
+                name = ini.ReadString("name", oldSection);
+
+            if (ini.KeyExists("selected", oldSection))
+                selected = ini.ReadBool("selected", oldSection);
+
+            if (ini.KeyExists("equips", oldSection))
+                equipsStr = ini.ReadString("equips", oldSection);
+
+            ini.DeleteSection(oldSection);
+
+            ini.Write("name", name, newSection);
+            ini.Write("selected", selected.ToString(), newSection);
+            ini.Write("equips", equipsStr, newSection);
+        }
+
+        private void AddNewEquips(List<string> equipsList)
+        {
+            loadCategoryList = true;
+
+            for (int i = 0; i < equipsList.Count; i++)
+            {
+                string name = "";
+
+                if (machines.ContainsKey(Convert.ToInt32(equipsList[i])))
+                {
+                    name = machines[Convert.ToInt32(equipsList[i])];
+                }
+
+                ListViewItem item = new ListViewItem();
+
+                item.Name = equipsList[i];
+                item.Text = (listViewEquips.Items.Count + 1).ToString();
+                item.SubItems.Add(name);
+
+                listViewEquips.Items.Add(item);
+            }
+
+            loadCategoryList = false;
+
+            int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
+
+            SaveEquipsFromCategoryToIniFile(idCategory);
+        }
+
+        private void DeleteEquip(int index)
+        {
+            if (listViewEquips.SelectedItems.Count > 0)
+            {
+                listViewEquips.Items.RemoveAt(index);
+            }
+
+            int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
+
+            SaveEquipsFromCategoryToIniFile(idCategory);
+        }
+
+        private void MoveEquipUp(int index)
+        {
+            SwapEquips(index, index - 1);
+
+            int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
+
+            SaveEquipsFromCategoryToIniFile(idCategory);
+        }
+
+        private void MoveEquipDown(int index)
+        {
+            SwapEquips(index, index + 1);
+
+            int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
+
+            SaveEquipsFromCategoryToIniFile(idCategory);
+        }
+
+        private void SwapEquips(int firstEquip, int secondEquip)
+        {
+            /*ListViewItem firstItem = listViewEquips.Items[firstEquip];
+            ListViewItem secondItem = listViewEquips.Items[secondEquip];
+
+            listViewEquips.Items.Remove(firstItem);
+            listViewEquips.Items.Remove(secondItem);
+
+            listViewEquips.Items.Insert(secondEquip, firstItem);
+            listViewEquips.Items.Insert(firstEquip, secondItem);*/
+
+            string firstName = listViewEquips.Items[firstEquip].Name;
+            string firstSubName = listViewEquips.Items[firstEquip].SubItems[1].Text;
+            bool firstSelected = listViewEquips.Items[firstEquip].Checked;
+
+            string secondName = listViewEquips.Items[secondEquip].Name;
+            string seconSubName = listViewEquips.Items[secondEquip].SubItems[1].Text;
+            bool secondSelected = listViewEquips.Items[secondEquip].Checked;
+
+            listViewEquips.Items[firstEquip].Name = secondName;
+            listViewEquips.Items[firstEquip].SubItems[1].Text = seconSubName;
+            listViewEquips.Items[firstEquip].Checked = secondSelected;
+
+            listViewEquips.Items[secondEquip].Name = firstName;
+            listViewEquips.Items[secondEquip].SubItems[1].Text = firstSubName;
+            listViewEquips.Items[secondEquip].Checked = firstSelected;
         }
 
         private void AddYearsToComboBox(int yearStart, int yearEnd)
@@ -565,7 +758,9 @@ namespace Productivity
 
         private void AddUsersToListView(int countDaysFromSellectedMonth)
         {
-            List<Category> categoryEquip = GetSelectedCategoriesAndEquipsList();
+            ValueCategoryes valueCategoryes = new ValueCategoryes();
+
+            List<Category> categoryEquip = valueCategoryes.GetSelectedCategoriesAndEquipsList();
 
             List<int> equips = CategoryEquipToListSelectedEquip(categoryEquip);
 
@@ -1069,7 +1264,7 @@ namespace Productivity
             return equips;
         }*/
 
-        private List<Category> GetSelectedCategoriesAndEquipsList()
+        /*private List<Category> GetSelectedCategoriesAndEquipsList()
         {
             List<Category> categories = new List<Category>();
 
@@ -1141,7 +1336,7 @@ namespace Productivity
             categories.Sort((v, s) => v.Id.CompareTo(s.Id));
 
             return categories;
-        }
+        }*/
 
         private int CountDaysFromMonth(string date)
         {
@@ -1155,6 +1350,8 @@ namespace Productivity
 
         private void UpdateStatistics()
         {
+            ValueCategoryes valueCategoryes = new ValueCategoryes();
+
             int year = GetYearFromComboBox();
             int month = GetMonthFromComboBox();
 
@@ -1165,7 +1362,7 @@ namespace Productivity
             CreateColomnsToDataGrid(countDaysFromSellectedMonth, month);
 
             //List<int> equips = GetSelectegEquipsList();
-            List<Category> categoryEquips = GetSelectedCategoriesAndEquipsList();
+            List<Category> categoryEquips = valueCategoryes.GetSelectedCategoriesAndEquipsList();
 
             LoadUsersList(categoryEquips, selectDate);
 
@@ -1180,6 +1377,7 @@ namespace Productivity
             {
                 buttonCatEdit.Enabled = true;
                 buttonCatDelete.Enabled = true;
+                buttonEquipAdd.Enabled = true;
 
                 if (item == 0)
                 {
@@ -1205,6 +1403,39 @@ namespace Productivity
                 buttonCatDelete.Enabled = false;
                 buttonCatUp.Enabled = false;
                 buttonCatDown.Enabled = false;
+                buttonEquipAdd.Enabled = false;
+            }
+        }
+
+        private void EnabledButtonsForEquips(int item, int itemsCount)
+        {
+            if (item >= 0)
+            {
+                buttonEquipDel.Enabled = true;
+
+                if (item == 0)
+                {
+                    buttonEquipUp.Enabled = false;
+                }
+                else
+                {
+                    buttonEquipUp.Enabled = true;
+                }
+
+                if (item == itemsCount - 1)
+                {
+                    buttonEquipDown.Enabled = false;
+                }
+                else
+                {
+                    buttonEquipDown.Enabled = true;
+                }
+            }
+            else
+            {
+                buttonEquipDel.Enabled = false;
+                buttonEquipUp.Enabled = false;
+                buttonEquipDown.Enabled = false;
             }
         }
 
@@ -1287,11 +1518,6 @@ namespace Productivity
         {
             if (metroSetTabControlPreviousIndex == 2)
             {
-                if (listViewCategoryPreviousIndex != -1)
-                {
-                    SaveEquipsFromCategoryToIniFile(listViewCategoryPreviousIndex);
-                }
-
                 SaveCategoryToIniFile();
 
                 listViewEquips.Items.Clear();
@@ -1308,7 +1534,6 @@ namespace Productivity
             }
 
             metroSetTabControlPreviousIndex = metroSetTabControl1.SelectedIndex;
-            listViewCategoryPreviousIndex = -1;
         }
 
         private void listViewCategory_SelectedIndexChanged(object sender, EventArgs e)
@@ -1317,23 +1542,26 @@ namespace Productivity
             {
                 int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
 
-                if (listViewCategoryPreviousIndex != -1)
-                {
-                    SaveEquipsFromCategoryToIniFile(listViewCategoryPreviousIndex);
-                    //SaveCategoryToIniFile();
-                }
-
-                listViewCategoryPreviousIndex = idCategory;
-
                 //LoadEquipsFromCategoryToListView(idCategory);
                 EnabledButtonsForCategory(listViewCategory.SelectedIndices[0], listViewCategory.Items.Count);
             }
             else
             {
                 EnabledButtonsForCategory(-1, listViewCategory.Items.Count);
+                listViewEquips.Items.Clear();
+            }
+        }
+
+        private void listViewCategory_Click(object sender, EventArgs e)
+        {
+            if (listViewCategory.SelectedItems.Count > 0)
+            {
+                int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
+
+                LoadEquipsFromCategoryToListView(idCategory);
             }
 
-            
+            //EnabledButtonsForCategory(listViewCategory.SelectedIndices[0], listViewCategory.Items.Count);
         }
 
         private void buttonAddCat_Click(object sender, EventArgs e)
@@ -1345,20 +1573,6 @@ namespace Productivity
             {
                 AddNewCategory(fm.NameCategory);
             }
-        }
-
-        private void listViewCategory_Click(object sender, EventArgs e)
-        {
-            if (listViewCategory.SelectedItems.Count > 0)
-            {
-                int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
-
-                //SaveEquipsFromCategoryToIniFile(idCategory);
-
-                LoadEquipsFromCategoryToListView(idCategory);
-            }
-
-            //EnabledButtonsForCategory(listViewCategory.SelectedIndices[0], listViewCategory.Items.Count);
         }
 
         private void buttonCatEdit_Click(object sender, EventArgs e)
@@ -1390,15 +1604,109 @@ namespace Productivity
                     int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
 
                     DeleteCategory(idCategory);
-
-                    listViewCategoryPreviousIndex = -1;
                 }
             }
         }
 
         private void buttonCatUp_Click(object sender, EventArgs e)
         {
+            if (listViewCategory.SelectedItems.Count > 0)
+            {
+                int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
 
+                MoveCategoryUp(idCategory);
+
+                int index = listViewCategory.Items.IndexOfKey(idCategory.ToString());
+
+                listViewCategory.Items[index - 1].Selected = true;
+            }
+        }
+
+        private void buttonCatDown_Click(object sender, EventArgs e)
+        {
+            if (listViewCategory.SelectedItems.Count > 0)
+            {
+                int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
+
+                MoveCategoryDown(idCategory);
+
+                int index = listViewCategory.Items.IndexOfKey(idCategory.ToString());
+
+                listViewCategory.Items[index + 1].Selected = true;
+            }
+        }
+
+        private void listViewEquips_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listViewEquips.SelectedItems.Count > 0)
+            {
+                EnabledButtonsForEquips(listViewEquips.SelectedIndices[0], listViewEquips.Items.Count);
+            }
+            else
+            {
+                EnabledButtonsForCategory(-1, listViewEquips.Items.Count);
+            }
+        }
+
+        private void listViewEquips_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            if (!loadCategoryList && listViewCategory.SelectedItems.Count > 0)
+            {
+                int idCategory = Convert.ToInt32(listViewCategory.SelectedItems[0].Name);
+
+                SaveEquipsFromCategoryToIniFile(idCategory);
+            }
+            //MessageBox.Show("test");
+        }
+
+        private void buttonEquipAdd_Click(object sender, EventArgs e)
+        {
+            FormAddEquips fm = new FormAddEquips();
+            fm.ShowDialog();
+
+            if (fm.NewValue)
+            {
+                AddNewEquips(fm.EquipsList);
+            }
+        }
+
+        private void buttonEquipDel_Click(object sender, EventArgs e)
+        {
+            if (listViewCategory.SelectedItems.Count > 0)
+            {
+                DialogResult result;
+
+                result = MessageBox.Show("Вы действительно хотите удалить: " + listViewEquips.SelectedItems[0].SubItems[1].Text + "?", "Удаление оборудования", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    DeleteEquip(listViewEquips.SelectedIndices[0]);
+                }
+            }
+        }
+
+        private void buttonEquipUp_Click(object sender, EventArgs e)
+        {
+            if (listViewEquips.SelectedItems.Count > 0)
+            {
+                int index = listViewEquips.SelectedIndices[0];
+
+                MoveEquipUp(index);
+
+                listViewEquips.Items[index - 1].Selected = true;
+            }
+        }
+
+        private void buttonEquipDown_Click(object sender, EventArgs e)
+        {
+            if (listViewEquips.SelectedItems.Count > 0)
+            {
+                int index = listViewEquips.SelectedIndices[0];
+
+                MoveEquipDown(index);
+
+                listViewEquips.Items[index + 1].Selected = true;
+            }
         }
     }
 }
