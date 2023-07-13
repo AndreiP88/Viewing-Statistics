@@ -18,7 +18,7 @@ namespace OrderManager
             this.iniFile = "settings.ini";
         }
 
-        private String GetParameter(string section, String key)
+        private string GetParameter(string section, string key)
         {
             IniFile INI = new IniFile(iniFile);
 
@@ -26,6 +26,32 @@ namespace OrderManager
 
             if (INI.KeyExists(key))
                 result = INI.ReadString(key, section);
+
+            //MessageBox.Show("GET: [" + section + "][" + key + "]: " + result);
+            return result;
+        }
+
+        private int GetParameterNumber(string section, string key)
+        {
+            IniFile INI = new IniFile(iniFile);
+
+            int result = 0;
+
+            if (INI.KeyExists(key))
+                result = INI.ReadInt(key, section);
+
+            //MessageBox.Show("GET: [" + section + "][" + key + "]: " + result);
+            return result;
+        }
+
+        private bool GetParameterBoolean(string section, string key)
+        {
+            IniFile INI = new IniFile(iniFile);
+
+            bool result = false;
+
+            if (INI.KeyExists(key))
+                result = INI.ReadBool(key, section);
 
             //MessageBox.Show("GET: [" + section + "][" + key + "]: " + result);
             return result;
@@ -40,6 +66,61 @@ namespace OrderManager
 
             //MessageBox.Show("SET: [" + section + "][" + key + "]: " + value);
         }
+
+        /// <summary>
+        /// Получит норму выработки за смену
+        /// </summary>
+        /// <returns></returns>
+        public int GetNormTime()
+        {
+            int result = 0;
+
+            result = GetParameterNumber("main", "normTime");
+
+            return result;
+        }
+
+        /// <summary>
+        /// Получить количество смен
+        /// </summary>
+        /// <returns></returns>
+        public int GetCountShifts()
+        {
+            int result = 0;
+
+            result = GetParameterNumber("main", "countShifts");
+
+            return result;
+        }
+
+        /// <summary>
+        /// Получить значение указывающее способ загрузки оборудования для сотрудника: загружать все оборудование или только указанное
+        /// </summary>
+        /// <returns></returns>
+        public bool GetLoadAllEquipForUser()
+        {
+            bool result = false;
+
+            result = GetParameterBoolean("main", "loadAllEquipForUser");
+
+            return result;
+        }
+
+        public void SetNormTime(int value)
+        {
+            SetParameter("main", "normTime", value.ToString());
+        }
+
+        public void SetCountShifts(decimal value)
+        {
+            SetParameter("main", "countShifts", value.ToString());
+        }
+
+        public void SetLoadAllEquipForUser(bool value)
+        {
+            SetParameter("main", "loadAllEquipForUser", value.ToString());
+        }
+
 
         public bool GetAutoUpdate()
         {

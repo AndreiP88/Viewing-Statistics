@@ -9,6 +9,7 @@ using System.Threading;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
 using System.Xml.Linq;
 using static System.Collections.Specialized.BitVector32;
+using OrderManager;
 
 namespace Productivity
 {
@@ -19,24 +20,15 @@ namespace Productivity
             InitializeComponent();
         }
 
-
-        /*
-         * 
-         * Сделать прокрутку и сделать перерисовку ширины столбцов в зависимости от нижней таблицы 
-         * Добавить таймер
-         listView4.Left = listView3.TopItem.Position.X - 4;
-         listView4.Width = listView3.Width;
-         */
-
         CancellationTokenSource cancelTokenSource;
 
         int metroSetTabControlPreviousIndex = -1;
         bool loadCategoryList = true;
 
-        bool viewAllEquipsForUser = true;
+        /*bool viewAllEquipsForUser = true;
         int countShifts = 2;
 
-        int fullOutput = 650;
+        int fullOutput = 650;*/
 
         Dictionary<int, string> users = new Dictionary<int, string>();
         Dictionary<int, string> machines = new Dictionary<int, string>();
@@ -541,6 +533,10 @@ namespace Productivity
 
         private void CreateColomnsToDataGrid(int days, int month)
         {
+            INISettings settings= new INISettings();
+
+            int countShifts = settings.GetCountShifts();
+
             dataGridView1.Rows.Clear();
             dataGridView1.Columns.Clear();
 
@@ -572,12 +568,12 @@ namespace Productivity
             }
 
             dataGridView1.Columns.Add(@"colGroup", @"Выработка");
-            dataGridView1.Columns[days * 2 + 2].Width = 100;
-            dataGridView1.Columns[days * 2 + 2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView1.Columns[days * countShifts + 2].Width = 100;
+            dataGridView1.Columns[days * countShifts + 2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
             dataGridView1.Columns.Add(@"colTask", @"Отставание");
-            dataGridView1.Columns[days * 2 + 3].Width = 100;
-            dataGridView1.Columns[days * 2 + 3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView1.Columns[days * countShifts + 3].Width = 100;
+            dataGridView1.Columns[days * countShifts + 3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
             dataGridView1.Rows.Add();
             dataGridView1.Rows[0].Frozen = true;
@@ -588,11 +584,11 @@ namespace Productivity
             AddCellToGrid(0, days * countShifts + 2, 2);
             dataGridView1.Rows[0].Cells[days * countShifts + 2].Value = "";
 
-            for (int i = 2; i <= days * 2; i+=2)
+            for (int i = 2; i <= days * countShifts; i+=countShifts)
             {
                 AddCellToGrid(0, i, countShifts);
 
-                dataGridView1.Rows[0].Cells[i].Value = (i / 2).ToString("D2") + "." + month.ToString("D2");
+                dataGridView1.Rows[0].Cells[i].Value = ((i - 2 + countShifts) / countShifts).ToString("D2") + "." + month.ToString("D2");
             }
 
             dataGridView1.Rows.Add();
@@ -607,7 +603,7 @@ namespace Productivity
             AddCellToGrid(1, days * countShifts + 3);
             dataGridView1.Rows[1].Cells[days * countShifts + 3].Value = "Отставание";
 
-            for (int i = 2; i <= days * countShifts + 1; i += 2)
+            for (int i = 2; i <= days * countShifts + 1; i += countShifts)
             {
                 for (int j = 1; j <= countShifts; j++)
                 {
@@ -741,10 +737,11 @@ namespace Productivity
 
         private void LoadShifts()
         {
-            /*equipsList = new List<Equips>();*/
-
-            ValueDateTime timeValues = new ValueDateTime();
             ValueShifts valueShifts = new ValueShifts();
+
+            INISettings settings = new INISettings();
+
+            int countShifts = settings.GetCountShifts();
 
             int year = GetYearFromComboBox();
             int month = GetMonthFromComboBox();
@@ -759,10 +756,13 @@ namespace Productivity
         private void AddUsersToListView(int countDaysFromSellectedMonth)
         {
             ValueCategoryes valueCategoryes = new ValueCategoryes();
+            INISettings settings = new INISettings();
 
             List<Category> categoryEquip = valueCategoryes.GetSelectedCategoriesAndEquipsList();
 
             List<int> equips = CategoryEquipToListSelectedEquip(categoryEquip);
+
+            bool viewAllEquipsForUser = settings.GetLoadAllEquipForUser();
 
             rowIndexes.Clear();
 
@@ -941,8 +941,11 @@ namespace Productivity
             List<WorkingOut> equipsListWorkingOut = new List<WorkingOut>();
             List<WorkingOut> usersListWorkingOut = new List<WorkingOut>();
             //List<int> usersCurrent = new List<int>();
-
+            INISettings settings = new INISettings();
             ValueDateTime timeValues = new ValueDateTime();
+
+            int fullOutput = settings.GetNormTime();
+            int countShifts = settings.GetCountShifts();
 
             for (int i = 0; i < usersList.Count; i++)
             {
@@ -1419,6 +1422,7 @@ namespace Productivity
             if (metroSetTabControlPreviousIndex == 2)
             {
                 SaveCategoryToIniFile();
+                SaveParameterToIniFile();
 
                 listViewEquips.Items.Clear();
             }
@@ -1431,9 +1435,55 @@ namespace Productivity
             if (metroSetTabControl1.SelectedIndex == 2)
             {
                 LoadCategoryToListView();
+                LoadParameterFromIniFile();
             }
 
             metroSetTabControlPreviousIndex = metroSetTabControl1.SelectedIndex;
+        }
+
+        private void LoadParameterFromIniFile()
+        {
+            INISettings settings = new INISettings();
+            ValueDateTime time = new ValueDateTime();
+
+            int normTime = settings.GetNormTime();
+
+            int[] hoursAndMinutes = time.TotalMinutesToHoursAndMinutes(normTime);
+
+            int hours = hoursAndMinutes[0];
+            int minutes = hoursAndMinutes[1];
+
+            formattedNumericUpDown1.Value = hours;
+            formattedNumericUpDown2.Value = minutes;
+
+            int countShifts = settings.GetCountShifts();
+
+            formattedNumericUpDown3.Value = countShifts;
+
+            bool loadAllEquipForUser = settings.GetLoadAllEquipForUser();
+
+            metroSetCheckBox1.Checked = loadAllEquipForUser;
+        }
+
+        private void SaveParameterToIniFile()
+        {
+            INISettings settings = new INISettings();
+            ValueDateTime time = new ValueDateTime();
+
+            int hours = (int)formattedNumericUpDown1.Value;
+            int minutes = (int)formattedNumericUpDown2.Value;
+
+            int normTime = time.HoursAndMinutesToTotalMinutes(hours, minutes);
+
+            settings.SetNormTime(normTime);
+
+            int countShifts = (int)formattedNumericUpDown3.Value;
+
+            settings.SetCountShifts(countShifts);
+
+            bool loadAllEquipForUser = metroSetCheckBox1.Checked;
+
+            settings.SetLoadAllEquipForUser(loadAllEquipForUser);
         }
 
         private void listViewCategory_SelectedIndexChanged(object sender, EventArgs e)

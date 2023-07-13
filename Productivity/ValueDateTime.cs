@@ -68,5 +68,25 @@ namespace Productivity
 
             return result;
         }
+
+        public int HoursAndMinutesToTotalMinutes(int hours, int minutes)
+        {
+            int hoursToMinutes = minutes;
+
+            hoursToMinutes += hours * 60;
+
+            return hoursToMinutes;
+        }
+
+        public int[] TotalMinutesToHoursAndMinutes(int totalMinutes)
+        {
+            int minutes = Math.Abs(totalMinutes % 60);
+
+            int hours = totalMinutes / 60;
+
+            int[] result = new int[] { hours, minutes };
+
+            return result;
+        }
     }
 }
