@@ -70,14 +70,25 @@ namespace Productivity
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader18 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.metroSetSwitch1 = new MetroSet_UI.Controls.MetroSetSwitch();
+            this.metroSetLabel1 = new MetroSet_UI.Controls.MetroSetLabel();
+            this.metroSetSwitch2 = new MetroSet_UI.Controls.MetroSetSwitch();
+            this.metroSetLabel2 = new MetroSet_UI.Controls.MetroSetLabel();
+            this.metroSetNumeric1 = new MetroSet_UI.Controls.MetroSetNumeric();
+            this.metroSetLabel3 = new MetroSet_UI.Controls.MetroSetLabel();
+            this.metroSetLabel4 = new MetroSet_UI.Controls.MetroSetLabel();
             this.metroSetSetTabPage2 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.dataGridView1 = new Productivity.FormMain.DoubleBufferedDataGridView();
@@ -149,13 +160,13 @@ namespace Productivity
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage2);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage3);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage4);
-            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.metroSetTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroSetTabControl1.IsDerivedStyle = true;
             this.metroSetTabControl1.ItemSize = new System.Drawing.Size(130, 38);
             this.metroSetTabControl1.Location = new System.Drawing.Point(12, 90);
             this.metroSetTabControl1.Name = "metroSetTabControl1";
-            this.metroSetTabControl1.SelectedIndex = 2;
+            this.metroSetTabControl1.SelectedIndex = 0;
             this.metroSetTabControl1.SelectedTextColor = System.Drawing.Color.White;
             this.metroSetTabControl1.Size = new System.Drawing.Size(1276, 518);
             this.metroSetTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
@@ -214,10 +225,15 @@ namespace Productivity
             this.columnHeader10,
             this.columnHeader3,
             this.columnHeader4,
+            this.columnHeader16,
+            this.columnHeader18,
             this.columnHeader6,
             this.columnHeader7,
             this.columnHeader8,
-            this.columnHeader9});
+            this.columnHeader9,
+            this.columnHeader13,
+            this.columnHeader14,
+            this.columnHeader15});
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
@@ -240,53 +256,90 @@ namespace Productivity
             // columnHeader2
             // 
             this.columnHeader2.Text = "Имя";
-            this.columnHeader2.Width = 186;
+            this.columnHeader2.Width = 240;
             // 
             // columnHeader10
             // 
             this.columnHeader10.Text = "Оборудование";
-            this.columnHeader10.Width = 168;
+            this.columnHeader10.Width = 240;
             // 
             // columnHeader3
             // 
-            this.columnHeader3.Text = "Номер заказа";
-            this.columnHeader3.Width = 134;
+            this.columnHeader3.Text = "Заказ";
+            this.columnHeader3.Width = 80;
             // 
             // columnHeader4
             // 
             this.columnHeader4.Text = "Заказчик";
-            this.columnHeader4.Width = 170;
+            this.columnHeader4.Width = 220;
+            // 
+            // columnHeader16
+            // 
+            this.columnHeader16.Text = "Тираж";
+            this.columnHeader16.Width = 80;
+            // 
+            // columnHeader18
+            // 
+            this.columnHeader18.Text = "Норма времени";
+            this.columnHeader18.Width = 120;
             // 
             // columnHeader6
             // 
             this.columnHeader6.Text = "Начало выполнения";
-            this.columnHeader6.Width = 154;
+            this.columnHeader6.Width = 140;
             // 
             // columnHeader7
             // 
             this.columnHeader7.Text = "Завершение выполнения";
-            this.columnHeader7.Width = 183;
+            this.columnHeader7.Width = 140;
             // 
             // columnHeader8
             // 
-            this.columnHeader8.Text = "Завершение по плану";
-            this.columnHeader8.Width = 158;
+            this.columnHeader8.Text = "Продолжительность";
+            this.columnHeader8.Width = 120;
             // 
             // columnHeader9
             // 
-            this.columnHeader9.Text = "Отклонение";
-            this.columnHeader9.Width = 123;
+            this.columnHeader9.Text = "Завершение по плану";
+            this.columnHeader9.Width = 140;
+            // 
+            // columnHeader13
+            // 
+            this.columnHeader13.Text = "Отклонение";
+            this.columnHeader13.Width = 110;
+            // 
+            // columnHeader14
+            // 
+            this.columnHeader14.Text = "Сделано";
+            this.columnHeader14.Width = 80;
+            // 
+            // columnHeader15
+            // 
+            this.columnHeader15.Text = "Выработка";
+            this.columnHeader15.Width = 80;
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.ColumnCount = 4;
+            this.tableLayoutPanel2.ColumnCount = 10;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 180F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 160F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 220F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 140F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 140F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 655F));
             this.tableLayoutPanel2.Controls.Add(this.dateTimePicker1, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.comboBox1, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroSetSwitch1, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroSetLabel1, 3, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroSetSwitch2, 4, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroSetLabel2, 5, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroSetNumeric1, 6, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroSetLabel3, 7, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroSetLabel4, 8, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -325,7 +378,7 @@ namespace Productivity
             this.metroSetSwitch1.BackgroundColor = System.Drawing.Color.Empty;
             this.metroSetSwitch1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(165)))), ((int)(((byte)(159)))), ((int)(((byte)(147)))));
             this.metroSetSwitch1.CheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.metroSetSwitch1.CheckState = MetroSet_UI.Enums.CheckState.Unchecked;
+            this.metroSetSwitch1.CheckState = MetroSet_UI.Enums.CheckState.Checked;
             this.metroSetSwitch1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.metroSetSwitch1.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(205)))), ((int)(((byte)(205)))));
             this.metroSetSwitch1.DisabledCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
@@ -337,13 +390,129 @@ namespace Productivity
             this.metroSetSwitch1.Size = new System.Drawing.Size(58, 22);
             this.metroSetSwitch1.Style = MetroSet_UI.Enums.Style.Light;
             this.metroSetSwitch1.StyleManager = null;
-            this.metroSetSwitch1.Switched = false;
+            this.metroSetSwitch1.Switched = true;
             this.metroSetSwitch1.SymbolColor = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(92)))), ((int)(((byte)(92)))));
             this.metroSetSwitch1.TabIndex = 3;
             this.metroSetSwitch1.Text = "Автообновление";
             this.metroSetSwitch1.ThemeAuthor = "Narwin";
             this.metroSetSwitch1.ThemeName = "MetroLite";
             this.metroSetSwitch1.UnCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(155)))), ((int)(((byte)(155)))));
+            this.metroSetSwitch1.SwitchedChanged += new MetroSet_UI.Controls.MetroSetSwitch.SwitchedChangedEventHandler(this.metroSetSwitch1_SwitchedChanged);
+            // 
+            // metroSetLabel1
+            // 
+            this.metroSetLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroSetLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.metroSetLabel1.IsDerivedStyle = true;
+            this.metroSetLabel1.Location = new System.Drawing.Point(407, 0);
+            this.metroSetLabel1.Name = "metroSetLabel1";
+            this.metroSetLabel1.Size = new System.Drawing.Size(214, 30);
+            this.metroSetLabel1.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetLabel1.StyleManager = null;
+            this.metroSetLabel1.TabIndex = 4;
+            this.metroSetLabel1.Text = "Автовыбор текущей смены";
+            this.metroSetLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.metroSetLabel1.ThemeAuthor = "Narwin";
+            this.metroSetLabel1.ThemeName = "MetroLite";
+            // 
+            // metroSetSwitch2
+            // 
+            this.metroSetSwitch2.BackColor = System.Drawing.Color.Transparent;
+            this.metroSetSwitch2.BackgroundColor = System.Drawing.Color.Empty;
+            this.metroSetSwitch2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(165)))), ((int)(((byte)(159)))), ((int)(((byte)(147)))));
+            this.metroSetSwitch2.CheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.metroSetSwitch2.CheckState = MetroSet_UI.Enums.CheckState.Unchecked;
+            this.metroSetSwitch2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.metroSetSwitch2.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(205)))), ((int)(((byte)(205)))));
+            this.metroSetSwitch2.DisabledCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.metroSetSwitch2.DisabledUnCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(205)))), ((int)(((byte)(205)))), ((int)(((byte)(205)))));
+            this.metroSetSwitch2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroSetSwitch2.IsDerivedStyle = true;
+            this.metroSetSwitch2.Location = new System.Drawing.Point(627, 3);
+            this.metroSetSwitch2.Name = "metroSetSwitch2";
+            this.metroSetSwitch2.Size = new System.Drawing.Size(58, 22);
+            this.metroSetSwitch2.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetSwitch2.StyleManager = null;
+            this.metroSetSwitch2.Switched = false;
+            this.metroSetSwitch2.SymbolColor = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(92)))), ((int)(((byte)(92)))));
+            this.metroSetSwitch2.TabIndex = 5;
+            this.metroSetSwitch2.Text = "metroSetSwitch2";
+            this.metroSetSwitch2.ThemeAuthor = "Narwin";
+            this.metroSetSwitch2.ThemeName = "MetroLite";
+            this.metroSetSwitch2.UnCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(155)))), ((int)(((byte)(155)))));
+            // 
+            // metroSetLabel2
+            // 
+            this.metroSetLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroSetLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.metroSetLabel2.IsDerivedStyle = true;
+            this.metroSetLabel2.Location = new System.Drawing.Point(691, 0);
+            this.metroSetLabel2.Name = "metroSetLabel2";
+            this.metroSetLabel2.Size = new System.Drawing.Size(134, 30);
+            this.metroSetLabel2.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetLabel2.StyleManager = null;
+            this.metroSetLabel2.TabIndex = 6;
+            this.metroSetLabel2.Text = "Автообновление";
+            this.metroSetLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.metroSetLabel2.ThemeAuthor = "Narwin";
+            this.metroSetLabel2.ThemeName = "MetroLite";
+            // 
+            // metroSetNumeric1
+            // 
+            this.metroSetNumeric1.BackColor = System.Drawing.Color.Transparent;
+            this.metroSetNumeric1.BackgroundColor = System.Drawing.Color.Empty;
+            this.metroSetNumeric1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            this.metroSetNumeric1.DisabledBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            this.metroSetNumeric1.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(155)))), ((int)(((byte)(155)))));
+            this.metroSetNumeric1.DisabledForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(136)))), ((int)(((byte)(136)))), ((int)(((byte)(136)))));
+            this.metroSetNumeric1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroSetNumeric1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.metroSetNumeric1.IsDerivedStyle = true;
+            this.metroSetNumeric1.Location = new System.Drawing.Point(831, 3);
+            this.metroSetNumeric1.Maximum = 720;
+            this.metroSetNumeric1.Minimum = 0;
+            this.metroSetNumeric1.Name = "metroSetNumeric1";
+            this.metroSetNumeric1.Size = new System.Drawing.Size(75, 26);
+            this.metroSetNumeric1.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetNumeric1.StyleManager = null;
+            this.metroSetNumeric1.SymbolsColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.metroSetNumeric1.TabIndex = 7;
+            this.metroSetNumeric1.Text = "metroSetNumeric1";
+            this.metroSetNumeric1.ThemeAuthor = "Narwin";
+            this.metroSetNumeric1.ThemeName = "MetroLite";
+            this.metroSetNumeric1.Value = 0;
+            // 
+            // metroSetLabel3
+            // 
+            this.metroSetLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroSetLabel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.metroSetLabel3.IsDerivedStyle = true;
+            this.metroSetLabel3.Location = new System.Drawing.Point(912, 0);
+            this.metroSetLabel3.Name = "metroSetLabel3";
+            this.metroSetLabel3.Size = new System.Drawing.Size(114, 30);
+            this.metroSetLabel3.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetLabel3.StyleManager = null;
+            this.metroSetLabel3.TabIndex = 8;
+            this.metroSetLabel3.Text = "-период";
+            this.metroSetLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.metroSetLabel3.ThemeAuthor = "Narwin";
+            this.metroSetLabel3.ThemeName = "MetroLite";
+            // 
+            // metroSetLabel4
+            // 
+            this.metroSetLabel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroSetLabel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.metroSetLabel4.IsDerivedStyle = true;
+            this.metroSetLabel4.Location = new System.Drawing.Point(1032, 0);
+            this.metroSetLabel4.Name = "metroSetLabel4";
+            this.metroSetLabel4.Size = new System.Drawing.Size(134, 30);
+            this.metroSetLabel4.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetLabel4.StyleManager = null;
+            this.metroSetLabel4.TabIndex = 9;
+            this.metroSetLabel4.Text = "Осталось: ";
+            this.metroSetLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.metroSetLabel4.ThemeAuthor = "Narwin";
+            this.metroSetLabel4.ThemeName = "MetroLite";
             // 
             // metroSetSetTabPage2
             // 
@@ -1035,6 +1204,17 @@ namespace Productivity
         private FormattedNumericUpDown formattedNumericUpDown3;
         private GroupBox groupBox3;
         private MetroSet_UI.Controls.MetroSetCheckBox metroSetCheckBox1;
+        private MetroSet_UI.Controls.MetroSetLabel metroSetLabel1;
+        private ColumnHeader columnHeader13;
+        private ColumnHeader columnHeader14;
+        private MetroSet_UI.Controls.MetroSetSwitch metroSetSwitch2;
+        private MetroSet_UI.Controls.MetroSetLabel metroSetLabel2;
+        private MetroSet_UI.Controls.MetroSetNumeric metroSetNumeric1;
+        private MetroSet_UI.Controls.MetroSetLabel metroSetLabel3;
+        private MetroSet_UI.Controls.MetroSetLabel metroSetLabel4;
+        private ColumnHeader columnHeader15;
+        private ColumnHeader columnHeader16;
+        private ColumnHeader columnHeader18;
     }
 }
 

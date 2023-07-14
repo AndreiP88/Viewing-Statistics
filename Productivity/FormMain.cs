@@ -10,6 +10,8 @@ using static System.ComponentModel.Design.ObjectSelectorEditor;
 using System.Xml.Linq;
 using static System.Collections.Specialized.BitVector32;
 using OrderManager;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Security.Policy;
 
 namespace Productivity
 {
@@ -24,11 +26,6 @@ namespace Productivity
 
         int metroSetTabControlPreviousIndex = -1;
         bool loadCategoryList = true;
-
-        /*bool viewAllEquipsForUser = true;
-        int countShifts = 2;
-
-        int fullOutput = 650;*/
 
         Dictionary<int, string> users = new Dictionary<int, string>();
         Dictionary<int, string> machines = new Dictionary<int, string>();
@@ -57,17 +54,6 @@ namespace Productivity
                 ValueEquips equipsValue = new ValueEquips();
 
                 machines = equipsValue.LoadMachine();
-
-                /*foreach(KeyValuePair<int, string> equip in machines)
-                {
-                    ListViewItem item = new ListViewItem();
-
-                    item.Name = equip.Key.ToString();
-                    item.Text = (ListViewEquips.Items.Count + 1).ToString("D2");
-                    item.SubItems.Add(equip.Value);
-
-                    ListViewEquips.Items.Add(item);
-                }*/
             }
             catch (Exception ex)
             {
@@ -75,55 +61,6 @@ namespace Productivity
             }
         }
 
-        /*private void LoadCheckedEquipsFromIniFile()
-        {
-            INISettings iniSettings = new INISettings();
-
-            string equipStr = iniSettings.GetViewedEquipment();
-
-            string[] equipsArray = equipStr.Split(new char[] { ';' });
-
-            foreach(string equip in  equipsArray)
-            {
-                int index = ListViewEquips.Items.IndexOfKey(equip);
-
-                if (index != -1)
-                {
-                    ListViewEquips.Items[index].Checked = true;
-                }
-            }
-        }*/
-
-        /*private void SaveCheckedEquipsToIniFile()
-        {
-            INISettings iniSettings = new INISettings();
-
-            List<string> selectedEquips = new List<string>();
-
-            for (int i = 0; i < ListViewEquips.Items.Count; i++)
-            {
-                if (ListViewEquips.Items[i].Checked)
-                {
-                    selectedEquips.Add(ListViewEquips.Items[i].Name);
-                }
-            }
-
-            string outputStr = "";
-
-            for (int i = 0; i < selectedEquips.Count; i++)
-            {
-                if (i <  selectedEquips.Count - 1)
-                {
-                    outputStr += selectedEquips[i] + ";";
-                }
-                else
-                {
-                    outputStr += selectedEquips[i];
-                }
-            }
-
-            iniSettings.SetViewedEquipment(outputStr);
-        }*/
 
         private void LoadCategoryToListView()
         {
@@ -262,35 +199,6 @@ namespace Productivity
             ini.Write("equips", "", section);
 
             LoadCategoryToListView();
-
-
-
-
-            /*ListViewItem item = new ListViewItem();
-
-            int id = listViewCategory.Items.Count + 1;
-
-            while (true)
-            {
-                if (listViewCategory.Items.IndexOfKey(id.ToString()) == -1)
-                {
-                    break;
-                }
-                else
-                {
-                    id++;
-                }
-            }
-
-            item.Name = id.ToString();
-            item.Text = (listViewCategory.Items.Count + 1).ToString();
-            item.SubItems.Add(name);
-
-            item.Checked = false;
-
-            listViewCategory.Items.Add(item);
-
-            SaveCategoryToIniFile();*/
         }
 
         private void EditNameCategory(int categoryId, string newName)
@@ -1232,6 +1140,82 @@ namespace Productivity
             return (int)workingOut;
         }
 
+        private int CalculateWorkTimeN(List<UserShiftOrder> order)
+        {
+            float workingOut = 0;
+
+            /*for (int i = 0; i < order.Count; i++)
+            {
+                if (order[i].Flags == 576)
+                {
+                    workingOut += order[i].Normtime;
+                }
+
+                if (order[i].Flags == 512 || order[i].Flags == 544)
+                {
+                    if (order[i].Normtime > 0)
+                    {
+                        float norm = order[i].PlanOutQty / order[i].Normtime;
+
+                        if (norm > 0)
+                        {
+                            workingOut += order[i].FactOutQty / norm;
+                        }
+                    }
+                }
+            }*/
+
+            for (int i = 0; i < order.Count; i++)
+            {
+                if (order[i].Normtime > 0)
+                {
+                    float norm = order[i].PlanOutQty / order[i].Normtime;
+
+                    if (norm > 0)
+                    {
+                        workingOut += order[i].FactOutQty / norm;
+                    }
+                }
+            }
+
+            return (int)workingOut;
+        }
+
+        private int CalculateWorkTimeForOneOrder(UserShiftOrder order)
+        {
+            float workingOut = 0;
+
+            if (order.Flags == 576)
+            {
+                workingOut += order.Normtime;
+            }
+
+            if (order.Flags == 512 || order.Flags == 544)
+            {
+                if (order.Normtime > 0)
+                {
+                    float norm = order.PlanOutQty / order.Normtime;
+
+                    if (norm > 0)
+                    {
+                        workingOut += order.FactOutQty / norm;
+                    }
+                }
+            }
+
+            /*if (order.Normtime > 0)
+            {
+                float norm = order.PlanOutQty / order.Normtime;
+
+                if (norm > 0)
+                {
+                    workingOut += order.FactOutQty / norm;
+                }
+            }*/
+
+            return (int)workingOut;
+        }
+
         private float GetPercentWorkingOut(int targetWorkingOut, int facticalWorkingOut)
         {
             float result;
@@ -1342,44 +1326,182 @@ namespace Productivity
             }
         }
 
+        private void SelectCurrentShift()
+        {
+            DateTime dateTime = DateTime.Now;
+
+            if (dateTime.Hour < 8 || dateTime.Hour >= 20)
+            {
+                comboBox1.SelectedIndex = 1;
+            }
+            else
+            {
+                comboBox1.SelectedIndex = 0;
+            }
+
+            if (dateTime.Hour < 8 && dateTime.Hour >= 0)
+            {
+                dateTimePicker1.Value = dateTime.AddDays(-1);
+            }
+            else
+            {
+                dateTimePicker1.Value = dateTime;
+            }
+        }
+
         private void LoadOrdersSelectedDateAndShift()
         {
             listView1.Items.Clear();
 
             ValueShifts shifts = new ValueShifts();
+            ValueDateTime time = new ValueDateTime();
+            ValueCategoryes valueCategoryes = new ValueCategoryes();
+
+            List<Category> categoryEquip = valueCategoryes.GetSelectedCategoriesAndEquipsList();
+
+            List<int> equips = CategoryEquipToListSelectedEquip(categoryEquip);
 
             DateTime selectDate = dateTimePicker1.Value;
             int selectShift = comboBox1.SelectedIndex + 1;
 
             List<User> usersShiftList = shifts.LoadOrders(selectDate, selectShift);
 
-            for(int i = 0; i < usersShiftList.Count; i++)
+            List<int> usersCurrent = new List<int>();
+
+            //Пока так, потом сделаю отдельную выборку оборудования с сортировкой, либо без сортирвки а в порядке загрузки
+            for (int i = 0; i < equips.Count; i++)
             {
-                User user = usersShiftList[i];
-
-                for (int j = 0; j < user.Shifts[0].Orders.Count; j++)
+                for (int j = 0; j < usersShiftList.Count; j++)
                 {
-                    ListViewItem item = new ListViewItem();
-
-                    item.Name = user.Id.ToString();
-                    item.Text = listView1.Items.Count.ToString();
-                    item.SubItems.Add(users[user.Id]);
-                    item.SubItems.Add(machines[user.Equip]);
-                    item.SubItems.Add(user.Shifts[0].Orders[j].OrderNumber);
-                    item.SubItems.Add(user.Shifts[0].Orders[j].OrderName);
-                    item.SubItems.Add(user.Shifts[0].Orders[j].DateBegin.ToString());
-                    item.SubItems.Add(user.Shifts[0].Orders[j].Normtime.ToString());
-                    item.SubItems.Add(user.Shifts[0].Orders[j].FactOutQty.ToString());
-                    item.SubItems.Add(user.Shifts[0].Orders[j].PlanOutQty.ToString());
-
-                    listView1.Items.Add(item);
+                    if (usersShiftList[j].Equip == equips[i])
+                    {
+                        if (!usersCurrent.Contains(usersShiftList[j].Id))
+                        {
+                            usersCurrent.Add(usersShiftList[j].Id);
+                        }
+                    }
                 }
-                
-
-                
             }
 
-            
+            /*for (int i = 0; i < usersShiftList.Count; i++)
+            {
+                if (!usersCurrent.Contains(usersShiftList[i].Id))
+                {
+                    usersCurrent.Add(usersShiftList[i].Id);
+                }
+            }*/
+
+            for (int i = 0; i < usersCurrent.Count; i++)
+            {
+                ListViewItem item = new ListViewItem();
+
+                item.Name = "u" + usersCurrent[i].ToString();
+                item.Text = (i + 1).ToString();
+                item.SubItems.Add(users[usersCurrent[i]]);
+                item.SubItems.Add("");
+                item.SubItems.Add("");
+                item.SubItems.Add("");
+                item.SubItems.Add("");
+                item.SubItems.Add("");
+                item.SubItems.Add("");
+                item.SubItems.Add("");
+                item.SubItems.Add("");
+                item.SubItems.Add("");
+                item.SubItems.Add("");
+                item.SubItems.Add("");
+                item.SubItems.Add("");
+
+                item.BackColor = Color.Gray;
+                item.Font = new Font(listView1.Font, FontStyle.Bold);
+
+                listView1.Items.Add(item);
+
+                float userWorkingOut = 0;
+                int userDone = 0;
+                int indexRowForUser = listView1.Items.Count - 1;
+
+                for (int j = 0; j < usersShiftList.Count; j++)
+                {
+                    if (usersShiftList[j].Id == usersCurrent[i])
+                    {
+                        User user = usersShiftList[j];
+                        List<int> ordersIdManOrderJobItem = new List<int>();
+
+                        //List<UserShiftOrder> ordersIdManOrderJobItem = new List<UserShiftOrder>();
+
+                        for (int k = 0; k < user.Shifts[0].Orders.Count; k++)
+                        {
+                            if (!ordersIdManOrderJobItem.Contains(user.Shifts[0].Orders[k].IdManOrderJobItem))
+                            {
+                                ordersIdManOrderJobItem.Add(user.Shifts[0].Orders[k].IdManOrderJobItem);
+                            }
+                        }
+
+                        for (int k = 0; k < ordersIdManOrderJobItem.Count; k++)
+                        {
+                            List<int> indexesUserShiftsOrders = new List<int>();
+
+                            for (int l = 0; l < user.Shifts[0].Orders.Count; l++)
+                            {
+                                if (user.Shifts[0].Orders[l].IdManOrderJobItem == ordersIdManOrderJobItem[k])
+                                {
+                                    indexesUserShiftsOrders.Add(l);
+                                }
+                            }
+
+                            float workingOut = 0;
+                            int done = 0;
+                            int duration = 0;
+                            int amount = 0;
+
+                            for (int l = 0; l < indexesUserShiftsOrders.Count; l++)
+                            {
+                                UserShiftOrder orderCur = user.Shifts[0].Orders[indexesUserShiftsOrders[l]];
+
+                                workingOut += CalculateWorkTimeForOneOrder(orderCur);
+
+                                if (orderCur.Flags != 576)
+                                {
+                                    done += orderCur.FactOutQty;
+                                    amount = orderCur.PlanOutQty;
+                                }
+
+                                duration += orderCur.Duration;
+                            }
+
+                            userWorkingOut += (int)workingOut;
+                            userDone += done;
+
+                            UserShiftOrder order = user.Shifts[0].Orders[indexesUserShiftsOrders[0]];
+
+                            int[] normtime = shifts.GetNormTimeForOrder(order.IdManOrderJobItem);
+
+                            ListViewItem subItem = new ListViewItem();
+
+                            subItem.Name = user.Id.ToString();
+                            subItem.Text = (k + 1).ToString();
+                            subItem.SubItems.Add("");
+                            subItem.SubItems.Add(machines[user.Equip]);
+                            subItem.SubItems.Add(order.OrderNumber);
+                            subItem.SubItems.Add(order.OrderName);
+                            subItem.SubItems.Add(amount.ToString("N0"));
+                            subItem.SubItems.Add(time.MinuteToTimeString((normtime[0] + normtime[1])));
+                            subItem.SubItems.Add(user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin);
+                            subItem.SubItems.Add(user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd);
+                            subItem.SubItems.Add(time.MinuteToTimeString(duration));
+                            subItem.SubItems.Add("завершение по плану");
+                            subItem.SubItems.Add("отклонение");
+                            subItem.SubItems.Add(done.ToString("N0"));
+                            subItem.SubItems.Add(time.MinuteToTimeString((int)workingOut));
+
+                            listView1.Items.Add(subItem);
+                        }
+                    }
+                }
+
+                listView1.Items[indexRowForUser].SubItems[12].Text = userDone.ToString("N0");
+                listView1.Items[indexRowForUser].SubItems[13].Text = time.MinuteToTimeString((int)userWorkingOut);
+            }
         }
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
@@ -1425,6 +1547,18 @@ namespace Productivity
                 SaveParameterToIniFile();
 
                 listViewEquips.Items.Clear();
+            }
+
+            if (metroSetTabControl1.SelectedIndex == 0)
+            {
+                if (metroSetSwitch1.Switched)
+                {
+                    metroSetSwitch1.Switched = true;
+                }
+                else
+                {
+                    //Сделать загрузку из файла настроек. Сохранять последнюю открытую смену
+                }
             }
 
             if (metroSetTabControl1.SelectedIndex == 1)
@@ -1670,6 +1804,22 @@ namespace Productivity
         {
             listViewEquips.Columns[1].Width = listViewEquips.Width - 65;
             listViewEquips.Refresh();
+        }
+
+        private void metroSetSwitch1_SwitchedChanged(object sender)
+        {
+            if (metroSetSwitch1.Switched)
+            {
+                SelectCurrentShift();
+
+                dateTimePicker1.Enabled = false;
+                comboBox1.Enabled = false;
+            }
+            else
+            {
+                dateTimePicker1.Enabled = true;
+                comboBox1.Enabled = true;
+            }
         }
     }
 }
