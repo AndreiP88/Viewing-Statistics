@@ -1364,6 +1364,8 @@ namespace Productivity
             DateTime selectDate = dateTimePicker1.Value;
             int selectShift = comboBox1.SelectedIndex + 1;
 
+            string timeStartShift = time.StartShiftPlanedDateTime(selectDate, selectShift);
+
             List<User> usersShiftList = shifts.LoadOrders(selectDate, selectShift);
 
             List<int> usersCurrent = new List<int>();
@@ -1373,6 +1375,7 @@ namespace Productivity
             {
                 for (int j = 0; j < usersShiftList.Count; j++)
                 {
+
                     if (usersShiftList[j].Equip == equips[i])
                     {
                         if (!usersCurrent.Contains(usersShiftList[j].Id))
@@ -1449,10 +1452,16 @@ namespace Productivity
                                 }
                             }
 
+                            int orderPreviousAmount = shifts.GetAmountDoneFromPreviousShifts(ordersIdManOrderJobItem[k], selectDate, selectShift);
+
                             float workingOut = 0;
                             int done = 0;
                             int duration = 0;
                             int amount = 0;
+                            string timePlanedEndOrder = "";
+                            int normTimeMakeReady = 0;
+                            int normTimeWork = 0;
+                            int differentTime = 0;
 
                             for (int l = 0; l < indexesUserShiftsOrders.Count; l++)
                             {
@@ -1464,33 +1473,103 @@ namespace Productivity
                                 {
                                     done += orderCur.FactOutQty;
                                     amount = orderCur.PlanOutQty;
+                                    normTimeWork = orderCur.Normtime;
+                                }
+
+                                if (orderCur.Flags == 576)
+                                {
+                                    normTimeMakeReady = orderCur.Normtime;
                                 }
 
                                 duration += orderCur.Duration;
                             }
 
+                            UserShiftOrder order = user.Shifts[0].Orders[indexesUserShiftsOrders[0]];
+
+                            string lastTimeEndPlanedOrder = time.DateTimeAmountMunutes(timeStartShift, (int)userWorkingOut);
+
+                            int lastAmount = amount - orderPreviousAmount;
+                            //MessageBox.Show(lastAmount + " = " + order.PlanOutQty + " - " + orderPreviousAmount);
+
                             userWorkingOut += (int)workingOut;
                             userDone += done;
 
-                            UserShiftOrder order = user.Shifts[0].Orders[indexesUserShiftsOrders[0]];
-
                             int[] normtime = shifts.GetNormTimeForOrder(order.IdManOrderJobItem);
+                            int normTimeFull = 0;
+
+                            if (order.Status == 2)
+                            {
+                                if (orderPreviousAmount > 0)
+                                {
+                                    //Сделать подсчёт остатка времени
+                                    float lastTime = 0;
+
+                                    if (normtime[1] > 0)
+                                    {
+                                        float norm = amount / normtime[1];
+
+                                        if (norm > 0)
+                                        {
+                                            lastTime = lastAmount / norm;
+                                        }
+                                    }
+
+                                    normTimeFull = (int)lastTime;
+                                }
+                                else
+                                {
+                                    normTimeFull = normTimeMakeReady + normTimeWork;
+                                }
+
+                                timePlanedEndOrder = time.DateTimeAmountMunutes(timeStartShift, (int)userWorkingOut);
+                                //Сделать полдсчет отсавания
+                                differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd);
+                            }
+
+                            if (order.Status != 2)
+                            {
+                                if (orderPreviousAmount > 0)
+                                {
+                                    //Сделать подсчёт остатка времени
+                                    float lastTime = 0;
+
+                                    if (normtime[1] > 0)
+                                    {
+                                        float norm = amount / normtime[1];
+
+                                        if (norm > 0)
+                                        {
+                                            lastTime = lastAmount / norm;
+                                        }
+                                    }
+                                    
+                                    normTimeFull = (int)lastTime;
+                                }
+                                else
+                                {
+                                    normTimeFull = normtime[0] + normtime[1];
+                                }
+                                
+                                timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull);
+
+                                differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, DateTime.Now.ToString());
+                            }
 
                             ListViewItem subItem = new ListViewItem();
 
                             subItem.Name = user.Id.ToString();
                             subItem.Text = (k + 1).ToString();
-                            subItem.SubItems.Add("");
-                            subItem.SubItems.Add(machines[user.Equip]);
+                            //subItem.SubItems.Add("");
+                            subItem.SubItems.Add("    " + machines[user.Equip]);
                             subItem.SubItems.Add(order.OrderNumber);
                             subItem.SubItems.Add(order.OrderName);
-                            subItem.SubItems.Add(amount.ToString("N0"));
-                            subItem.SubItems.Add(time.MinuteToTimeString((normtime[0] + normtime[1])));
+                            subItem.SubItems.Add(lastAmount.ToString("N0") + "/" + amount.ToString("N0"));
+                            subItem.SubItems.Add(time.MinuteToTimeString(normTimeFull));
                             subItem.SubItems.Add(user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin);
                             subItem.SubItems.Add(user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd);
                             subItem.SubItems.Add(time.MinuteToTimeString(duration));
-                            subItem.SubItems.Add("завершение по плану");
-                            subItem.SubItems.Add("отклонение");
+                            subItem.SubItems.Add(timePlanedEndOrder);
+                            subItem.SubItems.Add(time.MinuteToTimeString(differentTime));
                             subItem.SubItems.Add(done.ToString("N0"));
                             subItem.SubItems.Add(time.MinuteToTimeString((int)workingOut));
 
@@ -1499,8 +1578,8 @@ namespace Productivity
                     }
                 }
 
-                listView1.Items[indexRowForUser].SubItems[12].Text = userDone.ToString("N0");
-                listView1.Items[indexRowForUser].SubItems[13].Text = time.MinuteToTimeString((int)userWorkingOut);
+                listView1.Items[indexRowForUser].SubItems[11].Text = userDone.ToString("N0");
+                listView1.Items[indexRowForUser].SubItems[12].Text = time.MinuteToTimeString((int)userWorkingOut);
             }
         }
 
@@ -1820,6 +1899,11 @@ namespace Productivity
                 dateTimePicker1.Enabled = true;
                 comboBox1.Enabled = true;
             }
+        }
+
+        private void metroSetButton1_Click(object sender, EventArgs e)
+        {
+            LoadOrdersSelectedDateAndShift();
         }
     }
 }

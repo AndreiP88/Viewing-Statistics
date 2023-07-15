@@ -138,7 +138,7 @@ namespace Productivity
                             man_factjob.shift_num = @shiftNum AND
                             man_factjob.id_common_employee IS NOT NULL AND
                             man_factjob.id_equip IS NOT NULL AND
-                            man_factjob.fact_out_qty IS NOT NULL AND
+                            --man_factjob.fact_out_qty IS NOT NULL AND
                             man_planjob_list.normtime IS NOT NULL AND
                             man_planjob_list.plan_out_qty IS NOT NULL
                         ORDER BY man_factjob.date_begin"
@@ -187,6 +187,13 @@ namespace Productivity
                         usersList[indexFromUserList].Shifts[indexShift].Orders = new List<UserShiftOrder>();
                     }
 
+                    int factOut = 0;
+
+                    if (!DBNull.Value.Equals(sqlReader["fact_out_qty"]))
+                    {
+                        factOut = Convert.ToInt32(sqlReader["fact_out_qty"]);
+                    }
+
                     usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
                         sqlReader["order_num"].ToString(),
                         sqlReader["ul_name"].ToString(),
@@ -195,7 +202,8 @@ namespace Productivity
                         sqlReader["date_begin"].ToString(),
                         sqlReader["date_end"].ToString(),
                         Convert.ToInt32(sqlReader["duration"]),
-                        Convert.ToInt32(sqlReader["fact_out_qty"]),
+                        //Convert.ToInt32(sqlReader["fact_out_qty"]),
+                        factOut,
                         Convert.ToInt32(sqlReader["plan_out_qty"]),
                         Convert.ToInt32(sqlReader["normtime"]),
                         Convert.ToInt32(sqlReader["id_man_order_job_item"])
@@ -243,6 +251,62 @@ namespace Productivity
                     else
                     {
                         result[1] = Convert.ToInt32(sqlReader["normtime"]);
+                    }
+                }
+
+                connection.Close();
+            }
+
+            return result;
+        }
+
+        public int GetAmountDoneFromPreviousShifts(int idManOrderJobItem, DateTime currentDate, int currentShift)
+        {
+            int result = 0;
+
+            ValueDateTime time = new ValueDateTime();
+
+            string startShiftForDB = time.StartShiftPlanedDateTimeForDataBase(currentDate, currentShift);
+
+            using (SqlConnection connection = DBConnection.GetDBConnection())
+            {
+                connection.Open();
+                SqlCommand Command = new SqlCommand
+                {
+                    Connection = connection,
+
+                    CommandText =
+                        @"SELECT
+	                        man_factjob.flags,
+	                        man_factjob.fact_out_qty
+                        FROM
+	                        dbo.man_factjob
+                        INNER JOIN
+	                        dbo.man_planjob_list
+                        ON 
+		                        man_factjob.id_man_planjob_list = man_planjob_list.id_man_planjob_list
+                        WHERE
+	                        --man_factjob.id_man_planjob_list = @idManOrderJobItem AND
+	                        id_man_order_job_item = @idManOrderJobItem AND
+	                        date_begin < CONVERT ( VARCHAR ( 24 ), @startShiftForDB, 21 ) AND
+	                        fact_out_qty IS NOT NULL
+                        ORDER BY date_begin"
+
+                };
+                Command.Parameters.AddWithValue("@startShiftForDB", startShiftForDB);
+                Command.Parameters.AddWithValue("@idManOrderJobItem", idManOrderJobItem);
+
+                DbDataReader sqlReader = Command.ExecuteReader();
+
+                while (sqlReader.Read())
+                {
+                    if (Convert.ToInt32(sqlReader["flags"]) != 576)
+                    {
+                        result += Convert.ToInt32(sqlReader["fact_out_qty"]);
+                    }
+                    else
+                    {
+                        
                     }
                 }
 

@@ -40,6 +40,49 @@ namespace Productivity
             return result;
         }
 
+        public string StartShiftPlanedDateTimeForDataBase(string startShift)
+        {
+            string result = "";
+
+            DateTime date = Convert.ToDateTime(startShift);
+
+            result = date.ToString("yyyy-MM-dd") + "T" + date.ToString("HH:mm:ss:fff");
+
+            return result;
+        }
+
+        public string StartShiftPlanedDateTimeForDataBase(DateTime date, int shiftNumber)
+        {
+            string result = "";
+
+            if (shiftNumber == 1)
+            {
+                result = date.ToString("yyyy-MM-dd") + "T08:00:00.000";
+            }
+            else
+            {
+                result = date.ToString("yyyy-MM-dd") + "T20:00:00.000";
+            }
+
+            return result;
+        }
+
+        public string StartShiftPlanedDateTime(DateTime date, int shiftNumber)
+        {
+            string result = "";
+
+            if (shiftNumber == 1)
+            {
+                result = date.ToString("dd.MM.yyyy") + " 08:00:00";
+            }
+            else
+            {
+                result = date.ToString("dd.MM.yyyy") + " 20:00:00";
+            }
+
+            return result;
+        }
+
         public string MinuteToTimeString(int totalMinutes)
         {
             string result = "00:00";
@@ -85,6 +128,67 @@ namespace Productivity
             int hours = totalMinutes / 60;
 
             int[] result = new int[] { hours, minutes };
+
+            return result;
+        }
+
+        public int DateDifferenceToMinutes(string firstDate, string secondDate)
+        {
+            int result;
+
+            TimeSpan totalTime;
+
+            DateTime firstD = StringToDateTime(firstDate);
+            DateTime secondD = StringToDateTime(secondDate);
+
+            if (firstD > secondD)
+            {
+                totalTime = firstD.Subtract(secondD);
+                result = (int)totalTime.TotalMinutes;
+            }
+            else
+            {
+                totalTime = secondD.Subtract(firstD);
+                result = (int)totalTime.TotalMinutes * (-1);
+            }
+
+            return result;
+        }
+
+        public string DateTimeAmountMunutes(string firstDate, int secondTime)
+        {
+            DateTime totalTime;
+            DateTime firstD;
+
+            firstD = StringToDateTime(firstDate);
+
+            totalTime = firstD.AddMinutes(secondTime);
+
+            return DateToSting(totalTime);
+        }
+
+        public DateTime StringToDateTime(string date)
+        {
+            DateTime result = DateTime.Now;
+
+            try
+            {
+                if (date != "")
+                {
+                    result = Convert.ToDateTime(date);
+                }
+            }
+            catch
+            {
+                result = DateTime.Now;
+            }
+
+            return result;
+        }
+
+        private string DateToSting(DateTime tDate)
+        {
+            string result = tDate.ToString("dd.MM.yyyy HH:mm");
 
             return result;
         }

@@ -67,7 +67,6 @@ namespace Productivity
             this.listView1 = new Productivity.FormMain.MyListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -86,9 +85,9 @@ namespace Productivity
             this.metroSetLabel1 = new MetroSet_UI.Controls.MetroSetLabel();
             this.metroSetSwitch2 = new MetroSet_UI.Controls.MetroSetSwitch();
             this.metroSetLabel2 = new MetroSet_UI.Controls.MetroSetLabel();
-            this.metroSetNumeric1 = new MetroSet_UI.Controls.MetroSetNumeric();
             this.metroSetLabel3 = new MetroSet_UI.Controls.MetroSetLabel();
-            this.metroSetLabel4 = new MetroSet_UI.Controls.MetroSetLabel();
+            this.formattedNumericUpDown4 = new Productivity.FormattedNumericUpDown();
+            this.metroSetButton1 = new MetroSet_UI.Controls.MetroSetButton();
             this.metroSetSetTabPage2 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.dataGridView1 = new Productivity.FormMain.DoubleBufferedDataGridView();
@@ -133,6 +132,7 @@ namespace Productivity
             this.metroSetSetTabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown4)).BeginInit();
             this.metroSetSetTabPage2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -222,7 +222,6 @@ namespace Productivity
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
-            this.columnHeader10,
             this.columnHeader3,
             this.columnHeader4,
             this.columnHeader16,
@@ -258,11 +257,6 @@ namespace Productivity
             this.columnHeader2.Text = "Имя";
             this.columnHeader2.Width = 240;
             // 
-            // columnHeader10
-            // 
-            this.columnHeader10.Text = "Оборудование";
-            this.columnHeader10.Width = 240;
-            // 
             // columnHeader3
             // 
             this.columnHeader3.Text = "Заказ";
@@ -275,8 +269,8 @@ namespace Productivity
             // 
             // columnHeader16
             // 
-            this.columnHeader16.Text = "Тираж";
-            this.columnHeader16.Width = 80;
+            this.columnHeader16.Text = "Остаток/Тираж";
+            this.columnHeader16.Width = 120;
             // 
             // columnHeader18
             // 
@@ -325,21 +319,21 @@ namespace Productivity
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 160F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 220F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 160F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 140F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 140F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Controls.Add(this.dateTimePicker1, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.comboBox1, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroSetSwitch1, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroSetLabel1, 3, 0);
-            this.tableLayoutPanel2.Controls.Add(this.metroSetSwitch2, 4, 0);
-            this.tableLayoutPanel2.Controls.Add(this.metroSetLabel2, 5, 0);
-            this.tableLayoutPanel2.Controls.Add(this.metroSetNumeric1, 6, 0);
-            this.tableLayoutPanel2.Controls.Add(this.metroSetLabel3, 7, 0);
-            this.tableLayoutPanel2.Controls.Add(this.metroSetLabel4, 8, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroSetSwitch2, 5, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroSetLabel2, 6, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroSetLabel3, 8, 0);
+            this.tableLayoutPanel2.Controls.Add(this.formattedNumericUpDown4, 7, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroSetButton1, 4, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -428,7 +422,7 @@ namespace Productivity
             this.metroSetSwitch2.DisabledUnCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(205)))), ((int)(((byte)(205)))), ((int)(((byte)(205)))));
             this.metroSetSwitch2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroSetSwitch2.IsDerivedStyle = true;
-            this.metroSetSwitch2.Location = new System.Drawing.Point(627, 3);
+            this.metroSetSwitch2.Location = new System.Drawing.Point(787, 3);
             this.metroSetSwitch2.Name = "metroSetSwitch2";
             this.metroSetSwitch2.Size = new System.Drawing.Size(58, 22);
             this.metroSetSwitch2.Style = MetroSet_UI.Enums.Style.Light;
@@ -446,7 +440,7 @@ namespace Productivity
             this.metroSetLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroSetLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.metroSetLabel2.IsDerivedStyle = true;
-            this.metroSetLabel2.Location = new System.Drawing.Point(691, 0);
+            this.metroSetLabel2.Location = new System.Drawing.Point(851, 0);
             this.metroSetLabel2.Name = "metroSetLabel2";
             this.metroSetLabel2.Size = new System.Drawing.Size(134, 30);
             this.metroSetLabel2.Style = MetroSet_UI.Enums.Style.Light;
@@ -457,62 +451,57 @@ namespace Productivity
             this.metroSetLabel2.ThemeAuthor = "Narwin";
             this.metroSetLabel2.ThemeName = "MetroLite";
             // 
-            // metroSetNumeric1
-            // 
-            this.metroSetNumeric1.BackColor = System.Drawing.Color.Transparent;
-            this.metroSetNumeric1.BackgroundColor = System.Drawing.Color.Empty;
-            this.metroSetNumeric1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-            this.metroSetNumeric1.DisabledBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
-            this.metroSetNumeric1.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(155)))), ((int)(((byte)(155)))));
-            this.metroSetNumeric1.DisabledForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(136)))), ((int)(((byte)(136)))), ((int)(((byte)(136)))));
-            this.metroSetNumeric1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroSetNumeric1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.metroSetNumeric1.IsDerivedStyle = true;
-            this.metroSetNumeric1.Location = new System.Drawing.Point(831, 3);
-            this.metroSetNumeric1.Maximum = 720;
-            this.metroSetNumeric1.Minimum = 0;
-            this.metroSetNumeric1.Name = "metroSetNumeric1";
-            this.metroSetNumeric1.Size = new System.Drawing.Size(75, 26);
-            this.metroSetNumeric1.Style = MetroSet_UI.Enums.Style.Light;
-            this.metroSetNumeric1.StyleManager = null;
-            this.metroSetNumeric1.SymbolsColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.metroSetNumeric1.TabIndex = 7;
-            this.metroSetNumeric1.Text = "metroSetNumeric1";
-            this.metroSetNumeric1.ThemeAuthor = "Narwin";
-            this.metroSetNumeric1.ThemeName = "MetroLite";
-            this.metroSetNumeric1.Value = 0;
-            // 
             // metroSetLabel3
             // 
             this.metroSetLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroSetLabel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.metroSetLabel3.IsDerivedStyle = true;
-            this.metroSetLabel3.Location = new System.Drawing.Point(912, 0);
+            this.metroSetLabel3.Location = new System.Drawing.Point(1051, 0);
             this.metroSetLabel3.Name = "metroSetLabel3";
             this.metroSetLabel3.Size = new System.Drawing.Size(114, 30);
             this.metroSetLabel3.Style = MetroSet_UI.Enums.Style.Light;
             this.metroSetLabel3.StyleManager = null;
             this.metroSetLabel3.TabIndex = 8;
-            this.metroSetLabel3.Text = "-период";
+            this.metroSetLabel3.Text = "мин.";
             this.metroSetLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.metroSetLabel3.ThemeAuthor = "Narwin";
             this.metroSetLabel3.ThemeName = "MetroLite";
             // 
-            // metroSetLabel4
+            // formattedNumericUpDown4
             // 
-            this.metroSetLabel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroSetLabel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.metroSetLabel4.IsDerivedStyle = true;
-            this.metroSetLabel4.Location = new System.Drawing.Point(1032, 0);
-            this.metroSetLabel4.Name = "metroSetLabel4";
-            this.metroSetLabel4.Size = new System.Drawing.Size(134, 30);
-            this.metroSetLabel4.Style = MetroSet_UI.Enums.Style.Light;
-            this.metroSetLabel4.StyleManager = null;
-            this.metroSetLabel4.TabIndex = 9;
-            this.metroSetLabel4.Text = "Осталось: ";
-            this.metroSetLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.metroSetLabel4.ThemeAuthor = "Narwin";
-            this.metroSetLabel4.ThemeName = "MetroLite";
+            this.formattedNumericUpDown4.Format = null;
+            this.formattedNumericUpDown4.Location = new System.Drawing.Point(991, 3);
+            this.formattedNumericUpDown4.Name = "formattedNumericUpDown4";
+            this.formattedNumericUpDown4.Size = new System.Drawing.Size(54, 23);
+            this.formattedNumericUpDown4.TabIndex = 10;
+            // 
+            // metroSetButton1
+            // 
+            this.metroSetButton1.DisabledBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.metroSetButton1.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.metroSetButton1.DisabledForeColor = System.Drawing.Color.Gray;
+            this.metroSetButton1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroSetButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.metroSetButton1.HoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(207)))), ((int)(((byte)(255)))));
+            this.metroSetButton1.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(207)))), ((int)(((byte)(255)))));
+            this.metroSetButton1.HoverTextColor = System.Drawing.Color.White;
+            this.metroSetButton1.IsDerivedStyle = true;
+            this.metroSetButton1.Location = new System.Drawing.Point(627, 3);
+            this.metroSetButton1.Name = "metroSetButton1";
+            this.metroSetButton1.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.metroSetButton1.NormalColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.metroSetButton1.NormalTextColor = System.Drawing.Color.White;
+            this.metroSetButton1.PressBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(147)))), ((int)(((byte)(195)))));
+            this.metroSetButton1.PressColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(147)))), ((int)(((byte)(195)))));
+            this.metroSetButton1.PressTextColor = System.Drawing.Color.White;
+            this.metroSetButton1.Size = new System.Drawing.Size(154, 24);
+            this.metroSetButton1.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetButton1.StyleManager = null;
+            this.metroSetButton1.TabIndex = 11;
+            this.metroSetButton1.Text = "Обновление";
+            this.metroSetButton1.ThemeAuthor = "Narwin";
+            this.metroSetButton1.ThemeName = "MetroLite";
+            this.metroSetButton1.Click += new System.EventHandler(this.metroSetButton1_Click);
             // 
             // metroSetSetTabPage2
             // 
@@ -1124,6 +1113,7 @@ namespace Productivity
             this.metroSetSetTabPage1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown4)).EndInit();
             this.metroSetSetTabPage2.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
@@ -1179,7 +1169,6 @@ namespace Productivity
         private MyListView listViewEquips;
         private ColumnHeader columnHeader5;
         private ColumnHeader columnHeader17;
-        private ColumnHeader columnHeader10;
         private MyListView listViewCategory;
         private ColumnHeader columnHeader11;
         private ColumnHeader columnHeader12;
@@ -1209,12 +1198,12 @@ namespace Productivity
         private ColumnHeader columnHeader14;
         private MetroSet_UI.Controls.MetroSetSwitch metroSetSwitch2;
         private MetroSet_UI.Controls.MetroSetLabel metroSetLabel2;
-        private MetroSet_UI.Controls.MetroSetNumeric metroSetNumeric1;
         private MetroSet_UI.Controls.MetroSetLabel metroSetLabel3;
-        private MetroSet_UI.Controls.MetroSetLabel metroSetLabel4;
         private ColumnHeader columnHeader15;
         private ColumnHeader columnHeader16;
         private ColumnHeader columnHeader18;
+        private FormattedNumericUpDown formattedNumericUpDown4;
+        private MetroSet_UI.Controls.MetroSetButton metroSetButton1;
     }
 }
 
