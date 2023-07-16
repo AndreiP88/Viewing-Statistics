@@ -1615,8 +1615,6 @@ namespace Productivity
 
         private void metroSetTabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
-
             if (metroSetTabControlPreviousIndex == 2)
             {
                 SaveCategoryToIniFile();
