@@ -33,6 +33,8 @@ namespace Productivity
 
         List<User> usersList;
 
+        DateTime lastTimeUpdateShiftStatistic = DateTime.Now;
+
         private void LoadAllUsers()
         {
             try
@@ -557,6 +559,8 @@ namespace Productivity
 
         private void LoadStartsValues()
         {
+            INISettings settings = new INISettings();
+
             LoadAllUsers();
             LoadMachine();
 
@@ -567,8 +571,10 @@ namespace Productivity
 
             //Update Later
             comboBox4.SelectedIndex = 0;
-            
-            metroSetTabControl1.SelectTab(1);
+
+            metroSetTabControl1.SelectTab(settings.GetLastTabIndex());
+
+            TabControlSelectedIndexChanged(metroSetTabControl1.SelectedIndex);
         }
 
         private int GetYearFromComboBox()
@@ -1349,7 +1355,7 @@ namespace Productivity
             }
         }
 
-        private void LoadOrdersSelectedDateAndShift()
+        private void LoadOrdersSelectedDateAndShift(DateTime selectDate, int selectShift)
         {
             listView1.Items.Clear();
 
@@ -1360,9 +1366,6 @@ namespace Productivity
             List<Category> categoryEquip = valueCategoryes.GetSelectedCategoriesAndEquipsList();
 
             List<int> equips = CategoryEquipToListSelectedEquip(categoryEquip);
-
-            DateTime selectDate = dateTimePicker1.Value;
-            int selectShift = comboBox1.SelectedIndex + 1;
 
             string timeStartShift = time.StartShiftPlanedDateTime(selectDate, selectShift);
 
@@ -1452,7 +1455,9 @@ namespace Productivity
                                 }
                             }
 
-                            int orderPreviousAmount = shifts.GetAmountDoneFromPreviousShifts(ordersIdManOrderJobItem[k], selectDate, selectShift);
+                            UserShiftOrder order = user.Shifts[0].Orders[indexesUserShiftsOrders[0]];
+
+                            int orderPreviousAmount = shifts.GetAmountDoneFromPreviousShifts(ordersIdManOrderJobItem[k], order.DateBegin);
 
                             float workingOut = 0;
                             int done = 0;
@@ -1484,8 +1489,6 @@ namespace Productivity
                                 duration += orderCur.Duration;
                             }
 
-                            UserShiftOrder order = user.Shifts[0].Orders[indexesUserShiftsOrders[0]];
-
                             string lastTimeEndPlanedOrder = time.DateTimeAmountMunutes(timeStartShift, (int)userWorkingOut);
 
                             int lastAmount = amount - orderPreviousAmount;
@@ -1497,23 +1500,22 @@ namespace Productivity
                             int[] normtime = shifts.GetNormTimeForOrder(order.IdManOrderJobItem);
                             int normTimeFull = 0;
 
+                            float lastTime = 0;
+
+                            if (normtime[1] > 0)
+                            {
+                                float norm = amount / normtime[1];
+
+                                if (norm > 0)
+                                {
+                                    lastTime = lastAmount / norm;
+                                }
+                            }
+
                             if (order.Status == 2)
                             {
                                 if (orderPreviousAmount > 0)
                                 {
-                                    //Сделать подсчёт остатка времени
-                                    float lastTime = 0;
-
-                                    if (normtime[1] > 0)
-                                    {
-                                        float norm = amount / normtime[1];
-
-                                        if (norm > 0)
-                                        {
-                                            lastTime = lastAmount / norm;
-                                        }
-                                    }
-
                                     normTimeFull = (int)lastTime;
                                 }
                                 else
@@ -1522,7 +1524,7 @@ namespace Productivity
                                 }
 
                                 timePlanedEndOrder = time.DateTimeAmountMunutes(timeStartShift, (int)userWorkingOut);
-                                //Сделать полдсчет отсавания
+
                                 differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd);
                             }
 
@@ -1530,19 +1532,6 @@ namespace Productivity
                             {
                                 if (orderPreviousAmount > 0)
                                 {
-                                    //Сделать подсчёт остатка времени
-                                    float lastTime = 0;
-
-                                    if (normtime[1] > 0)
-                                    {
-                                        float norm = amount / normtime[1];
-
-                                        if (norm > 0)
-                                        {
-                                            lastTime = lastAmount / norm;
-                                        }
-                                    }
-                                    
                                     normTimeFull = (int)lastTime;
                                 }
                                 else
@@ -1563,7 +1552,7 @@ namespace Productivity
                             subItem.SubItems.Add("    " + machines[user.Equip]);
                             subItem.SubItems.Add(order.OrderNumber);
                             subItem.SubItems.Add(order.OrderName);
-                            subItem.SubItems.Add(lastAmount.ToString("N0") + "/" + amount.ToString("N0"));
+                            subItem.SubItems.Add(lastAmount.ToString("N0") + " | " + amount.ToString("N0"));
                             subItem.SubItems.Add(time.MinuteToTimeString(normTimeFull));
                             subItem.SubItems.Add(user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin);
                             subItem.SubItems.Add(user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd);
@@ -1585,11 +1574,17 @@ namespace Productivity
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
-            LoadOrdersSelectedDateAndShift();
+            DateTime selectDate = dateTimePicker1.Value;
+            int selectShift = comboBox1.SelectedIndex + 1;
+
+            LoadOrdersSelectedDateAndShift(selectDate, selectShift);
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            LoadOrdersSelectedDateAndShift();
+            DateTime selectDate = dateTimePicker1.Value;
+            int selectShift = comboBox1.SelectedIndex + 1;
+
+            LoadOrdersSelectedDateAndShift(selectDate, selectShift);
         }
 
 
@@ -1620,6 +1615,8 @@ namespace Productivity
 
         private void metroSetTabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            
+
             if (metroSetTabControlPreviousIndex == 2)
             {
                 SaveCategoryToIniFile();
@@ -1628,30 +1625,34 @@ namespace Productivity
                 listViewEquips.Items.Clear();
             }
 
-            if (metroSetTabControl1.SelectedIndex == 0)
+            TabControlSelectedIndexChanged(metroSetTabControl1.SelectedIndex);
+
+            metroSetTabControlPreviousIndex = metroSetTabControl1.SelectedIndex;
+        }
+
+        private void TabControlSelectedIndexChanged(int selectedIndex)
+        {
+            INISettings settings = new INISettings();
+
+            if (selectedIndex == 0)
             {
-                if (metroSetSwitch1.Switched)
-                {
-                    metroSetSwitch1.Switched = true;
-                }
-                else
-                {
-                    //Сделать загрузку из файла настроек. Сохранять последнюю открытую смену
-                }
+                metroSetSwitch1.Switched = settings.GetLoadCurrentShift();
+                metroSetSwitch2.Switched = settings.GetAutoUpdateStatistic();
+                formattedNumericUpDown4.Value = settings.GetPeriodAutoUpdateStatistic();
             }
 
-            if (metroSetTabControl1.SelectedIndex == 1)
+            if (selectedIndex == 1)
             {
                 UpdateStatistics();
             }
 
-            if (metroSetTabControl1.SelectedIndex == 2)
+            if (selectedIndex == 2)
             {
                 LoadCategoryToListView();
                 LoadParameterFromIniFile();
             }
 
-            metroSetTabControlPreviousIndex = metroSetTabControl1.SelectedIndex;
+            settings.SetLastTabIndex(selectedIndex);
         }
 
         private void LoadParameterFromIniFile()
@@ -1887,6 +1888,8 @@ namespace Productivity
 
         private void metroSetSwitch1_SwitchedChanged(object sender)
         {
+            INISettings settings = new INISettings();
+
             if (metroSetSwitch1.Switched)
             {
                 SelectCurrentShift();
@@ -1899,11 +1902,80 @@ namespace Productivity
                 dateTimePicker1.Enabled = true;
                 comboBox1.Enabled = true;
             }
+
+            settings.SetLoadCurrentShift(metroSetSwitch1.Switched);
+        }
+
+        private void LoadOrdersForSelectedDate()
+        {
+            if (metroSetSwitch1.Switched)
+            {
+                SelectCurrentShift();
+            }
+
+            DateTime selectDate = dateTimePicker1.Value;
+            int selectShift = comboBox1.SelectedIndex + 1;
+
+            LoadOrdersSelectedDateAndShift(selectDate, selectShift);
+
+            lastTimeUpdateShiftStatistic = DateTime.Now;
         }
 
         private void metroSetButton1_Click(object sender, EventArgs e)
         {
-            LoadOrdersSelectedDateAndShift();
+            LoadOrdersForSelectedDate();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (metroSetSwitch2.Switched)
+            {
+                int updatePeriod = (int)formattedNumericUpDown4.Value;
+                int lostMin = lastTimeUpdateShiftStatistic.AddMinutes(updatePeriod).Subtract(DateTime.Now).Minutes + 1;
+
+                button2.Text = "Обновление (" + lostMin + ")";
+
+                if (lastTimeUpdateShiftStatistic.AddMinutes(updatePeriod) <= DateTime.Now)
+                {
+                    LoadOrdersForSelectedDate();
+                }
+            }
+        }
+
+        private void metroSetSwitch2_SwitchedChanged(object sender)
+        {
+            INISettings settings = new INISettings();
+
+            if (metroSetSwitch2.Switched)
+            {
+                timer1.Enabled = true;
+
+                formattedNumericUpDown4.Visible = true;
+                metroSetLabel3.Visible = true;
+            }
+            else
+            {
+                timer1.Enabled = false;
+
+                formattedNumericUpDown4.Visible = false;
+                metroSetLabel3.Visible = false;
+
+                button2.Text = "Обновление";
+            }
+
+            settings.SetAutoUpdateStatistic(metroSetSwitch2.Switched);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            LoadOrdersForSelectedDate();
+        }
+
+        private void formattedNumericUpDown4_ValueChanged(object sender, EventArgs e)
+        {
+            INISettings settings = new INISettings();
+
+            settings.SetPeriodAutoUpdateStatistic((int)formattedNumericUpDown4.Value);
         }
     }
 }

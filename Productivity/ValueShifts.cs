@@ -316,6 +316,62 @@ namespace Productivity
             return result;
         }
 
+        public int GetAmountDoneFromPreviousShifts(int idManOrderJobItem, string startOrderDateTime)
+        {
+            int result = 0;
+
+            //ValueDateTime time = new ValueDateTime();
+
+            //string startOrder = time.
+
+            using (SqlConnection connection = DBConnection.GetDBConnection())
+            {
+                connection.Open();
+                SqlCommand Command = new SqlCommand
+                {
+                    Connection = connection,
+
+                    CommandText =
+                        @"SELECT
+	                        man_factjob.flags,
+	                        man_factjob.fact_out_qty
+                        FROM
+	                        dbo.man_factjob
+                        INNER JOIN
+	                        dbo.man_planjob_list
+                        ON 
+		                        man_factjob.id_man_planjob_list = man_planjob_list.id_man_planjob_list
+                        WHERE
+	                        --man_factjob.id_man_planjob_list = @idManOrderJobItem AND
+	                        id_man_order_job_item = @idManOrderJobItem AND
+	                        date_begin < CONVERT ( VARCHAR ( 24 ), @startShiftForDB, 21 ) AND
+	                        fact_out_qty IS NOT NULL
+                        ORDER BY date_begin"
+
+                };
+                Command.Parameters.AddWithValue("@startShiftForDB", startOrderDateTime);
+                Command.Parameters.AddWithValue("@idManOrderJobItem", idManOrderJobItem);
+
+                DbDataReader sqlReader = Command.ExecuteReader();
+
+                while (sqlReader.Read())
+                {
+                    if (Convert.ToInt32(sqlReader["flags"]) != 576)
+                    {
+                        result += Convert.ToInt32(sqlReader["fact_out_qty"]);
+                    }
+                    else
+                    {
+
+                    }
+                }
+
+                connection.Close();
+            }
+
+            return result;
+        }
+
 
 
 

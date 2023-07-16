@@ -121,6 +121,66 @@ namespace OrderManager
             SetParameter("main", "loadAllEquipForUser", value.ToString());
         }
 
+        public bool GetLoadCurrentShift()
+        {
+            bool result = false;
+
+            result = GetParameterBoolean("statistic", "loadCurrentShift");
+
+            return result;
+        }
+
+        public bool GetAutoUpdateStatistic()
+        {
+            bool result = false;
+
+            result = GetParameterBoolean("statistic", "autoUpdateStatistic");
+
+            return result;
+        }
+
+        public int GetPeriodAutoUpdateStatistic()
+        {
+            int result = 0;
+
+            result = GetParameterNumber("statistic", "periodAutoUpdateStatistic");
+
+            return result;
+        }
+
+        public void SetLoadCurrentShift(bool value)
+        {
+            SetParameter("statistic", "loadCurrentShift", value.ToString());
+        }
+
+        public void SetAutoUpdateStatistic(bool value)
+        {
+            SetParameter("statistic", "autoUpdateStatistic", value.ToString());
+        }
+
+        public void SetPeriodAutoUpdateStatistic(int value)
+        {
+            SetParameter("statistic", "periodAutoUpdateStatistic", value.ToString());
+        }
+
+        public int GetLastTabIndex()
+        {
+            int result = 0;
+
+            result = GetParameterNumber("main", "lastTabIndex");
+
+            return result;
+        }
+
+        public void SetLastTabIndex(int value)
+        {
+            SetParameter("main", "lastTabIndex", value.ToString());
+        }
+
+
+
+
+
 
         public bool GetAutoUpdate()
         {

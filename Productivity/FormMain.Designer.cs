@@ -61,6 +61,7 @@ namespace Productivity
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.metroSetTabControl1 = new MetroSet_UI.Controls.MetroSetTabControl();
             this.metroSetSetTabPage1 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -87,7 +88,7 @@ namespace Productivity
             this.metroSetLabel2 = new MetroSet_UI.Controls.MetroSetLabel();
             this.metroSetLabel3 = new MetroSet_UI.Controls.MetroSetLabel();
             this.formattedNumericUpDown4 = new Productivity.FormattedNumericUpDown();
-            this.metroSetButton1 = new MetroSet_UI.Controls.MetroSetButton();
+            this.button2 = new System.Windows.Forms.Button();
             this.metroSetSetTabPage2 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.dataGridView1 = new Productivity.FormMain.DoubleBufferedDataGridView();
@@ -128,6 +129,7 @@ namespace Productivity
             this.metroSetCheckBox1 = new MetroSet_UI.Controls.MetroSetCheckBox();
             this.metroSetSetTabPage4 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.metroSetControlBox1 = new MetroSet_UI.Controls.MetroSetControlBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.metroSetTabControl1.SuspendLayout();
             this.metroSetSetTabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -160,7 +162,7 @@ namespace Productivity
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage2);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage3);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage4);
-            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Default;
             this.metroSetTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroSetTabControl1.IsDerivedStyle = true;
             this.metroSetTabControl1.ItemSize = new System.Drawing.Size(130, 38);
@@ -325,6 +327,7 @@ namespace Productivity
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel2.Controls.Add(this.dateTimePicker1, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.comboBox1, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroSetSwitch1, 2, 0);
@@ -333,7 +336,7 @@ namespace Productivity
             this.tableLayoutPanel2.Controls.Add(this.metroSetLabel2, 6, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroSetLabel3, 8, 0);
             this.tableLayoutPanel2.Controls.Add(this.formattedNumericUpDown4, 7, 0);
-            this.tableLayoutPanel2.Controls.Add(this.metroSetButton1, 4, 0);
+            this.tableLayoutPanel2.Controls.Add(this.button2, 4, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -434,6 +437,7 @@ namespace Productivity
             this.metroSetSwitch2.ThemeAuthor = "Narwin";
             this.metroSetSwitch2.ThemeName = "MetroLite";
             this.metroSetSwitch2.UnCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(155)))), ((int)(((byte)(155)))));
+            this.metroSetSwitch2.SwitchedChanged += new MetroSet_UI.Controls.MetroSetSwitch.SwitchedChangedEventHandler(this.metroSetSwitch2_SwitchedChanged);
             // 
             // metroSetLabel2
             // 
@@ -471,37 +475,37 @@ namespace Productivity
             // 
             this.formattedNumericUpDown4.Format = null;
             this.formattedNumericUpDown4.Location = new System.Drawing.Point(991, 3);
+            this.formattedNumericUpDown4.Maximum = new decimal(new int[] {
+            720,
+            0,
+            0,
+            0});
+            this.formattedNumericUpDown4.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.formattedNumericUpDown4.Name = "formattedNumericUpDown4";
             this.formattedNumericUpDown4.Size = new System.Drawing.Size(54, 23);
             this.formattedNumericUpDown4.TabIndex = 10;
+            this.formattedNumericUpDown4.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.formattedNumericUpDown4.ValueChanged += new System.EventHandler(this.formattedNumericUpDown4_ValueChanged);
             // 
-            // metroSetButton1
+            // button2
             // 
-            this.metroSetButton1.DisabledBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.metroSetButton1.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.metroSetButton1.DisabledForeColor = System.Drawing.Color.Gray;
-            this.metroSetButton1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroSetButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.metroSetButton1.HoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(207)))), ((int)(((byte)(255)))));
-            this.metroSetButton1.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(207)))), ((int)(((byte)(255)))));
-            this.metroSetButton1.HoverTextColor = System.Drawing.Color.White;
-            this.metroSetButton1.IsDerivedStyle = true;
-            this.metroSetButton1.Location = new System.Drawing.Point(627, 3);
-            this.metroSetButton1.Name = "metroSetButton1";
-            this.metroSetButton1.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.metroSetButton1.NormalColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.metroSetButton1.NormalTextColor = System.Drawing.Color.White;
-            this.metroSetButton1.PressBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(147)))), ((int)(((byte)(195)))));
-            this.metroSetButton1.PressColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(147)))), ((int)(((byte)(195)))));
-            this.metroSetButton1.PressTextColor = System.Drawing.Color.White;
-            this.metroSetButton1.Size = new System.Drawing.Size(154, 24);
-            this.metroSetButton1.Style = MetroSet_UI.Enums.Style.Light;
-            this.metroSetButton1.StyleManager = null;
-            this.metroSetButton1.TabIndex = 11;
-            this.metroSetButton1.Text = "Обновление";
-            this.metroSetButton1.ThemeAuthor = "Narwin";
-            this.metroSetButton1.ThemeName = "MetroLite";
-            this.metroSetButton1.Click += new System.EventHandler(this.metroSetButton1_Click);
+            this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button2.Location = new System.Drawing.Point(627, 3);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(154, 24);
+            this.button2.TabIndex = 12;
+            this.button2.Text = "Обновление";
+            this.button2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // metroSetSetTabPage2
             // 
@@ -1092,6 +1096,11 @@ namespace Productivity
             this.metroSetControlBox1.ThemeAuthor = "Narwin";
             this.metroSetControlBox1.ThemeName = "MetroLite";
             // 
+            // timer1
+            // 
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
@@ -1203,7 +1212,8 @@ namespace Productivity
         private ColumnHeader columnHeader16;
         private ColumnHeader columnHeader18;
         private FormattedNumericUpDown formattedNumericUpDown4;
-        private MetroSet_UI.Controls.MetroSetButton metroSetButton1;
+        private Timer timer1;
+        private Button button2;
     }
 }
 
