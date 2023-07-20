@@ -1539,6 +1539,7 @@ namespace Productivity
                             int done = 0;
                             int duration = 0;
                             int amount = 0;
+                            string timeEnd = "";
                             string timePlanedEndOrder = "";
                             int normTimeMakeReady = 0;
                             int normTimeWork = 0;
@@ -1547,6 +1548,11 @@ namespace Productivity
                             for (int l = 0; l < indexesUserShiftsOrders.Count; l++)
                             {
                                 UserShiftOrder orderCur = user.Shifts[0].Orders[indexesUserShiftsOrders[l]];
+
+                                string firstTimeBegin = user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin;
+                                string lastTimeBegin = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateBegin;
+                                string firstTimeEnd = user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateEnd;
+                                string lastTimeEnd = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
 
                                 workingOut += CalculateWorkTimeForOneOrder(orderCur);
 
@@ -1570,7 +1576,7 @@ namespace Productivity
                             int lastAmount = amount - orderPreviousAmount;
                             //MessageBox.Show(lastAmount + " = " + order.PlanOutQty + " - " + orderPreviousAmount);
 
-                            userWorkingOut += (int)workingOut;
+                            userWorkingOut += workingOut;
                             userDone += done;
 
                             int[] normtime = shifts.GetNormTimeForOrder(order.IdManOrderJobItem);
@@ -1599,6 +1605,8 @@ namespace Productivity
                                     normTimeFull = normTimeMakeReady + normTimeWork;
                                 }
 
+                                timeEnd = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
+
                                 timePlanedEndOrder = time.DateTimeAmountMunutes(timeStartShift, (int)userWorkingOut);
 
                                 differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd);
@@ -1614,10 +1622,23 @@ namespace Productivity
                                 {
                                     normTimeFull = normtime[0] + normtime[1];
                                 }
-                                
-                                timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull);
 
-                                differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, DateTime.Now.ToString());
+                                //timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull);
+
+                                //if (user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin == user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd)
+                                if (user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateBegin == user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd)
+                                {
+                                    timeEnd = "выполняется";
+                                    timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull);
+                                    differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, DateTime.Now.ToString());
+                                    duration = time.DateDifferenceToMinutes(DateTime.Now.ToString(), user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin);
+                                }
+                                else
+                                {
+                                    timeEnd = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
+                                    timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, (int)workingOut);
+                                    differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd);
+                                }
                             }
 
                             indexRow = dataGridViewOneShift.Rows.Add();
@@ -1631,7 +1652,8 @@ namespace Productivity
                             dataGridViewOneShift.Rows[indexRow].Cells[4].Value = lastAmount.ToString("N0") + " | " + amount.ToString("N0");
                             dataGridViewOneShift.Rows[indexRow].Cells[5].Value = time.MinuteToTimeString(normTimeFull);
                             dataGridViewOneShift.Rows[indexRow].Cells[6].Value = user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin;
-                            dataGridViewOneShift.Rows[indexRow].Cells[7].Value = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
+                            //dataGridViewOneShift.Rows[indexRow].Cells[7].Value = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
+                            dataGridViewOneShift.Rows[indexRow].Cells[7].Value = timeEnd;
                             dataGridViewOneShift.Rows[indexRow].Cells[8].Value = time.MinuteToTimeString(duration);
                             dataGridViewOneShift.Rows[indexRow].Cells[9].Value = timePlanedEndOrder;
                             dataGridViewOneShift.Rows[indexRow].Cells[10].Value = time.MinuteToTimeString(differentTime);
