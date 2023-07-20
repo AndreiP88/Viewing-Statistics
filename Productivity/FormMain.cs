@@ -1353,7 +1353,7 @@ namespace Productivity
         {
             DateTime dateTime = DateTime.Now;
 
-            if (dateTime.Hour < 8 || dateTime.Hour >= 20)
+            if (dateTime.Hour >= 20 && dateTime.Hour <= 23 || dateTime.Hour >= 0 && dateTime.Hour < 8)
             {
                 comboBox1.SelectedIndex = 1;
             }
@@ -1362,7 +1362,7 @@ namespace Productivity
                 comboBox1.SelectedIndex = 0;
             }
 
-            if (dateTime.Hour < 8 && dateTime.Hour >= 0)
+            if (dateTime.Hour >= 0 && dateTime.Hour < 8)
             {
                 dateTimePicker1.Value = dateTime.AddDays(-1);
             }
@@ -1378,7 +1378,49 @@ namespace Productivity
 
             DateTime currentTime = DateTime.Now;
 
-            if (shift == 1)
+            if (currentTime.ToString("dd.MM.yyyy") == dateTime.ToString("dd.MM.yyyy"))
+            {
+                if (shift == 1)
+                {
+                    if (currentTime.Hour >= 8 && currentTime.Hour < 20)
+                    {
+                        result = true;
+                        //MessageBox.Show(1.ToString());
+                    }
+                }
+                if (shift == 2)
+                {
+                    if (currentTime.Hour >= 20 && currentTime.Hour <= 23)
+                    {
+                        result = true;
+                        //MessageBox.Show(2.ToString());
+                    }
+                }
+                /*else
+                {
+                    result = false;
+                    MessageBox.Show(3.ToString());
+                }*/
+            }
+            else if (currentTime.AddDays(-1).ToString("dd.MM.yyyy") == dateTime.ToString("dd.MM.yyyy"))
+            {
+                if (shift == 1)
+                {
+                    result = false;
+                    //MessageBox.Show(4.ToString());
+                }
+                else if (shift == 2)
+                {
+                    if (currentTime.Hour >= 0 && currentTime.Hour < 8)
+                    {
+                        result = true;
+                        //MessageBox.Show(5.ToString());
+                    } 
+                }
+            } 
+
+
+            /*if (shift == 1)
             {
                 if (currentTime.ToString("dd.MM.yyyy") == dateTime.ToString("dd.MM.yyyy"))
                     result = true;
@@ -1387,12 +1429,62 @@ namespace Productivity
             }
             else
             {
-                if (currentTime.ToString("dd.MM.yyyy") == dateTime.ToString("dd.MM.yyyy") && (currentTime.Hour < 0 && currentTime.Hour >= 20))
-                    result = true;
-                else if (currentTime.AddDays(-1).ToString("dd.MM.yyyy") == dateTime.ToString("dd.MM.yyyy") && (currentTime.Hour < 8 && currentTime.Hour >= 0))
-                    result = true;
-                else
-                    result = false;
+                if (currentTime.ToString("dd.MM.yyyy") == dateTime.ToString("dd.MM.yyyy"))
+                    if (currentTime.Hour >= 20 && currentTime.Hour < 0)
+                        result = true;
+                    else
+                        result = false;
+                else if (currentTime.ToString("dd.MM.yyyy") == dateTime.AddDays(1).ToString("dd.MM.yyyy"))
+                    if (currentTime.Hour >= 0 && currentTime.Hour < 8)
+                        result = true;
+                    else
+                        result = false;
+            }*/
+            //MessageBox.Show(currentTime.ToString("dd.MM.yyyy") + " == " + dateTime.ToString("dd.MM.yyyy") + " - " + result.ToString() + ", Время: " + currentTime.Hour + ", Смена: " + shift);
+            return result;
+        }
+
+        private int AddDinnerTimeToWorkingOut(string firstTime, string secondTime)
+        {
+            int result = 0;
+
+            int dinnerTime = 35;
+
+            string fDinnerTimeDay = "11:30";
+            string sDinnerTimeDay = "15:30";
+
+            TimeSpan firstDinnerTimeDay = TimeSpan.Parse(fDinnerTimeDay);
+            TimeSpan secondDinnerTimeDay = TimeSpan.Parse(sDinnerTimeDay);
+
+            string fDinnerTimeNight = "23:30";
+            string sDinnerTimeNight = "03:30";
+
+            TimeSpan firstDinnerTimeNight = TimeSpan.Parse(fDinnerTimeNight);
+            TimeSpan secondDinnerTimeNight = TimeSpan.Parse(sDinnerTimeNight);
+
+            //DateTime firstDinnerStart = DateTime.;
+
+            DateTime dtFirstTime = Convert.ToDateTime(firstTime);
+            DateTime dtSecondTime = Convert.ToDateTime(secondTime);
+
+            if (dtFirstTime.TimeOfDay < firstDinnerTimeDay && firstDinnerTimeDay < dtSecondTime.TimeOfDay)
+            {
+                result += dinnerTime;
+            }
+
+            if (dtFirstTime.TimeOfDay < secondDinnerTimeDay && secondDinnerTimeDay < dtSecondTime.TimeOfDay)
+            {
+                result += dinnerTime;
+            }
+
+            if (dtFirstTime.TimeOfDay < firstDinnerTimeNight && firstDinnerTimeNight < dtSecondTime.TimeOfDay)
+            {
+                result += dinnerTime;
+            }
+
+            if (dtFirstTime.TimeOfDay < secondDinnerTimeNight && secondDinnerTimeNight < dtSecondTime.TimeOfDay)
+            {
+                result += dinnerTime;
             }
 
             return result;
@@ -1500,6 +1592,7 @@ namespace Productivity
 
                 float userWorkingOut = 0;
                 int userDone = 0;
+                int dinnerTime = 0;
                 //int indexRowForUser = listView1.Items.Count - 1;
 
                 for (int j = 0; j < usersShiftList.Count; j++)
@@ -1535,6 +1628,13 @@ namespace Productivity
 
                             int orderPreviousAmount = shifts.GetAmountDoneFromPreviousShifts(ordersIdManOrderJobItem[k], order.DateBegin);
 
+                            string firstTimeBegin = user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin;
+                            string lastTimeBegin = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateBegin;
+                            string firstTimeEnd = user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateEnd;
+                            string lastTimeEnd = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
+
+                            dinnerTime += AddDinnerTimeToWorkingOut(firstTimeBegin, lastTimeEnd);
+
                             float workingOut = 0;
                             int done = 0;
                             int duration = 0;
@@ -1548,11 +1648,6 @@ namespace Productivity
                             for (int l = 0; l < indexesUserShiftsOrders.Count; l++)
                             {
                                 UserShiftOrder orderCur = user.Shifts[0].Orders[indexesUserShiftsOrders[l]];
-
-                                string firstTimeBegin = user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin;
-                                string lastTimeBegin = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateBegin;
-                                string firstTimeEnd = user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateEnd;
-                                string lastTimeEnd = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
 
                                 workingOut += CalculateWorkTimeForOneOrder(orderCur);
 
@@ -1605,11 +1700,11 @@ namespace Productivity
                                     normTimeFull = normTimeMakeReady + normTimeWork;
                                 }
 
-                                timeEnd = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
+                                timeEnd = lastTimeEnd;
 
-                                timePlanedEndOrder = time.DateTimeAmountMunutes(timeStartShift, (int)userWorkingOut);
+                                timePlanedEndOrder = time.DateTimeAmountMunutes(timeStartShift, (int)userWorkingOut + dinnerTime);
 
-                                differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd);
+                                differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, lastTimeEnd);
                             }
 
                             if (order.Status != 2)
@@ -1626,18 +1721,18 @@ namespace Productivity
                                 //timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull);
 
                                 //if (user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin == user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd)
-                                if (user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateBegin == user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd)
+                                if (lastTimeBegin == lastTimeEnd)
                                 {
                                     timeEnd = "выполняется";
-                                    timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull);
+                                    timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull + dinnerTime);
                                     differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, DateTime.Now.ToString());
-                                    duration = time.DateDifferenceToMinutes(DateTime.Now.ToString(), user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin);
+                                    duration = time.DateDifferenceToMinutes(DateTime.Now.ToString(), firstTimeBegin);
                                 }
                                 else
                                 {
-                                    timeEnd = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
-                                    timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, (int)workingOut);
-                                    differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd);
+                                    timeEnd = lastTimeEnd;
+                                    timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, (int)workingOut + dinnerTime);
+                                    differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, lastTimeEnd);
                                 }
                             }
 
@@ -1651,7 +1746,7 @@ namespace Productivity
                             dataGridViewOneShift.Rows[indexRow].Cells[3].Value = order.OrderName;
                             dataGridViewOneShift.Rows[indexRow].Cells[4].Value = lastAmount.ToString("N0") + " | " + amount.ToString("N0");
                             dataGridViewOneShift.Rows[indexRow].Cells[5].Value = time.MinuteToTimeString(normTimeFull);
-                            dataGridViewOneShift.Rows[indexRow].Cells[6].Value = user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin;
+                            dataGridViewOneShift.Rows[indexRow].Cells[6].Value = firstTimeBegin;
                             //dataGridViewOneShift.Rows[indexRow].Cells[7].Value = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
                             dataGridViewOneShift.Rows[indexRow].Cells[7].Value = timeEnd;
                             dataGridViewOneShift.Rows[indexRow].Cells[8].Value = time.MinuteToTimeString(duration);
@@ -2032,7 +2127,7 @@ namespace Productivity
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (metroSetSwitch2.Switched && CheckCurrentShift(dateTimePicker1.Value, comboBox1.SelectedIndex + 1))
+            if (metroSetSwitch2.Switched)
             {
                 int updatePeriod = (int)formattedNumericUpDown4.Value;
                 int lostMin = lastTimeUpdateShiftStatistic.AddMinutes(updatePeriod).Subtract(DateTime.Now).Minutes + 1;
