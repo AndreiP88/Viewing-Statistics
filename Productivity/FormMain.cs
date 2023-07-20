@@ -1449,7 +1449,6 @@ namespace Productivity
             ChangeStateTimer();
 
             CreateColomnsToDataGridForOneShift();
-            listView1.Items.Clear();
 
             ValueShifts shifts = new ValueShifts();
             ValueDateTime time = new ValueDateTime();
@@ -1499,32 +1498,9 @@ namespace Productivity
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.BackColor = Color.Gray;
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
 
-                ListViewItem item = new ListViewItem();
-
-                item.Name = "u" + usersCurrent[i].ToString();
-                item.Text = (i + 1).ToString();
-                item.SubItems.Add(users[usersCurrent[i]]);
-                item.SubItems.Add("");
-                item.SubItems.Add("");
-                item.SubItems.Add("");
-                item.SubItems.Add("");
-                item.SubItems.Add("");
-                item.SubItems.Add("");
-                item.SubItems.Add("");
-                item.SubItems.Add("");
-                item.SubItems.Add("");
-                item.SubItems.Add("");
-                item.SubItems.Add("");
-                item.SubItems.Add("");
-
-                item.BackColor = Color.Gray;
-                item.Font = new Font(listView1.Font, FontStyle.Bold);
-
-                listView1.Items.Add(item);
-
                 float userWorkingOut = 0;
                 int userDone = 0;
-                int indexRowForUser = listView1.Items.Count - 1;
+                //int indexRowForUser = listView1.Items.Count - 1;
 
                 for (int j = 0; j < usersShiftList.Count; j++)
                 {
@@ -1661,32 +1637,11 @@ namespace Productivity
                             dataGridViewOneShift.Rows[indexRow].Cells[10].Value = time.MinuteToTimeString(differentTime);
                             dataGridViewOneShift.Rows[indexRow].Cells[11].Value = done.ToString("N0");
                             dataGridViewOneShift.Rows[indexRow].Cells[12].Value = time.MinuteToTimeString((int)workingOut);
-
-                            ListViewItem subItem = new ListViewItem();
-
-                            subItem.Name = user.Id.ToString();
-                            subItem.Text = (k + 1).ToString();
-                            //subItem.SubItems.Add("");
-                            subItem.SubItems.Add("    " + machines[user.Equip]);
-                            subItem.SubItems.Add(order.OrderNumber);
-                            subItem.SubItems.Add(order.OrderName);
-                            subItem.SubItems.Add(lastAmount.ToString("N0") + " | " + amount.ToString("N0"));
-                            subItem.SubItems.Add(time.MinuteToTimeString(normTimeFull));
-                            subItem.SubItems.Add(user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin);
-                            subItem.SubItems.Add(user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd);
-                            subItem.SubItems.Add(time.MinuteToTimeString(duration));
-                            subItem.SubItems.Add(timePlanedEndOrder);
-                            subItem.SubItems.Add(time.MinuteToTimeString(differentTime));
-                            subItem.SubItems.Add(done.ToString("N0"));
-                            subItem.SubItems.Add(time.MinuteToTimeString((int)workingOut));
-
-                            listView1.Items.Add(subItem);
                         }
                     }
                 }
 
                 indexRow = dataGridViewOneShift.Rows.Add();
-
                 
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.Font = new Font(dataGridView1.Font, FontStyle.Bold);
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.BackColor = Color.Silver;
@@ -1694,9 +1649,6 @@ namespace Productivity
 
                 dataGridViewOneShift.Rows[indexRow].Cells[11].Value = userDone.ToString("N0");
                 dataGridViewOneShift.Rows[indexRow].Cells[12].Value = time.MinuteToTimeString((int)userWorkingOut);
-
-                listView1.Items[indexRowForUser].SubItems[11].Text = userDone.ToString("N0");
-                listView1.Items[indexRowForUser].SubItems[12].Text = time.MinuteToTimeString((int)userWorkingOut);
             }
         }
 
