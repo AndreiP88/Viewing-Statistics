@@ -65,6 +65,7 @@ namespace Productivity
             this.metroSetTabControl1 = new MetroSet_UI.Controls.MetroSetTabControl();
             this.metroSetSetTabPage1 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.dataGridViewOneShift = new Productivity.FormMain.DoubleBufferedDataGridView();
             this.listView1 = new Productivity.FormMain.MyListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -133,6 +134,7 @@ namespace Productivity
             this.metroSetTabControl1.SuspendLayout();
             this.metroSetSetTabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOneShift)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown4)).BeginInit();
             this.metroSetSetTabPage2.SuspendLayout();
@@ -207,17 +209,38 @@ namespace Productivity
             this.tableLayoutPanel1.BackColor = System.Drawing.SystemColors.ButtonHighlight;
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.dataGridViewOneShift, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.listView1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.ForeColor = System.Drawing.Color.Transparent;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 1F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1268, 472);
             this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // dataGridViewOneShift
+            // 
+            this.dataGridViewOneShift.AllowUserToAddRows = false;
+            this.dataGridViewOneShift.AllowUserToDeleteRows = false;
+            this.dataGridViewOneShift.BackgroundColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.dataGridViewOneShift.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewOneShift.ColumnHeadersVisible = false;
+            this.tableLayoutPanel1.SetColumnSpan(this.dataGridViewOneShift, 2);
+            this.dataGridViewOneShift.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridViewOneShift.Location = new System.Drawing.Point(3, 40);
+            this.dataGridViewOneShift.MultiSelect = false;
+            this.dataGridViewOneShift.Name = "dataGridViewOneShift";
+            this.dataGridViewOneShift.ReadOnly = true;
+            this.dataGridViewOneShift.RowHeadersVisible = false;
+            this.dataGridViewOneShift.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            this.dataGridViewOneShift.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridViewOneShift.Size = new System.Drawing.Size(1262, 429);
+            this.dataGridViewOneShift.TabIndex = 4;
             // 
             // listView1
             // 
@@ -244,7 +267,7 @@ namespace Productivity
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.ShowItemToolTips = true;
-            this.listView1.Size = new System.Drawing.Size(1262, 430);
+            this.listView1.Size = new System.Drawing.Size(1262, 1);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -271,7 +294,7 @@ namespace Productivity
             // 
             // columnHeader16
             // 
-            this.columnHeader16.Text = "Остаток/Тираж";
+            this.columnHeader16.Text = "Остаток | Тираж";
             this.columnHeader16.Width = 120;
             // 
             // columnHeader18
@@ -498,6 +521,7 @@ namespace Productivity
             // button2
             // 
             this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button2.ForeColor = System.Drawing.Color.Black;
             this.button2.Location = new System.Drawing.Point(627, 3);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(154, 24);
@@ -1121,6 +1145,7 @@ namespace Productivity
             this.metroSetTabControl1.ResumeLayout(false);
             this.metroSetSetTabPage1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOneShift)).EndInit();
             this.tableLayoutPanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown4)).EndInit();
             this.metroSetSetTabPage2.ResumeLayout(false);
@@ -1214,6 +1239,7 @@ namespace Productivity
         private FormattedNumericUpDown formattedNumericUpDown4;
         private Timer timer1;
         private Button button2;
+        private DoubleBufferedDataGridView dataGridViewOneShift;
     }
 }
 

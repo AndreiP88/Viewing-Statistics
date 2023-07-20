@@ -12,6 +12,7 @@ using static System.Collections.Specialized.BitVector32;
 using OrderManager;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Security.Policy;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Productivity
 {
@@ -536,6 +537,22 @@ namespace Productivity
             {
                 dataGridView1.Rows[indexRow].Cells[j] = new HMergedCell();
                 pCell = (HMergedCell)dataGridView1.Rows[indexRow].Cells[j];
+                pCell.LeftColumn = indexCell;
+                pCell.RightColumn = indexCell + collSpan - 1;
+            }
+            //nOffset += collSpan + 1;
+        }
+
+        private void AddCellToGrid(DataGridView dataGrid, int indexRow, int indexCell, int collSpan = 1)
+        {
+            HMergedCell pCell;
+
+            //int nOffset = indexCell;
+
+            for (int j = indexCell; j < indexCell + collSpan; j++)
+            {
+                dataGrid.Rows[indexRow].Cells[j] = new HMergedCell();
+                pCell = (HMergedCell)dataGrid.Rows[indexRow].Cells[j];
                 pCell.LeftColumn = indexCell;
                 pCell.RightColumn = indexCell + collSpan - 1;
             }
@@ -1355,8 +1372,83 @@ namespace Productivity
             }
         }
 
+        private bool CheckCurrentShift(DateTime dateTime, int shift) 
+        {
+            bool result = false;
+
+            DateTime currentTime = DateTime.Now;
+
+            if (shift == 1)
+            {
+                if (currentTime.ToString("dd.MM.yyyy") == dateTime.ToString("dd.MM.yyyy"))
+                    result = true;
+                else
+                    result = false;
+            }
+            else
+            {
+                if (currentTime.ToString("dd.MM.yyyy") == dateTime.ToString("dd.MM.yyyy") && (currentTime.Hour < 0 && currentTime.Hour >= 20))
+                    result = true;
+                else if (currentTime.AddDays(-1).ToString("dd.MM.yyyy") == dateTime.ToString("dd.MM.yyyy") && (currentTime.Hour < 8 && currentTime.Hour >= 0))
+                    result = true;
+                else
+                    result = false;
+            }
+
+            return result;
+        }
+
+        private void CreateColomnsToDataGridForOneShift()
+        {
+            INISettings settings = new INISettings();
+
+            int countShifts = settings.GetCountShifts();
+
+            dataGridViewOneShift.Rows.Clear();
+            dataGridViewOneShift.Columns.Clear();
+
+            string[] colNames = { "№", "Имя", "Заказ", "Заказчик", "Остаток | Тираж", "Дано времени", "Начало", "Завершение", "Продолжительность", "Планируемое время завершения", "Отклонение", "Сделано", "Выработка" };
+            int[] colWidth = { 35, 300, 90, 260, 160, 120, 160, 160, 120, 160, 120, 80, 80 };
+
+            for (int i = 0; i < colNames.Length; i++)
+            {
+                int indexCol = dataGridViewOneShift.Columns.Add(colNames[i], colNames[i]);
+                dataGridViewOneShift.Columns[indexCol].Width = colWidth[i];
+                dataGridViewOneShift.Columns[indexCol].SortMode = DataGridViewColumnSortMode.NotSortable;
+
+                if (i == 0)
+                {
+                    dataGridViewOneShift.Columns[indexCol].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                    dataGridViewOneShift.Columns[indexCol].Frozen = true;
+                }
+                else if (i == 1)
+                {
+                    dataGridViewOneShift.Columns[indexCol].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                    dataGridViewOneShift.Columns[indexCol].Frozen = true;
+                }
+                else
+                {
+                    dataGridViewOneShift.Columns[indexCol].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                    dataGridViewOneShift.Columns[indexCol].Frozen = false;
+                }
+            }
+
+            dataGridViewOneShift.Rows.Add();
+            dataGridViewOneShift.Rows[0].Height = 60;
+            dataGridViewOneShift.Rows[0].Frozen = true;
+
+            for (int i = 0; i < colNames.Length; i++)
+            {
+                AddCellToGrid(dataGridViewOneShift, 0, i);
+                dataGridViewOneShift.Rows[0].Cells[i].Value = colNames[i];
+            }
+        }
+
         private void LoadOrdersSelectedDateAndShift(DateTime selectDate, int selectShift)
         {
+            ChangeStateTimer();
+
+            CreateColomnsToDataGridForOneShift();
             listView1.Items.Clear();
 
             ValueShifts shifts = new ValueShifts();
@@ -1399,6 +1491,14 @@ namespace Productivity
 
             for (int i = 0; i < usersCurrent.Count; i++)
             {
+                int indexRow = dataGridViewOneShift.Rows.Add();
+
+                dataGridViewOneShift.Rows[indexRow].Cells[0].Value = (i + 1).ToString();
+                dataGridViewOneShift.Rows[indexRow].Cells[1].Value = users[usersCurrent[i]];
+                dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.Font = new Font(dataGridView1.Font, FontStyle.Bold);
+                dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.BackColor = Color.Gray;
+                dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
+
                 ListViewItem item = new ListViewItem();
 
                 item.Name = "u" + usersCurrent[i].ToString();
@@ -1544,6 +1644,24 @@ namespace Productivity
                                 differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, DateTime.Now.ToString());
                             }
 
+                            indexRow = dataGridViewOneShift.Rows.Add();
+
+                            dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
+
+                            dataGridViewOneShift.Rows[indexRow].Cells[0].Value = (k + 1).ToString();
+                            dataGridViewOneShift.Rows[indexRow].Cells[1].Value = "    " + machines[user.Equip];
+                            dataGridViewOneShift.Rows[indexRow].Cells[2].Value = order.OrderNumber;
+                            dataGridViewOneShift.Rows[indexRow].Cells[3].Value = order.OrderName;
+                            dataGridViewOneShift.Rows[indexRow].Cells[4].Value = lastAmount.ToString("N0") + " | " + amount.ToString("N0");
+                            dataGridViewOneShift.Rows[indexRow].Cells[5].Value = time.MinuteToTimeString(normTimeFull);
+                            dataGridViewOneShift.Rows[indexRow].Cells[6].Value = user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin;
+                            dataGridViewOneShift.Rows[indexRow].Cells[7].Value = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
+                            dataGridViewOneShift.Rows[indexRow].Cells[8].Value = time.MinuteToTimeString(duration);
+                            dataGridViewOneShift.Rows[indexRow].Cells[9].Value = timePlanedEndOrder;
+                            dataGridViewOneShift.Rows[indexRow].Cells[10].Value = time.MinuteToTimeString(differentTime);
+                            dataGridViewOneShift.Rows[indexRow].Cells[11].Value = done.ToString("N0");
+                            dataGridViewOneShift.Rows[indexRow].Cells[12].Value = time.MinuteToTimeString((int)workingOut);
+
                             ListViewItem subItem = new ListViewItem();
 
                             subItem.Name = user.Id.ToString();
@@ -1566,6 +1684,16 @@ namespace Productivity
                         }
                     }
                 }
+
+                indexRow = dataGridViewOneShift.Rows.Add();
+
+                
+                dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.Font = new Font(dataGridView1.Font, FontStyle.Bold);
+                dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.BackColor = Color.Silver;
+                dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
+
+                dataGridViewOneShift.Rows[indexRow].Cells[11].Value = userDone.ToString("N0");
+                dataGridViewOneShift.Rows[indexRow].Cells[12].Value = time.MinuteToTimeString((int)userWorkingOut);
 
                 listView1.Items[indexRowForUser].SubItems[11].Text = userDone.ToString("N0");
                 listView1.Items[indexRowForUser].SubItems[12].Text = time.MinuteToTimeString((int)userWorkingOut);
@@ -1634,6 +1762,8 @@ namespace Productivity
 
             if (selectedIndex == 0)
             {
+                comboBox1.SelectedIndex = 0;
+
                 metroSetSwitch1.Switched = settings.GetLoadCurrentShift();
                 metroSetSwitch2.Switched = settings.GetAutoUpdateStatistic();
                 formattedNumericUpDown4.Value = settings.GetPeriodAutoUpdateStatistic();
@@ -1901,6 +2031,8 @@ namespace Productivity
                 comboBox1.Enabled = true;
             }
 
+            ChangeStateTimer();
+
             settings.SetLoadCurrentShift(metroSetSwitch1.Switched);
         }
 
@@ -1926,7 +2058,7 @@ namespace Productivity
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (metroSetSwitch2.Switched)
+            if (metroSetSwitch2.Switched && CheckCurrentShift(dateTimePicker1.Value, comboBox1.SelectedIndex + 1))
             {
                 int updatePeriod = (int)formattedNumericUpDown4.Value;
                 int lostMin = lastTimeUpdateShiftStatistic.AddMinutes(updatePeriod).Subtract(DateTime.Now).Minutes + 1;
@@ -1940,26 +2072,40 @@ namespace Productivity
             }
         }
 
+        private void ChangeStateTimer()
+        {
+            if (metroSetSwitch2.Switched && CheckCurrentShift(dateTimePicker1.Value, comboBox1.SelectedIndex + 1))
+            {
+                timer1.Enabled = true;
+            }
+            else
+            {
+                timer1.Enabled = false;
+
+                button2.Text = "Обновление";
+            }
+        }
+
         private void metroSetSwitch2_SwitchedChanged(object sender)
         {
             INISettings settings = new INISettings();
 
             if (metroSetSwitch2.Switched)
             {
-                timer1.Enabled = true;
+                //timer1.Enabled = true;
 
                 formattedNumericUpDown4.Visible = true;
                 metroSetLabel3.Visible = true;
             }
             else
             {
-                timer1.Enabled = false;
+                //timer1.Enabled = false;
 
                 formattedNumericUpDown4.Visible = false;
                 metroSetLabel3.Visible = false;
-
-                button2.Text = "Обновление";
             }
+
+            ChangeStateTimer();
 
             settings.SetAutoUpdateStatistic(metroSetSwitch2.Switched);
         }
