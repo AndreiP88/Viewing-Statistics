@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Category.cs" />
     <Compile Include="Equip.cs" />
+    <Compile Include="FileDownloader.cs" />
     <Compile Include="FormAddEquips.cs">
       <SubType>Form</SubType>
     </Compile>

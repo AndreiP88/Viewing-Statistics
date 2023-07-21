@@ -2,17 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
-using static System.ComponentModel.Design.ObjectSelectorEditor;
-using System.Xml.Linq;
-using static System.Collections.Specialized.BitVector32;
-using OrderManager;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Security.Policy;
-using static System.Net.Mime.MediaTypeNames;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 namespace Productivity
 {
@@ -35,6 +30,130 @@ namespace Productivity
         List<User> usersList;
 
         DateTime lastTimeUpdateShiftStatistic = DateTime.Now;
+
+        private void StartDowloadUpdater()
+        {
+            string fileTemp = "Update.exe";
+
+            string link = "https://drive.google.com/uc?export=download&id=1gNtqWboCGjdZ_FKPS-eKoHuVZr9mdgDH";
+
+            var task = Task.Run(() => DowloadUpdater(link, fileTemp));
+
+        }
+
+        private void DowloadUpdater(string link, string path)
+        {
+            FileDownloader downloader = new FileDownloader();
+
+            try
+            {
+                downloader.DownloadFile(link, path);
+            }
+            catch
+            {
+                //MessageBox.Show("Ошибка подключения", "Ошибка", MessageBoxButtons.OK);
+            }
+
+            Invoke(new Action(() =>
+            {
+                //MessageBox.Show(currentDateV.ToString() + " " + lastDateV.ToString());
+
+            }));
+        }
+
+        private void CreateFolder()
+        {
+            string path = @"TempDownload";
+            if (!Directory.Exists(path))
+            {
+                DirectoryInfo di = Directory.CreateDirectory(path);
+                di.Attributes = FileAttributes.Directory | FileAttributes.Hidden | FileAttributes.System;
+            }
+        }
+
+        private void StartCheckUpdate()
+        {
+            //MessageBox.Show("Запуск");
+
+            CreateFolder();
+
+            string pathTemp = @"TempDownload";
+
+            string fileTemp = "changlog.txt";
+
+            string link = "https://drive.google.com/uc?export=download&id=1gMfdWRsRONkljPkjlQt90vwPTF3kqL9w";
+
+            //cancelTokenSource = new CancellationTokenSource();
+
+            var task = Task.Run(() => CheckUpdate(link, pathTemp + "\\" + fileTemp));
+
+            //task.Wait();
+
+            //CheckUpdate(link, pathTemp + "\\" + fileTemp);
+
+            /*CancellationToken token = cancelTokenSource.Token;
+
+            Task task = new Task(() => LoadDetailsMount(token));
+
+            task.Start();*/
+        }
+
+        private void CheckUpdate(string link, string path)
+        {
+            FileDownloader downloader = new FileDownloader();
+            INISettings ini = new INISettings();
+
+            string[] chLog = null;
+
+            int lastDateV = 0;
+            int currentDateV = 0;
+
+            string lastDateVersion = ini.GetLastDateVersion();
+            string currentDateVersion = "";
+
+            try
+            {
+                var p = new Process();
+                p.StartInfo.FileName = "Update.exe";
+                p.StartInfo.Arguments = "update";
+
+                downloader.DownloadFile(link, path);
+                //downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
+                //downloader.DownloadFileCompleted += Downloader_DownloadFileCompleted;
+
+                chLog = File.ReadAllLines(path, Encoding.UTF8);
+                currentDateVersion = chLog[0].Substring(7);
+
+                if (currentDateVersion != "")
+                    currentDateV = Convert.ToInt32(currentDateVersion);
+
+                if (lastDateVersion != "")
+                {
+                    lastDateV = Convert.ToInt32(lastDateVersion);
+
+
+                    if (currentDateV > lastDateV)
+                    {
+                        p.Start();
+                    }
+                }
+                else
+                {
+                    p.Start();
+                }
+
+            }
+            catch
+            {
+                //MessageBox.Show("Ошибка подключения", "Ошибка", MessageBoxButtons.OK);
+            }
+
+            Invoke(new Action(() =>
+            {
+                //MessageBox.Show(currentDateV.ToString() + " " + lastDateV.ToString());
+
+            }));
+        }
 
         private void LoadAllUsers()
         {
@@ -63,7 +182,6 @@ namespace Productivity
                 MessageBox.Show(ex.Message, "Ошибка подключения");
             }
         }
-
 
         private void LoadCategoryToListView()
         {
@@ -1787,6 +1905,7 @@ namespace Productivity
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            StartCheckUpdate();
             LoadStartsValues();
         }
 

@@ -2,9 +2,9 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace OrderManager
+namespace Productivity
 {
-    internal class INISettings
+    public class INISettings
     {
         string iniFile;
 
