@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace Viewing_Statistics
+namespace libData
 {
-    internal class Page
+    public class Page
     {
         public int Id;
         public int TypePage;

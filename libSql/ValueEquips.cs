@@ -2,14 +2,10 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace Productivity
+namespace libSql
 {
-    internal class ValueEquips
+    public class ValueEquips
     {
         public Dictionary<int, string> LoadMachine()
         {

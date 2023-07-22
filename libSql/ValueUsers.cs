@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections;
+﻿using libData;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace Productivity
+namespace libSql
 {
-    internal class ValueUsers
+    public class ValueUsers
     {
         //Не используемый метод
         public List<User> LoadUsersList(List<int> equips, DateTime date)
@@ -236,7 +231,7 @@ namespace Productivity
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка подключения");
+                //MessageBox.Show(ex.Message, "Ошибка подключения");
             }
 
             return users;

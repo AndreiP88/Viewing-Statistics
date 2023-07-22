@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Productivity
+namespace libTime
 {
-    internal class ValueDateTime
+    public class ValueDateTime
     {
         public string SelectStartDateTimeFromShiftNumberAndDate(DateTime date, int shiftNumber)
         {

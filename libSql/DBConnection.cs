@@ -1,6 +1,6 @@
 ﻿using System.Data.SqlClient;
 
-namespace Productivity
+namespace libSql
 {
     public class DBConnection
     {

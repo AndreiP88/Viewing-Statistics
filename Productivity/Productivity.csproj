@@ -50,9 +50,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Category.cs" />
-    <Compile Include="Equip.cs" />
-    <Compile Include="FileDownloader.cs" />
     <Compile Include="FormAddEquips.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -66,28 +63,14 @@
       <DependentUpon>FormAddEditCategory.cs</DependentUpon>
     </Compile>
     <Compile Include="HMergedCell.cs" />
-    <Compile Include="IniFiles.cs" />
-    <Compile Include="INISettings.cs" />
-    <Compile Include="ValueCategoryes.cs" />
-    <Compile Include="WorkingOut.cs" />
-    <Compile Include="WorkingOutValue.cs" />
-    <Compile Include="ValueDateTime.cs" />
-    <Compile Include="DBConnection.cs" />
-    <Compile Include="DBSQLUtils.cs" />
-    <Compile Include="ValueEquips.cs" />
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserShiftOrder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="User.cs" />
-    <Compile Include="UserShift.cs" />
-    <Compile Include="ValueUsers.cs" />
-    <Compile Include="ValueShifts.cs" />
     <EmbeddedResource Include="FormAddEquips.resx">
       <DependentUpon>FormAddEquips.cs</DependentUpon>
     </EmbeddedResource>
@@ -119,6 +102,28 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libData\libData.csproj">
+      <Project>{f043bc6d-4696-4767-b259-eb34b320dd6e}</Project>
+      <Name>libData</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libGDriveDownload\libGDriveDownload.csproj">
+      <Project>{b138249a-2f07-4a9a-81b7-efba64ff3189}</Project>
+      <Name>libGDriveDownload</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libINIFile\libINIFile.csproj">
+      <Project>{542b8852-bebc-4d06-a887-2ecf33db1390}</Project>
+      <Name>libINIFile</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libSql\libSql.csproj">
+      <Project>{a9b42fd8-5b29-47e5-a6f4-8088e0d04217}</Project>
+      <Name>libSql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libTime\libTime.csproj">
+      <Project>{10789ff6-75c6-4606-a626-6a4465d0f494}</Project>
+      <Name>libTime</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

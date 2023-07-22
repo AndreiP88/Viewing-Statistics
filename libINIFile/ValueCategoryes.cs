@@ -1,12 +1,13 @@
-﻿using System;
+﻿using libData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Productivity
+namespace libINIFile
 {
-    internal class ValueCategoryes
+    public class ValueCategoryes
     {
         public List<Category> GetSelectedCategoriesAndEquipsList()
         {

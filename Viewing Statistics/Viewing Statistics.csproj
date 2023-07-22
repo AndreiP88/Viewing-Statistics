@@ -56,7 +56,7 @@
     <Compile Include="FormViewStatistic.Designer.cs">
       <DependentUpon>FormViewStatistic.cs</DependentUpon>
     </Compile>
-    <Compile Include="Page.cs" />
+    <Compile Include="HMergedCell.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FormViewStatistic.resx">
@@ -86,9 +86,25 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Productivity\Productivity.csproj">
-      <Project>{c720d93d-1870-4d01-8b2b-425bb3302cb5}</Project>
-      <Name>Productivity</Name>
+    <ProjectReference Include="..\libData\libData.csproj">
+      <Project>{f043bc6d-4696-4767-b259-eb34b320dd6e}</Project>
+      <Name>libData</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libGDriveDownload\libGDriveDownload.csproj">
+      <Project>{b138249a-2f07-4a9a-81b7-efba64ff3189}</Project>
+      <Name>libGDriveDownload</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libINIFile\libINIFile.csproj">
+      <Project>{542b8852-bebc-4d06-a887-2ecf33db1390}</Project>
+      <Name>libINIFile</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libSql\libSql.csproj">
+      <Project>{a9b42fd8-5b29-47e5-a6f4-8088e0d04217}</Project>
+      <Name>libSql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libTime\libTime.csproj">
+      <Project>{10789ff6-75c6-4606-a626-6a4465d0f494}</Project>
+      <Name>libTime</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
