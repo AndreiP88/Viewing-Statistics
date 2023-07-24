@@ -51,6 +51,45 @@ namespace libSql
             return usersList;
         }
 
+        /// <summary>
+        /// Загрузка смен за указанный период
+        /// </summary>
+        /// <param name="listUsers"></param>
+        /// <param name="selectDate"></param>
+        /// <param name="countShifts"></param>
+        /// <returns></returns>
+        public List<User> LoadShifts(List<User> listUsers, DateTime selectDate, int period, int countShifts)
+        {
+            List<User> usersList = listUsers;
+
+            for (int currentDay = 0; currentDay <= period; currentDay++)
+            {
+                for (int currentShift = 1; currentShift <= countShifts; currentShift++)
+                {
+                    DateTime currentDate = selectDate.AddDays(currentDay);
+
+                    List<User> loadedList = LoadOrders(currentDate, currentShift);
+
+                    for (int i = 0; i < loadedList.Count; i++)
+                    {
+                        int indexFromUserList = usersList.FindIndex((v) => v.Id == loadedList[i].Id &&
+                                                                           v.Equip == loadedList[i].Equip);
+
+                        if (indexFromUserList != -1)
+                        {
+                            usersList[indexFromUserList].Shifts.AddRange(loadedList[i].Shifts);
+                            /*for (int j = 0; j < loadedList[i].Shifts.Count; j++)
+                            {
+                                usersList[indexFromUserList].Shifts.Add(loadedList[i].Shifts[j]);
+                            }*/
+                        }
+                    }
+                }
+            }
+
+            return usersList;
+        }
+
         public List<User> LoadOrders(DateTime currentDate, int currentShift)
         {
             ValueDateTime timeValues = new ValueDateTime();
@@ -99,10 +138,6 @@ namespace libSql
 	                        dbo.man_planjob_list
 	                    ON 
 		                    man_factjob.id_man_planjob_list = man_planjob_list.id_man_planjob_list
-	                    RIGHT JOIN
-	                        dbo.fbc_brigade
-	                    ON 
-		                    man_factjob.id_fbc_brigade = fbc_brigade.id_fbc_brigade
 	                    RIGHT JOIN
 	                        dbo.common_employee
 	                    ON 

@@ -82,13 +82,17 @@ namespace libSql
 
             if (date.Hour >= 8 && date.Hour <= 23)
             {
-                dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- days - 1);
-                dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- 1);
+                //dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- days - 1);
+                dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day - days - 1);
+                //dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- 1);
+                dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day - 1);
             }
             else //if (date.Hour >= 0 && date.Hour < 8)
             {
-                dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- (days + 1) - 1);
-                dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- 1 - 1);
+                //dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- (days + 1) - 1);
+                dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day - (days + 1) - 1);
+                //dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- 1 - 1);
+                dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day - 1 - 1);
             }
 
             string startDate = dateStart.ToString("yyyy-MM-dd") + "T07:40:00.000";
