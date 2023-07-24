@@ -667,9 +667,9 @@ namespace Viewing_Statistics
             }
 
             cancelTokenSource = new CancellationTokenSource();
-            AddWorkingTimeUsersToListView(cancelTokenSource.Token, dataGrid, selectDate, period);
+            //AddWorkingTimeUsersToListView(cancelTokenSource.Token, dataGrid, selectDate, period);
             Task taskDetails = new Task(() => AddWorkingTimeUsersToListView(cancelTokenSource.Token, dataGrid, selectDate, period), cancelTokenSource.Token);
-            //taskDetails.Start();
+            taskDetails.Start();
         }
 
         private void AddWorkingTimeUsersToListView(CancellationToken token, DoubleBufferedDataGridView dataGrid, DateTime selectDate, int period)
