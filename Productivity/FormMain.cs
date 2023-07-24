@@ -87,19 +87,7 @@ namespace Productivity
 
             string link = "https://drive.google.com/uc?export=download&id=1gMfdWRsRONkljPkjlQt90vwPTF3kqL9w";
 
-            //cancelTokenSource = new CancellationTokenSource();
-
             var task = Task.Run(() => CheckUpdate(link, pathTemp + "\\" + fileTemp));
-
-            //task.Wait();
-
-            //CheckUpdate(link, pathTemp + "\\" + fileTemp);
-
-            /*CancellationToken token = cancelTokenSource.Token;
-
-            Task task = new Task(() => LoadDetailsMount(token));
-
-            task.Start();*/
         }
 
         private void CheckUpdate(string link, string path)
@@ -1378,7 +1366,6 @@ namespace Productivity
 
             return countDaysFromSellectedMonth;
         }
-
 
         private void UpdateStatistics()
         {

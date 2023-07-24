@@ -1,4 +1,6 @@
-﻿namespace Viewing_Statistics
+﻿using System.Windows.Forms;
+
+namespace Viewing_Statistics
 {
     partial class Form1
     {
@@ -21,6 +23,11 @@
         }
 
         #region Код, автоматически созданный конструктором форм Windows
+
+        class DoubleBufferedDataGridView : DataGridView
+        {
+            protected override bool DoubleBuffered { get => true; }
+        }
 
         /// <summary>
         /// Требуемый метод для поддержки конструктора — не изменяйте 
@@ -92,6 +99,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1193, 559);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.HeaderHeight = 60;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Просмотр статистики";

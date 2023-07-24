@@ -11,8 +11,10 @@ namespace libData
         public int TimeForView;
         public List<string> CategoryesNames;
         public List<string> CategoryAndEquips;
+        public int TypeLoad;
         public string NameMediaFile;
-        public Page(int id, int typePage, string name, int timeForView, List<string> categoryesNames, List<string> categoryAndEquips, string nameMediaFile)
+
+        public Page(int id, int typePage, string name, int timeForView, List<string> categoryesNames, List<string> categoryAndEquips, int typeLoad, string nameMediaFile)
         {
             this.Id = id;
             this.TypePage = typePage;
@@ -20,6 +22,7 @@ namespace libData
             this.TimeForView = timeForView;
             this.CategoryesNames = categoryesNames;
             this.CategoryAndEquips = categoryAndEquips;
+            this.TypeLoad = typeLoad;
             this.NameMediaFile = nameMediaFile;
         }
     }
