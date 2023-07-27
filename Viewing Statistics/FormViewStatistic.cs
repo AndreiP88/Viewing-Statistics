@@ -92,7 +92,7 @@ namespace Viewing_Statistics
         private void CheckUpdate(string link, string path)
         {
             FileDownloader downloader = new FileDownloader();
-            INISettings ini = new INISettings();
+            INIView ini = new INIView();
 
             string[] chLog = null;
 
@@ -152,6 +152,8 @@ namespace Viewing_Statistics
             {
                 ValueUsers usersValue = new ValueUsers();
 
+                users.Clear();
+
                 users = usersValue.LoadAllUsersNames();
             }
             catch (Exception ex)
@@ -166,6 +168,8 @@ namespace Viewing_Statistics
             {
                 ValueEquips equipsValue = new ValueEquips();
 
+                machines.Clear();
+
                 machines = equipsValue.LoadMachine();
             }
             catch (Exception ex)
@@ -174,7 +178,7 @@ namespace Viewing_Statistics
             }
         }
 
-        private void LoadUsersList(List<int> equips, int countDays)
+        private void LoadUsersList(List<int> equips, DateTime startDate, int countDays)
         {
             try
             {
@@ -183,7 +187,8 @@ namespace Viewing_Statistics
                 ValueUsers usersValue = new ValueUsers();
 
                 //usersList = usersValue.LoadUsersList(equips, date);
-                usersList = usersValue.LoadUsersListFromLastAnyDays(equips, countDays);
+                //usersList = usersValue.LoadUsersListFromLastAnyDays(equips, countDays);
+                usersList = usersValue.LoadUsersListFromLastAnyDays(equips, startDate, countDays);
             }
             catch (Exception ex)
             {
@@ -191,11 +196,31 @@ namespace Viewing_Statistics
             }
         }
 
-        private void ReloadDataFromBase(List<int> equips, int countDays)
+        private void LoadShiftsForUsersList(DateTime startDate, int countDays)
         {
+            try
+            {
+                ValueShifts valueShifts = new ValueShifts();
+                INIView view = new INIView();
+
+                int countShifts = view.GetCountShifts();
+
+                usersList = valueShifts.LoadShifts(usersList, startDate, countDays, countShifts);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка подключения");
+            }
+        }
+
+        private void ReloadDataFromBase(List<Page> pagesList, DateTime startDate, int countDays)
+        {
+            List<int> equips = GetAllEquipsFromPagesList(pagesList);
+
             LoadAllUsers();
             LoadMachine();
-            LoadUsersList(equips, countDays);
+            LoadUsersList(equips, startDate, countDays);
+            LoadShiftsForUsersList(startDate, countDays);
         }
 
         private List<Page> LoadPagesList()
@@ -273,13 +298,15 @@ namespace Viewing_Statistics
 
         private void UpdatePagesListsFromFile()
         {
-            int period = 5;
+            INIView view = new INIView();
+
+            int period = view.GetPeriod();
+
+            DateTime startDate = GetStartDate(period);
 
             pages = LoadPagesList();
 
-            List<int> equips = GetAllEquipsFromPagesList(pages);
-
-            ReloadDataFromBase(equips, period);
+            ReloadDataFromBase(pages, startDate, period);
 
             AddTabPageFromPageList(pages, period);
         }
@@ -328,17 +355,8 @@ namespace Viewing_Statistics
 
         private void ViewStatistic(DoubleBufferedDataGridView dataGrid, Page page, int period)
         {
-            ValueShifts valueShifts = new ValueShifts();
-            INISettings settings = new INISettings();
-
-            int countShifts = settings.GetCountShifts();
-
-            DateTime selectDate = GetStartDate(period);
-
-            usersList = valueShifts.LoadShifts(usersList, selectDate, period, countShifts);
-            
             AddUsersToGridView(dataGrid, page);
-            StartAddingWorkingTimeToListView(dataGrid, selectDate, period);
+            StartAddingWorkingTimeToListView(dataGrid, period);
         }
 
         private void AddCellToGrid(DoubleBufferedDataGridView dataGrid, int indexRow, int indexCell, int collSpan = 1)
@@ -359,19 +377,23 @@ namespace Viewing_Statistics
 
         private DoubleBufferedDataGridView CreatGridView(int indexPage, DateTime startPeriod, int period)
         {
-            DoubleBufferedDataGridView gridView = new DoubleBufferedDataGridView();
-            gridView.Name = "gridView" + indexPage;
-            gridView.Dock = DockStyle.Fill;
-            gridView.ColumnHeadersVisible = false;
-            gridView.RowHeadersVisible = false;
-            gridView.AllowUserToAddRows = false;
-            gridView.AllowUserToDeleteRows = false;
-            gridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            gridView.MultiSelect = false;
-            
-            INISettings settings = new INISettings();
+            DoubleBufferedDataGridView gridView = new DoubleBufferedDataGridView
+            {
+                Name = "gridView" + indexPage,
+                Dock = DockStyle.Fill,
+                ColumnHeadersVisible = false,
+                RowHeadersVisible = false,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                MultiSelect = false
+            };
 
-            int countShifts = settings.GetCountShifts();
+            string[] colCaption = { "Т", "%", "П" };
+
+            INIView view = new INIView();
+
+            int countShifts = view.GetCountShifts();
 
             gridView.Rows.Clear();
             gridView.Columns.Clear();
@@ -380,7 +402,7 @@ namespace Viewing_Statistics
 
             int width = gridView.Width;
 
-            int w = 45;//(width - 560) / (days);
+            int w = view.GetWidthWorkingOutCol();
 
             int indexCol;
 
@@ -477,7 +499,7 @@ namespace Viewing_Statistics
 
                         AddCellToGrid(gridView, indexRow, n);
 
-                        gridView.Rows[indexRow].Cells[n].Value = (k).ToString();
+                        gridView.Rows[indexRow].Cells[n].Value = colCaption[k - 1];
                     }
                 }
             }
@@ -488,9 +510,9 @@ namespace Viewing_Statistics
         private void AddUsersToGridView(DoubleBufferedDataGridView dataGrid, Page page)
         {
             //ValueCategoryes valueCategoryes = new ValueCategoryes();
-            //INISettings settings = new INISettings();
+            INIView view = new INIView();
 
-            bool viewAllEquipsForUser = true;//settings.GetLoadAllEquipForUser();
+            bool viewAllEquipsForUser = view.GetLoadAllEquipForUser();
 
             //List<Category> categoryEquip = valueCategoryes.GetSelectedCategoriesAndEquipsList();
 
@@ -650,16 +672,16 @@ namespace Viewing_Statistics
             if (text == "")
             {
                 dataGrid.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
-                dataGrid.Rows[indexRow].DefaultCellStyle.Font = new Font(dataGrid.Font, FontStyle.Bold);
+                dataGrid.Rows[indexRow].DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
             }
             else
             {
                 dataGrid.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
-                dataGrid.Rows[indexRow].DefaultCellStyle.Font = new Font(dataGrid.Font, FontStyle.Regular);
+                dataGrid.Rows[indexRow].DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9, FontStyle.Regular);
             }
         }
 
-        private void StartAddingWorkingTimeToListView(DoubleBufferedDataGridView dataGrid, DateTime selectDate, int period)
+        private void StartAddingWorkingTimeToListView(DoubleBufferedDataGridView dataGrid, int period)
         {
             if (cancelTokenSource != null)
             {
@@ -667,21 +689,21 @@ namespace Viewing_Statistics
             }
 
             cancelTokenSource = new CancellationTokenSource();
-            //AddWorkingTimeUsersToListView(cancelTokenSource.Token, dataGrid, selectDate, period);
-            Task taskDetails = new Task(() => AddWorkingTimeUsersToListView(cancelTokenSource.Token, dataGrid, selectDate, period), cancelTokenSource.Token);
-            taskDetails.Start();
+            AddWorkingTimeUsersToListView(cancelTokenSource.Token, dataGrid, period);
+            Task taskDetails = new Task(() => AddWorkingTimeUsersToListView(cancelTokenSource.Token, dataGrid, period), cancelTokenSource.Token);
+            //taskDetails.Start();
         }
 
-        private void AddWorkingTimeUsersToListView(CancellationToken token, DoubleBufferedDataGridView dataGrid, DateTime selectDate, int period)
+        private void AddWorkingTimeUsersToListView(CancellationToken token, DoubleBufferedDataGridView dataGrid, int period)
         {
             List<WorkingOut> equipsListWorkingOut = new List<WorkingOut>();
             List<WorkingOut> usersListWorkingOut = new List<WorkingOut>();
             //List<int> usersCurrent = new List<int>();
-            INISettings settings = new INISettings();
+            INIView view = new INIView();
             ValueDateTime timeValues = new ValueDateTime();
 
-            int fullOutput = settings.GetNormTime();
-            int countShifts = settings.GetCountShifts();
+            int fullOutput = view.GetNormTime();
+            int countShifts = view.GetCountShifts();
             
             for (int i = 0; i < usersList.Count; i++)
             {
@@ -699,12 +721,8 @@ namespace Viewing_Statistics
                             break;
                         }
 
-                        //int countDaysFromMonth = CountDaysFromMonth(usersList[i].Shifts[j].ShiftDate);
-                        //MessageBox.Show(usersList[i].Shifts[j].Orders.Count + "");
                         if (usersList[i].Shifts[j].Orders != null)
                         {
-                            //int day = Convert.ToDateTime(usersList[i].Shifts[j].ShiftDate).Day;
-                            int day = Convert.ToDateTime(usersList[i].Shifts[j].ShiftDate).Subtract(selectDate).Days;
                             int shiftNumber = usersList[i].Shifts[j].ShiftNumber;
 
                             int timeWorkigOut = CalculateWorkTime(usersList[i].Shifts[j].Orders);
@@ -821,32 +839,18 @@ namespace Viewing_Statistics
                                 string key = CreateNameListViewItem(usersList[i].Equip, usersList[i].Id);
 
                                 /*DataGridViewRow row;
-                                row = dataGrid.Rows.IndexOf(key);
+                                row = dataGrid.Rows[key];
 
                                 int indexRow = row.Index;*/
-                                int indexRow = -1;
-
-                                for (int f = 0; f < dataGrid.Rows.Count; f++)
-                                {
-                                    if (dataGrid.Rows[f].HeaderCell.Value != null)
-                                    {
-                                        if (dataGrid.Rows[f].HeaderCell.Value.ToString() == key)
-                                        {
-                                            indexRow = f;
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                DataGridViewColumn pColumn;
-                                pColumn = dataGrid.Columns[usersList[i].Shifts[j].ShiftDate];
-                                int indexCol = pColumn.Index;
+                                int indexRow = GetDataGridRowIndexFromKey(dataGrid, key);
+                                int indexCol = GetDataGridColumnIndexFromKey(dataGrid, usersList[i].Shifts[j].ShiftDate);
 
                                 if (indexRow != -1)
                                 {
                                     //dataGrid.Rows[indexRow].Cells[(day) * countShifts * countOutValue + shiftNumber * countOutValue - 1].Value = timeValues.MinuteToTimeString(timeWorkigOut);
                                     dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue)].Value = timeValues.MinuteToTimeString(timeWorkigOut);
                                     dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 1].Value = percentWorkingOut.ToString("P1");
+                                    dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 2].Value = GetBonusWorkingOut(timeWorkigOut);
                                     dataGrid.Rows[indexRow].Cells[period * countOutValue * countShifts + 2].Value = timeValues.MinuteToTimeString(usersList[i].WorkingOutUser);
                                     //dataGrid.Rows[indexRow].Cells[days * countShifts + 3].Value = timeValues.MinuteToTimeString(usersList[i].WorkingOutBacklog);
                                 }
@@ -856,18 +860,13 @@ namespace Viewing_Statistics
                 }
             }
 
-            /*for (int i = 0; i < equipsListWorkingOut.Count; i++)
+            for (int i = 0; i < equipsListWorkingOut.Count; i++)
             {
                 //int countDaysFromMonth = 0;
 
                 for (int j = 0; j < equipsListWorkingOut[i].WorkingOutList.Count; j++)
                 {
-                    //MessageBox.Show(equipsList.Count + ", " + equipsList[i].Equip + ", " + equipsList[i].WorkingOut);
-                    int day = Convert.ToDateTime(equipsListWorkingOut[i].WorkingOutList[j].ShiftDate).Day;
                     int shiftNumber = equipsListWorkingOut[i].WorkingOutList[j].ShiftNumber;
-
-                    //countDaysFromMonth = CountDaysFromMonth(equipsListWorkingOut[i].WorkingOutList[j].ShiftDate);
-
                     int timeWorkigOut = equipsListWorkingOut[i].WorkingOutList[j].WorkingOut;
 
                     float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
@@ -876,11 +875,14 @@ namespace Viewing_Statistics
                     {
                         string key = "e" + equipsListWorkingOut[i].Id;
 
-                        if (rowIndexes.ContainsKey(key))
-                        {
-                            int indexRow = rowIndexes[key];
+                        int indexRow = GetDataGridRowIndexFromKey(dataGrid, key);
+                        int indexCol = GetDataGridColumnIndexFromKey(dataGrid, equipsListWorkingOut[i].WorkingOutList[j].ShiftDate);
 
-                            dataGridView1.Rows[indexRow].Cells[(day - 1) * countShifts + shiftNumber + 1].Value = timeValues.MinuteToTimeString(timeWorkigOut);
+                        if (indexRow != -1)
+                        {
+                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue)].Value = timeValues.MinuteToTimeString(timeWorkigOut);
+                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 1].Value = percentWorkingOut.ToString("P1");
+                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 2].Value = GetBonusWorkingOut(timeWorkigOut);
                         }
                     }));
                 }
@@ -891,30 +893,23 @@ namespace Viewing_Statistics
                 {
                     string key = "e" + equipsListWorkingOut[i].Id;
 
-                    if (rowIndexes.ContainsKey(key))
+                    /*if (rowIndexes.ContainsKey(key))
                     {
                         int indexRow = rowIndexes[key];
 
                         dataGridView1.Rows[indexRow].Cells[days * countShifts + 2].Value = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutSumm);
                         //dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutBacklog);
                         dataGridView1.Rows[indexRow].Cells[days * countShifts + 3].Value = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutList.Count * fullOutput - equipsListWorkingOut[i].WorkingOutSumm);
-                    }
+                    }*/
 
                 }));
             }
 
             for (int i = 0; i < usersListWorkingOut.Count; i++)
             {
-                int countDaysFromMonth = 0;
-
                 for (int j = 0; j < usersListWorkingOut[i].WorkingOutList.Count; j++)
                 {
-                    //MessageBox.Show(equipsList.Count + ", " + equipsList[i].Equip + ", " + equipsList[i].WorkingOut);
-                    int day = Convert.ToDateTime(usersListWorkingOut[i].WorkingOutList[j].ShiftDate).Day;
                     int shiftNumber = usersListWorkingOut[i].WorkingOutList[j].ShiftNumber;
-
-                    countDaysFromMonth = CountDaysFromMonth(usersListWorkingOut[i].WorkingOutList[j].ShiftDate);
-
                     int timeWorkigOut = usersListWorkingOut[i].WorkingOutList[j].WorkingOut;
 
                     float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
@@ -923,11 +918,14 @@ namespace Viewing_Statistics
                     {
                         string key = "u" + usersListWorkingOut[i].Id;
 
-                        if (rowIndexes.ContainsKey(key))
-                        {
-                            int indexRow = rowIndexes[key];
+                        int indexRow = GetDataGridRowIndexFromKey(dataGrid, key);
+                        int indexCol = GetDataGridColumnIndexFromKey(dataGrid, usersListWorkingOut[i].WorkingOutList[j].ShiftDate);
 
-                            dataGridView1.Rows[indexRow].Cells[(day - 1) * countShifts + shiftNumber + 1].Value = timeValues.MinuteToTimeString(timeWorkigOut);
+                        if (indexRow != -1)
+                        {
+                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue)].Value = timeValues.MinuteToTimeString(timeWorkigOut);
+                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 1].Value = percentWorkingOut.ToString("P1");
+                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 2].Value = GetBonusWorkingOut(timeWorkigOut);
                         }
                     }));
                 }
@@ -938,16 +936,50 @@ namespace Viewing_Statistics
                 {
                     string key = "u" + usersListWorkingOut[i].Id;
 
-                    if (rowIndexes.ContainsKey(key))
+                    /*if (rowIndexes.ContainsKey(key))
                     {
                         int indexRow = rowIndexes[key];
 
                         dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 2].Value = timeValues.MinuteToTimeString(usersListWorkingOut[i].WorkingOutSumm);
                         //dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutBacklog);
                         dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString(usersListWorkingOut[i].WorkingOutList.Count * fullOutput - usersListWorkingOut[i].WorkingOutSumm);
-                    }
+                    }*/
                 }));
-            }*/
+            }
+        }
+
+        private int GetDataGridRowIndexFromKey(DataGridView dataGrid, string key)
+        {
+            int result = -1;
+
+            for (int f = 0; f < dataGrid.Rows.Count; f++)
+            {
+                if (dataGrid.Rows[f].HeaderCell.Value != null)
+                {
+                    if (dataGrid.Rows[f].HeaderCell.Value.ToString() == key)
+                    {
+                        result = f;
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private int GetDataGridColumnIndexFromKey(DataGridView dataGrid, string key)
+        {
+            int result = -1;
+
+            DataGridViewColumn pColumn;
+            pColumn = dataGrid.Columns[key];
+
+            if (pColumn != null)
+            {
+                result = pColumn.Index;
+            }
+
+            return result;
         }
 
         private int CalculateWorkTime(List<UserShiftOrder> order)
@@ -998,6 +1030,41 @@ namespace Viewing_Statistics
             result = (float)facticalWorkingOut / targetWorkingOut;
 
             return result;
+        }
+
+        private string GetBonusWorkingOut(int wOut)
+        {
+            float result = 0;
+
+            if (wOut < 600)
+            {
+                result = 0f;
+            }
+            if (wOut >= 600 && wOut < 630)
+            {
+                result = 0.1f;
+            }
+            else if (wOut >= 630 && wOut < 660)
+            {
+                result = 0.12f;
+            }
+            else if (wOut >= 660 && wOut < 720)
+            {
+                result = 0.15f;
+            }
+            else if (wOut >= 720)
+            {
+                result = 0.2f;
+            }
+
+            if (wOut < 600)
+            {
+                return "";
+            }
+            else
+            {
+                return result.ToString("P0");
+            }
         }
 
         private string CreateNameListViewItem(int equip, int user)

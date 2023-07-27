@@ -83,16 +83,16 @@ namespace libSql
             if (date.Hour >= 8 && date.Hour <= 23)
             {
                 //dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- days - 1);
-                dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day - days - 1);
+                dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day - days);
                 //dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- 1);
-                dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day - 1);
+                dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day);
             }
             else //if (date.Hour >= 0 && date.Hour < 8)
             {
                 //dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- (days + 1) - 1);
-                dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day - (days + 1) - 1);
+                dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day - (days + 1));
                 //dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- 1 - 1);
-                dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day - 1 - 1);
+                dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day - 1);
             }
 
             string startDate = dateStart.ToString("yyyy-MM-dd") + "T07:40:00.000";
@@ -102,6 +102,42 @@ namespace libSql
 
             List<User> usersList = LoadUsersList(users, startDate, endDate);
             
+            return usersList;
+        }
+
+        public List<User> LoadUsersListFromLastAnyDays(List<int> equips, DateTime startDatePeriod, int period)
+        {
+            /*string startDate = date.ToString("yyyy-MM") + "-01T07:40:00.000";
+            string endDate = date.AddMonths(1).ToString("yyyy-MM") + "-01T07:10:00.000";*/
+
+            DateTime date = DateTime.Now;
+            DateTime dateStart = startDatePeriod;
+            DateTime dateEnd = DateTime.MinValue.AddYears(startDatePeriod.Year - 1).AddMonths(startDatePeriod.Month - 1).AddDays(startDatePeriod.Day + period + 1);
+
+
+
+            /*if (date.Hour >= 8 && date.Hour <= 23)
+            {
+                //dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- days - 1);
+                dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day - days);
+                //dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- 1);
+                dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day);
+            }
+            else //if (date.Hour >= 0 && date.Hour < 8)
+            {
+                //dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- (days + 1) - 1);
+                dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day - (days + 1));
+                //dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(- 1 - 1);
+                dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1).AddDays(date.Day - 1);
+            }*/
+
+            string startDate = dateStart.ToString("yyyy-MM-dd") + "T07:40:00.000";
+            string endDate = dateEnd.ToString("yyyy-MM-dd") + "T07:30:00.000";
+
+            List<int> users = LoadUsersIncludedAllEquips(equips, startDate, endDate);
+
+            List<User> usersList = LoadUsersList(users, startDate, endDate);
+
             return usersList;
         }
 

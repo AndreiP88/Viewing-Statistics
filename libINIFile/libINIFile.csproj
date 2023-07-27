@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IniFiles.cs" />
+    <Compile Include="INIView.cs" />
     <Compile Include="INISettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueCategoryes.cs" />
