@@ -11,8 +11,8 @@ namespace libData
         public int Id;
         public int Equip;
         public List<UserShift> Shifts;
-        public int WorkingOutUser;
-        public int WorkingOutBacklog;
+        public float WorkingOutUser;
+        public float WorkingOutBacklog;
 
         public User(int id, int equip)
         {

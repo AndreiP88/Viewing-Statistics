@@ -33,6 +33,8 @@ namespace Viewing_Statistics
 
         List<Page> pages;
 
+        DateTime timeLastChengePage;
+
         int countOutValue = 3;
 
         private void StartDowloadUpdater()
@@ -204,8 +206,9 @@ namespace Viewing_Statistics
                 INIView view = new INIView();
 
                 int countShifts = view.GetCountShifts();
+                bool givenShiftNumber = view.GetGivenShiftNumber();
 
-                usersList = valueShifts.LoadShifts(usersList, startDate, countDays, countShifts);
+                usersList = valueShifts.LoadShifts(usersList, startDate, countDays, countShifts, givenShiftNumber);
             }
             catch (Exception ex)
             {
@@ -296,6 +299,29 @@ namespace Viewing_Statistics
             return result;
         }
 
+        private void SelectNextPage()
+        {
+            DateTime currentTime = DateTime.Now;
+            int currentPage = metroSetTabControl1.SelectedIndex;
+            if (currentPage >= 0)
+            {
+                if (timeLastChengePage.AddSeconds(pages[currentPage].TimeForView) <= currentTime)
+                {
+                    if (currentPage < pages.Count - 1)
+                    {
+                        metroSetTabControl1.SelectedIndex = currentPage + 1;
+                        timeLastChengePage = currentTime;
+                    }
+                    else
+                    {
+                        UpdatePagesListsFromFile();
+                        metroSetTabControl1.SelectedIndex = 0;
+                        //timeLastChengePage = currentTime;
+                    }
+                }
+            }
+        }
+
         private void UpdatePagesListsFromFile()
         {
             INIView view = new INIView();
@@ -309,11 +335,15 @@ namespace Viewing_Statistics
             ReloadDataFromBase(pages, startDate, period);
 
             AddTabPageFromPageList(pages, period);
+
+            //
         }
 
         private void AddTabPageFromPageList(List<Page> pageList, int period)
         {
-            for(int i = 0; i < pageList.Count; i++)
+            metroSetTabControl1.TabPages.Clear();
+
+            for (int i = 0; i < pageList.Count; i++)
             {
                 TabPage page = new TabPage();
                 page.Name = pageList[i].Id.ToString();
@@ -330,10 +360,19 @@ namespace Viewing_Statistics
                     page.Controls.Add(dataGrid);
                 }
 
+                if (pageList[i].TypePage == 1)
+                {
+                    PictureBox pictureBox = CreatePictureBox(i, pageList[i].NameMediaFile);
+
+                    page.Controls.Add(pictureBox);
+                }
+
                 
 
                 metroSetTabControl1.TabPages.Add(page);
             }
+
+            timeLastChengePage = DateTime.Now;
         }
 
         private DateTime GetStartDate(int period)
@@ -373,6 +412,24 @@ namespace Viewing_Statistics
                 pCell.RightColumn = indexCell + collSpan - 1;
             }
             //nOffset += collSpan + 1;
+        }
+
+        private PictureBox CreatePictureBox(int index, string fileName)
+        {
+            string path = Application.StartupPath + "\\src\\" + fileName;
+
+            PictureBox pictureBox = new PictureBox();
+
+            pictureBox.Name = "pictureBox" + index;
+            pictureBox.Dock = DockStyle.Fill;
+            pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+
+            if (File.Exists(path))
+            {
+                pictureBox.Image = Image.FromFile(path);
+            }
+
+            return pictureBox;
         }
 
         private DoubleBufferedDataGridView CreatGridView(int indexPage, DateTime startPeriod, int period)
@@ -725,13 +782,13 @@ namespace Viewing_Statistics
                         {
                             int shiftNumber = usersList[i].Shifts[j].ShiftNumber;
 
-                            int timeWorkigOut = CalculateWorkTime(usersList[i].Shifts[j].Orders);
-                            int timeBacklog = fullOutput - timeWorkigOut;
+                            float timeWorkigOut = CalculateWorkTime(usersList[i].Shifts[j].Orders);
+                            float timeBacklog = fullOutput - timeWorkigOut;
 
                             usersList[i].WorkingOutUser += timeWorkigOut;
                             usersList[i].WorkingOutBacklog += timeBacklog;
 
-                            float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
+                            float percentWorkingOut = GetPercentWorkingOut(fullOutput, timeWorkigOut);
                             
                             //Выработка для оборудования
                             int indexEquipsList = equipsListWorkingOut.FindIndex(
@@ -848,10 +905,10 @@ namespace Viewing_Statistics
                                 if (indexRow != -1)
                                 {
                                     //dataGrid.Rows[indexRow].Cells[(day) * countShifts * countOutValue + shiftNumber * countOutValue - 1].Value = timeValues.MinuteToTimeString(timeWorkigOut);
-                                    dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue)].Value = timeValues.MinuteToTimeString(timeWorkigOut);
+                                    dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue)].Value = timeValues.MinuteToTimeString((int)Math.Round(timeWorkigOut));
                                     dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 1].Value = percentWorkingOut.ToString("P1");
-                                    dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 2].Value = GetBonusWorkingOut(timeWorkigOut);
-                                    dataGrid.Rows[indexRow].Cells[period * countOutValue * countShifts + 2].Value = timeValues.MinuteToTimeString(usersList[i].WorkingOutUser);
+                                    dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 2].Value = GetBonusWorkingOut((int)Math.Round(timeWorkigOut));
+                                    dataGrid.Rows[indexRow].Cells[period * countOutValue * countShifts + 2].Value = timeValues.MinuteToTimeString((int)Math.Round(usersList[i].WorkingOutUser));
                                     //dataGrid.Rows[indexRow].Cells[days * countShifts + 3].Value = timeValues.MinuteToTimeString(usersList[i].WorkingOutBacklog);
                                 }
                             }));
@@ -867,9 +924,9 @@ namespace Viewing_Statistics
                 for (int j = 0; j < equipsListWorkingOut[i].WorkingOutList.Count; j++)
                 {
                     int shiftNumber = equipsListWorkingOut[i].WorkingOutList[j].ShiftNumber;
-                    int timeWorkigOut = equipsListWorkingOut[i].WorkingOutList[j].WorkingOut;
+                    float timeWorkigOut = equipsListWorkingOut[i].WorkingOutList[j].WorkingOut;
 
-                    float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
+                    float percentWorkingOut = GetPercentWorkingOut(fullOutput, timeWorkigOut);
 
                     Invoke(new Action(() =>
                     {
@@ -880,14 +937,14 @@ namespace Viewing_Statistics
 
                         if (indexRow != -1)
                         {
-                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue)].Value = timeValues.MinuteToTimeString(timeWorkigOut);
+                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue)].Value = timeValues.MinuteToTimeString((int)Math.Round(timeWorkigOut));
                             dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 1].Value = percentWorkingOut.ToString("P1");
-                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 2].Value = GetBonusWorkingOut(timeWorkigOut);
+                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 2].Value = GetBonusWorkingOut((int)Math.Round(timeWorkigOut));
                         }
                     }));
                 }
 
-                int fullTimeWorkigOut = equipsListWorkingOut[i].WorkingOutSumm;
+                float fullTimeWorkigOut = equipsListWorkingOut[i].WorkingOutSumm;
 
                 Invoke(new Action(() =>
                 {
@@ -910,9 +967,9 @@ namespace Viewing_Statistics
                 for (int j = 0; j < usersListWorkingOut[i].WorkingOutList.Count; j++)
                 {
                     int shiftNumber = usersListWorkingOut[i].WorkingOutList[j].ShiftNumber;
-                    int timeWorkigOut = usersListWorkingOut[i].WorkingOutList[j].WorkingOut;
+                    float timeWorkigOut = usersListWorkingOut[i].WorkingOutList[j].WorkingOut;
 
-                    float percentWorkingOut = GetPercentWorkingOut(650, timeWorkigOut);
+                    float percentWorkingOut = GetPercentWorkingOut(fullOutput, (int)timeWorkigOut);
 
                     Invoke(new Action(() =>
                     {
@@ -923,14 +980,14 @@ namespace Viewing_Statistics
 
                         if (indexRow != -1)
                         {
-                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue)].Value = timeValues.MinuteToTimeString(timeWorkigOut);
+                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue)].Value = timeValues.MinuteToTimeString((int)Math.Round(timeWorkigOut));
                             dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 1].Value = percentWorkingOut.ToString("P1");
-                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 2].Value = GetBonusWorkingOut(timeWorkigOut);
+                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 2].Value = GetBonusWorkingOut((int)Math.Round(timeWorkigOut));
                         }
                     }));
                 }
 
-                int fullTimeWorkigOut = usersListWorkingOut[i].WorkingOutSumm;
+                float fullTimeWorkigOut = usersListWorkingOut[i].WorkingOutSumm;
 
                 Invoke(new Action(() =>
                 {
@@ -982,7 +1039,7 @@ namespace Viewing_Statistics
             return result;
         }
 
-        private int CalculateWorkTime(List<UserShiftOrder> order)
+        private float CalculateWorkTime(List<UserShiftOrder> order)
         {
             float workingOut = 0;
 
@@ -992,12 +1049,11 @@ namespace Viewing_Statistics
                 {
                     workingOut += order[i].Normtime;
                 }
-
-                if (order[i].Flags == 512 || order[i].Flags == 544)
+                else
                 {
                     if (order[i].Normtime > 0)
                     {
-                        float norm = order[i].PlanOutQty / order[i].Normtime;
+                        float norm = (float)order[i].PlanOutQty / (float)order[i].Normtime;
 
                         if (norm > 0)
                         {
@@ -1020,10 +1076,10 @@ namespace Viewing_Statistics
                 }
             }*/
 
-            return (int)workingOut;
+            return workingOut;
         }
 
-        private float GetPercentWorkingOut(int targetWorkingOut, int facticalWorkingOut)
+        private float GetPercentWorkingOut(int targetWorkingOut, float facticalWorkingOut)
         {
             float result;
 
@@ -1076,6 +1132,12 @@ namespace Viewing_Statistics
         {
             StartCheckUpdate();
             UpdatePagesListsFromFile();
+            timer1.Enabled = true;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            SelectNextPage();
         }
     }
 }

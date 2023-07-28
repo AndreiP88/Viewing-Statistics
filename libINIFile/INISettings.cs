@@ -104,6 +104,19 @@ namespace libINIFile
             return result;
         }
 
+        /// <summary>
+        /// Загружать список закозов 
+        /// </summary>
+        /// <returns></returns>
+        public bool GetGivenShiftNumber()
+        {
+            bool result = true;
+
+            result = GetParameterBoolean("main", "givenShiftNumber");
+
+            return result;
+        }
+
         public void SetNormTime(int value)
         {
             SetParameter("main", "normTime", value.ToString());

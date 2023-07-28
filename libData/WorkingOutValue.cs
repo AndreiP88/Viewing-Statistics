@@ -10,9 +10,9 @@ namespace libData
     {
         public string ShiftDate;
         public int ShiftNumber;
-        public int WorkingOut;
+        public float WorkingOut;
 
-        public WorkingOutValue(string shiftDate, int shiftNumber, int workingOut)
+        public WorkingOutValue(string shiftDate, int shiftNumber, float workingOut)
         {
             ShiftDate = shiftDate;
             ShiftNumber = shiftNumber;

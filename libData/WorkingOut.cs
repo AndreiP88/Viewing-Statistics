@@ -12,8 +12,8 @@ namespace libData
         //public string ShiftDate;
         //public int ShiftNumber;
         public List<WorkingOutValue> WorkingOutList;
-        public int WorkingOutSumm;
-        public int WorkingOutBacklog;
+        public float WorkingOutSumm;
+        public float WorkingOutBacklog;
 
         //public Equips(int equip,  string shiftDate, int shiftNumber)
         public WorkingOut(int id)

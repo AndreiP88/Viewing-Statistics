@@ -40,6 +40,38 @@ namespace libTime
             return result;
         }
 
+        public string SelectStartDateTimeFromShiftNumberAndDateOnlyTime(DateTime date, int shiftNumber)
+        {
+            string result = "";
+
+            if (shiftNumber == 1)
+            {
+                result = date.ToString("yyyy-MM-dd") + "T08:00:00.000";
+            }
+            else
+            {
+                result = date.ToString("yyyy-MM-dd") + "T20:00:00.000";
+            }
+
+            return result;
+        }
+
+        public string SelectEndDateTimeFromShiftNumberAndDateOnlyTime(DateTime date, int shiftNumber)
+        {
+            string result = "";
+
+            if (shiftNumber == 1)
+            {
+                result = date.ToString("yyyy-MM-dd") + "T20:00:00.000";
+            }
+            else
+            {
+                result = date.AddDays(1).ToString("yyyy-MM-dd") + "T08:00:00.000";
+            }
+
+            return result;
+        }
+
         public string StartShiftPlanedDateTimeForDataBase(string startShift)
         {
             string result = "";
