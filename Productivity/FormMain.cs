@@ -1947,6 +1947,10 @@ namespace Productivity
             bool loadAllEquipForUser = settings.GetLoadAllEquipForUser();
 
             metroSetCheckBox1.Checked = loadAllEquipForUser;
+
+            bool givenShiftNumber = settings.GetGivenShiftNumber();
+
+            metroSetCheckBox2.Checked = givenShiftNumber;
         }
 
         private void SaveParameterToIniFile()
@@ -1968,6 +1972,10 @@ namespace Productivity
             bool loadAllEquipForUser = metroSetCheckBox1.Checked;
 
             settings.SetLoadAllEquipForUser(loadAllEquipForUser);
+
+            bool givenShiftNumber = metroSetCheckBox2.Checked;
+
+            settings.SetGivenShiftNumber(givenShiftNumber);
         }
 
         private void listViewCategory_SelectedIndexChanged(object sender, EventArgs e)

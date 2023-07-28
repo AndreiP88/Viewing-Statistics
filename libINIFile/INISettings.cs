@@ -105,7 +105,7 @@ namespace libINIFile
         }
 
         /// <summary>
-        /// Загружать список закозов 
+        /// Загружать список заказов 
         /// </summary>
         /// <returns></returns>
         public bool GetGivenShiftNumber()
@@ -130,6 +130,11 @@ namespace libINIFile
         public void SetLoadAllEquipForUser(bool value)
         {
             SetParameter("main", "loadAllEquipForUser", value.ToString());
+        }
+
+        public void SetGivenShiftNumber(bool value)
+        {
+            SetParameter("main", "givenShiftNumber", value.ToString());
         }
 
         public bool GetLoadCurrentShift()

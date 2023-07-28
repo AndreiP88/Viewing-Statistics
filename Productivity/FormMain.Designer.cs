@@ -117,6 +117,8 @@ namespace Productivity
             this.metroSetSetTabPage4 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.metroSetControlBox1 = new MetroSet_UI.Controls.MetroSetControlBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.metroSetCheckBox2 = new MetroSet_UI.Controls.MetroSetCheckBox();
             this.metroSetTabControl1.SuspendLayout();
             this.metroSetSetTabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -139,6 +141,7 @@ namespace Productivity
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown3)).BeginInit();
             this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // metroSetTabControl1
@@ -150,13 +153,13 @@ namespace Productivity
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage2);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage3);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage4);
-            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Default;
             this.metroSetTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroSetTabControl1.IsDerivedStyle = true;
             this.metroSetTabControl1.ItemSize = new System.Drawing.Size(130, 38);
             this.metroSetTabControl1.Location = new System.Drawing.Point(12, 90);
             this.metroSetTabControl1.Name = "metroSetTabControl1";
-            this.metroSetTabControl1.SelectedIndex = 1;
+            this.metroSetTabControl1.SelectedIndex = 2;
             this.metroSetTabControl1.SelectedTextColor = System.Drawing.Color.White;
             this.metroSetTabControl1.Size = new System.Drawing.Size(1276, 518);
             this.metroSetTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
@@ -824,6 +827,7 @@ namespace Productivity
             this.tableLayoutPanel6.Controls.Add(this.groupBox1, 0, 0);
             this.tableLayoutPanel6.Controls.Add(this.groupBox2, 0, 1);
             this.tableLayoutPanel6.Controls.Add(this.groupBox3, 0, 2);
+            this.tableLayoutPanel6.Controls.Add(this.groupBox4, 0, 3);
             this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel6.Location = new System.Drawing.Point(633, 3);
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
@@ -1015,6 +1019,40 @@ namespace Productivity
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.metroSetCheckBox2);
+            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox4.Location = new System.Drawing.Point(3, 213);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(303, 64);
+            this.groupBox4.TabIndex = 3;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Выборка заказов из БД";
+            // 
+            // metroSetCheckBox2
+            // 
+            this.metroSetCheckBox2.BackColor = System.Drawing.Color.Transparent;
+            this.metroSetCheckBox2.BackgroundColor = System.Drawing.Color.White;
+            this.metroSetCheckBox2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(155)))), ((int)(((byte)(155)))));
+            this.metroSetCheckBox2.Checked = false;
+            this.metroSetCheckBox2.CheckSignColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.metroSetCheckBox2.CheckState = MetroSet_UI.Enums.CheckState.Unchecked;
+            this.metroSetCheckBox2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.metroSetCheckBox2.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(205)))), ((int)(((byte)(205)))));
+            this.metroSetCheckBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.metroSetCheckBox2.IsDerivedStyle = true;
+            this.metroSetCheckBox2.Location = new System.Drawing.Point(11, 32);
+            this.metroSetCheckBox2.Name = "metroSetCheckBox2";
+            this.metroSetCheckBox2.SignStyle = MetroSet_UI.Enums.SignStyle.Sign;
+            this.metroSetCheckBox2.Size = new System.Drawing.Size(286, 16);
+            this.metroSetCheckBox2.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetCheckBox2.StyleManager = null;
+            this.metroSetCheckBox2.TabIndex = 0;
+            this.metroSetCheckBox2.Text = "С указанием номера смены";
+            this.metroSetCheckBox2.ThemeAuthor = "Narwin";
+            this.metroSetCheckBox2.ThemeName = "MetroLite";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
@@ -1055,6 +1093,7 @@ namespace Productivity
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown3)).EndInit();
             this.groupBox3.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1116,6 +1155,8 @@ namespace Productivity
         private Timer timer1;
         private Button button2;
         private DoubleBufferedDataGridView dataGridViewOneShift;
+        private GroupBox groupBox4;
+        private MetroSet_UI.Controls.MetroSetCheckBox metroSetCheckBox2;
     }
 }
 
