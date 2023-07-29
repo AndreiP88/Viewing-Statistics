@@ -114,11 +114,14 @@ namespace Productivity
             this.formattedNumericUpDown3 = new Productivity.FormattedNumericUpDown();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.metroSetCheckBox1 = new MetroSet_UI.Controls.MetroSetCheckBox();
-            this.metroSetSetTabPage4 = new MetroSet_UI.Child.MetroSetSetTabPage();
-            this.metroSetControlBox1 = new MetroSet_UI.Controls.MetroSetControlBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.metroSetCheckBox2 = new MetroSet_UI.Controls.MetroSetCheckBox();
+            this.metroSetSetTabPage4 = new MetroSet_UI.Child.MetroSetSetTabPage();
+            this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel11 = new System.Windows.Forms.TableLayoutPanel();
+            this.comboBox5 = new System.Windows.Forms.ComboBox();
+            this.metroSetControlBox1 = new MetroSet_UI.Controls.MetroSetControlBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.metroSetTabControl1.SuspendLayout();
             this.metroSetSetTabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -142,6 +145,9 @@ namespace Productivity
             ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown3)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.metroSetSetTabPage4.SuspendLayout();
+            this.tableLayoutPanel10.SuspendLayout();
+            this.tableLayoutPanel11.SuspendLayout();
             this.SuspendLayout();
             // 
             // metroSetTabControl1
@@ -159,7 +165,7 @@ namespace Productivity
             this.metroSetTabControl1.ItemSize = new System.Drawing.Size(130, 38);
             this.metroSetTabControl1.Location = new System.Drawing.Point(12, 90);
             this.metroSetTabControl1.Name = "metroSetTabControl1";
-            this.metroSetTabControl1.SelectedIndex = 2;
+            this.metroSetTabControl1.SelectedIndex = 3;
             this.metroSetTabControl1.SelectedTextColor = System.Drawing.Color.White;
             this.metroSetTabControl1.Size = new System.Drawing.Size(1276, 518);
             this.metroSetTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
@@ -969,56 +975,6 @@ namespace Productivity
             this.metroSetCheckBox1.ThemeAuthor = "Narwin";
             this.metroSetCheckBox1.ThemeName = "MetroLite";
             // 
-            // metroSetSetTabPage4
-            // 
-            this.metroSetSetTabPage4.BaseColor = System.Drawing.Color.White;
-            this.metroSetSetTabPage4.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.metroSetSetTabPage4.Font = null;
-            this.metroSetSetTabPage4.ImageIndex = 0;
-            this.metroSetSetTabPage4.ImageKey = null;
-            this.metroSetSetTabPage4.IsDerivedStyle = true;
-            this.metroSetSetTabPage4.Location = new System.Drawing.Point(4, 42);
-            this.metroSetSetTabPage4.Name = "metroSetSetTabPage4";
-            this.metroSetSetTabPage4.Size = new System.Drawing.Size(1268, 472);
-            this.metroSetSetTabPage4.Style = MetroSet_UI.Enums.Style.Light;
-            this.metroSetSetTabPage4.StyleManager = null;
-            this.metroSetSetTabPage4.TabIndex = 3;
-            this.metroSetSetTabPage4.Text = "Параметры монитора";
-            this.metroSetSetTabPage4.ThemeAuthor = "Narwin";
-            this.metroSetSetTabPage4.ThemeName = "MetroLite";
-            this.metroSetSetTabPage4.ToolTipText = null;
-            // 
-            // metroSetControlBox1
-            // 
-            this.metroSetControlBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.metroSetControlBox1.CloseHoverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.metroSetControlBox1.CloseHoverForeColor = System.Drawing.Color.White;
-            this.metroSetControlBox1.CloseNormalForeColor = System.Drawing.Color.Gray;
-            this.metroSetControlBox1.DisabledForeColor = System.Drawing.Color.DimGray;
-            this.metroSetControlBox1.IsDerivedStyle = true;
-            this.metroSetControlBox1.Location = new System.Drawing.Point(1206, -4);
-            this.metroSetControlBox1.MaximizeBox = true;
-            this.metroSetControlBox1.MaximizeHoverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(238)))));
-            this.metroSetControlBox1.MaximizeHoverForeColor = System.Drawing.Color.Gray;
-            this.metroSetControlBox1.MaximizeNormalForeColor = System.Drawing.Color.Gray;
-            this.metroSetControlBox1.MinimizeBox = true;
-            this.metroSetControlBox1.MinimizeHoverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(238)))));
-            this.metroSetControlBox1.MinimizeHoverForeColor = System.Drawing.Color.Gray;
-            this.metroSetControlBox1.MinimizeNormalForeColor = System.Drawing.Color.Gray;
-            this.metroSetControlBox1.Name = "metroSetControlBox1";
-            this.metroSetControlBox1.Size = new System.Drawing.Size(100, 25);
-            this.metroSetControlBox1.Style = MetroSet_UI.Enums.Style.Light;
-            this.metroSetControlBox1.StyleManager = null;
-            this.metroSetControlBox1.TabIndex = 1;
-            this.metroSetControlBox1.Text = "metroSetControlBox1";
-            this.metroSetControlBox1.ThemeAuthor = "Narwin";
-            this.metroSetControlBox1.ThemeName = "MetroLite";
-            // 
-            // timer1
-            // 
-            this.timer1.Interval = 1000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.metroSetCheckBox2);
@@ -1052,6 +1008,95 @@ namespace Productivity
             this.metroSetCheckBox2.Text = "С указанием номера смены";
             this.metroSetCheckBox2.ThemeAuthor = "Narwin";
             this.metroSetCheckBox2.ThemeName = "MetroLite";
+            // 
+            // metroSetSetTabPage4
+            // 
+            this.metroSetSetTabPage4.BaseColor = System.Drawing.Color.White;
+            this.metroSetSetTabPage4.Controls.Add(this.tableLayoutPanel10);
+            this.metroSetSetTabPage4.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.metroSetSetTabPage4.Font = null;
+            this.metroSetSetTabPage4.ImageIndex = 0;
+            this.metroSetSetTabPage4.ImageKey = null;
+            this.metroSetSetTabPage4.IsDerivedStyle = true;
+            this.metroSetSetTabPage4.Location = new System.Drawing.Point(4, 42);
+            this.metroSetSetTabPage4.Name = "metroSetSetTabPage4";
+            this.metroSetSetTabPage4.Size = new System.Drawing.Size(1268, 472);
+            this.metroSetSetTabPage4.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetSetTabPage4.StyleManager = null;
+            this.metroSetSetTabPage4.TabIndex = 3;
+            this.metroSetSetTabPage4.Text = "Параметры монитора";
+            this.metroSetSetTabPage4.ThemeAuthor = "Narwin";
+            this.metroSetSetTabPage4.ThemeName = "MetroLite";
+            this.metroSetSetTabPage4.ToolTipText = null;
+            // 
+            // tableLayoutPanel10
+            // 
+            this.tableLayoutPanel10.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.tableLayoutPanel10.ColumnCount = 1;
+            this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel10.Controls.Add(this.tableLayoutPanel11, 0, 0);
+            this.tableLayoutPanel10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel10.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel10.Name = "tableLayoutPanel10";
+            this.tableLayoutPanel10.RowCount = 2;
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.050847F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 91.94915F));
+            this.tableLayoutPanel10.Size = new System.Drawing.Size(1268, 472);
+            this.tableLayoutPanel10.TabIndex = 0;
+            // 
+            // tableLayoutPanel11
+            // 
+            this.tableLayoutPanel11.ColumnCount = 2;
+            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 24.8019F));
+            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 75.1981F));
+            this.tableLayoutPanel11.Controls.Add(this.comboBox5, 0, 0);
+            this.tableLayoutPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel11.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel11.Name = "tableLayoutPanel11";
+            this.tableLayoutPanel11.RowCount = 1;
+            this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel11.Size = new System.Drawing.Size(1262, 31);
+            this.tableLayoutPanel11.TabIndex = 0;
+            // 
+            // comboBox5
+            // 
+            this.comboBox5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBox5.FormattingEnabled = true;
+            this.comboBox5.Location = new System.Drawing.Point(3, 3);
+            this.comboBox5.Name = "comboBox5";
+            this.comboBox5.Size = new System.Drawing.Size(306, 24);
+            this.comboBox5.TabIndex = 0;
+            // 
+            // metroSetControlBox1
+            // 
+            this.metroSetControlBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.metroSetControlBox1.CloseHoverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
+            this.metroSetControlBox1.CloseHoverForeColor = System.Drawing.Color.White;
+            this.metroSetControlBox1.CloseNormalForeColor = System.Drawing.Color.Gray;
+            this.metroSetControlBox1.DisabledForeColor = System.Drawing.Color.DimGray;
+            this.metroSetControlBox1.IsDerivedStyle = true;
+            this.metroSetControlBox1.Location = new System.Drawing.Point(1206, -4);
+            this.metroSetControlBox1.MaximizeBox = true;
+            this.metroSetControlBox1.MaximizeHoverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(238)))));
+            this.metroSetControlBox1.MaximizeHoverForeColor = System.Drawing.Color.Gray;
+            this.metroSetControlBox1.MaximizeNormalForeColor = System.Drawing.Color.Gray;
+            this.metroSetControlBox1.MinimizeBox = true;
+            this.metroSetControlBox1.MinimizeHoverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(238)))));
+            this.metroSetControlBox1.MinimizeHoverForeColor = System.Drawing.Color.Gray;
+            this.metroSetControlBox1.MinimizeNormalForeColor = System.Drawing.Color.Gray;
+            this.metroSetControlBox1.Name = "metroSetControlBox1";
+            this.metroSetControlBox1.Size = new System.Drawing.Size(100, 25);
+            this.metroSetControlBox1.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetControlBox1.StyleManager = null;
+            this.metroSetControlBox1.TabIndex = 1;
+            this.metroSetControlBox1.Text = "metroSetControlBox1";
+            this.metroSetControlBox1.ThemeAuthor = "Narwin";
+            this.metroSetControlBox1.ThemeName = "MetroLite";
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // FormMain
             // 
@@ -1094,6 +1139,9 @@ namespace Productivity
             ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown3)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
+            this.metroSetSetTabPage4.ResumeLayout(false);
+            this.tableLayoutPanel10.ResumeLayout(false);
+            this.tableLayoutPanel11.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1157,6 +1205,9 @@ namespace Productivity
         private DoubleBufferedDataGridView dataGridViewOneShift;
         private GroupBox groupBox4;
         private MetroSet_UI.Controls.MetroSetCheckBox metroSetCheckBox2;
+        private TableLayoutPanel tableLayoutPanel10;
+        private TableLayoutPanel tableLayoutPanel11;
+        private ComboBox comboBox5;
     }
 }
 

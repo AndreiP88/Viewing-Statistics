@@ -29,9 +29,9 @@ namespace Viewing_Statistics
         Dictionary<int, string> users = new Dictionary<int, string>();
         Dictionary<int, string> machines = new Dictionary<int, string>();
 
-        List<User> usersList;
+        List<User> usersList;// = new List<User>();
 
-        List<Page> pages;
+        List<Page> pages;// = new List<Page>();
 
         DateTime timeLastChengePage;
 
@@ -184,7 +184,12 @@ namespace Viewing_Statistics
         {
             try
             {
-                usersList = new List<User>();
+                if (usersList != null)
+                {
+                    usersList.Clear();
+                }
+
+                //usersList = new List<User>();
 
                 ValueUsers usersValue = new ValueUsers();
 
@@ -220,10 +225,25 @@ namespace Viewing_Statistics
         {
             List<int> equips = GetAllEquipsFromPagesList(pagesList);
 
+            DisposingAllControlsFromTabPages();
+
             LoadAllUsers();
             LoadMachine();
             LoadUsersList(equips, startDate, countDays);
             LoadShiftsForUsersList(startDate, countDays);
+        }
+
+        private void DisposingAllControlsFromTabPages()
+        {
+            for (int i = 0; i < metroSetTabControl1.TabPages.Count; i++)
+            {
+                Control.ControlCollection controls = metroSetTabControl1.TabPages[i].Controls;
+
+                foreach(Control control in controls)
+                {
+                    control.Dispose();
+                }
+            }
         }
 
         private List<Page> LoadPagesList()
@@ -330,6 +350,11 @@ namespace Viewing_Statistics
 
             DateTime startDate = GetStartDate(period);
 
+            if (pages != null)
+            {
+                pages.Clear();
+            }
+
             pages = LoadPagesList();
 
             ReloadDataFromBase(pages, startDate, period);
@@ -418,11 +443,12 @@ namespace Viewing_Statistics
         {
             string path = Application.StartupPath + "\\src\\" + fileName;
 
-            PictureBox pictureBox = new PictureBox();
-
-            pictureBox.Name = "pictureBox" + index;
-            pictureBox.Dock = DockStyle.Fill;
-            pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            PictureBox pictureBox = new PictureBox
+            {
+                Name = "pictureBox" + index,
+                Dock = DockStyle.Fill,
+                SizeMode = PictureBoxSizeMode.Zoom
+            };
 
             if (File.Exists(path))
             {
@@ -442,6 +468,7 @@ namespace Viewing_Statistics
                 RowHeadersVisible = false,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
+                ReadOnly = true,
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 MultiSelect = false
             };
@@ -459,18 +486,21 @@ namespace Viewing_Statistics
 
             int width = gridView.Width;
 
-            int w = view.GetWidthWorkingOutCol();
+            int wColNum = view.GetWidthNumberCol();
+            int wColName = view.GetWidthNameCol();
+            int wColVal = view.GetWidthWorkingOutCol();
+            int wColResults = view.GetWidthResultsCol();
 
             int indexCol;
 
             indexCol = gridView.Columns.Add(@"index", @"");
-            gridView.Columns[indexCol].Width = 45;
+            gridView.Columns[indexCol].Width = wColNum;
             gridView.Columns[indexCol].SortMode = DataGridViewColumnSortMode.NotSortable;
             gridView.Columns[indexCol].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             gridView.Columns[indexCol].Frozen = true;
 
             indexCol = gridView.Columns.Add(@"name", @"");
-            gridView.Columns[indexCol].Width = 300;
+            gridView.Columns[indexCol].Width = wColName;
             gridView.Columns[indexCol].SortMode = DataGridViewColumnSortMode.NotSortable;
             gridView.Columns[indexCol].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             gridView.Columns[indexCol].Frozen = true;
@@ -491,26 +521,26 @@ namespace Viewing_Statistics
                 }
 
                 //indexCol = gridView.Columns.Add(nameCol[nameCol.Count - 1], @"");
-                gridView.Columns[indexCol].Width = w;
+                gridView.Columns[indexCol].Width = wColVal;
                 gridView.Columns[indexCol].SortMode = DataGridViewColumnSortMode.NotSortable;
                 gridView.Columns[indexCol].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 gridView.Columns[indexCol].Frozen = false;
             }
 
             indexCol = gridView.Columns.Add(@"totalWOut0", @"");
-            gridView.Columns[indexCol].Width = 90;
+            gridView.Columns[indexCol].Width = wColResults;
             gridView.Columns[indexCol].SortMode = DataGridViewColumnSortMode.NotSortable;
             gridView.Columns[indexCol].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             gridView.Columns[indexCol].Frozen = false;
 
             indexCol = gridView.Columns.Add(@"totalWOut1", @"");
-            gridView.Columns[indexCol].Width = 90;
+            gridView.Columns[indexCol].Width = wColResults;
             gridView.Columns[indexCol].SortMode = DataGridViewColumnSortMode.NotSortable;
             gridView.Columns[indexCol].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             gridView.Columns[indexCol].Frozen = false;
 
             indexCol = gridView.Columns.Add(@"totalWOut2", @"");
-            gridView.Columns[indexCol].Width = 90;
+            gridView.Columns[indexCol].Width = wColResults;
             gridView.Columns[indexCol].SortMode = DataGridViewColumnSortMode.NotSortable;
             gridView.Columns[indexCol].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             gridView.Columns[indexCol].Frozen = false;
@@ -520,6 +550,9 @@ namespace Viewing_Statistics
             indexRow = gridView.Rows.Add();
             gridView.Rows[indexRow].Frozen = true;
 
+            AddCellToGrid(gridView, indexRow, 0, 2);
+            gridView.Rows[indexRow].Cells[0].Value = "";
+
             for (int i = 2; i <= countShifts * period * countOutValue; i += countShifts * countOutValue)
             {
                 AddCellToGrid(gridView, indexRow, i, countShifts * countOutValue);
@@ -528,8 +561,14 @@ namespace Viewing_Statistics
                 gridView.Rows[indexRow].Cells[i].Value = nameCol[((i - 2) + countShifts * countOutValue) / (countShifts * countOutValue) - 1];
             }
 
+            AddCellToGrid(gridView, indexRow, countShifts * period * countOutValue + 2, 3);
+            gridView.Rows[indexRow].Cells[countShifts * period * countOutValue + 2].Value = "";
+
             indexRow = gridView.Rows.Add();
             gridView.Rows[indexRow].Frozen = true;
+
+            AddCellToGrid(gridView, indexRow, 0, 2);
+            gridView.Rows[indexRow].Cells[0].Value = "";
 
             for (int i = 2; i <= countShifts * period * countOutValue + 1; i += countOutValue * countShifts)
             {
@@ -543,8 +582,14 @@ namespace Viewing_Statistics
                 }
             }
 
+            AddCellToGrid(gridView, indexRow, countShifts * period * countOutValue + 2, 3);
+            gridView.Rows[indexRow].Cells[countShifts * period * countOutValue + 2].Value = "";
+
             indexRow = gridView.Rows.Add();
             gridView.Rows[indexRow].Frozen = true;
+
+            AddCellToGrid(gridView, indexRow, 0, 2);
+            gridView.Rows[indexRow].Cells[0].Value = "";
 
             for (int i = 2; i <= countShifts * period * countOutValue + 1; i += countOutValue)
             {
@@ -560,6 +605,9 @@ namespace Viewing_Statistics
                     }
                 }
             }
+
+            AddCellToGrid(gridView, indexRow, countShifts * period * countOutValue + 2, 3);
+            gridView.Rows[indexRow].Cells[countShifts * period * countOutValue + 2].Value = "";
 
             return gridView;
         }
@@ -1043,7 +1091,7 @@ namespace Viewing_Statistics
         {
             float workingOut = 0;
 
-            for (int i = 0; i < order.Count; i++)
+            /*for (int i = 0; i < order.Count; i++)
             {
                 if (order[i].Flags == 576)
                 {
@@ -1061,20 +1109,19 @@ namespace Viewing_Statistics
                         }
                     }
                 }
-            }
+            }*/
 
-            /*for (int i = 0; i < order.Count; i++)
+
+            for (int i = 0; i < order.Count; i++)
             {
                 if (order[i].Normtime > 0)
                 {
-                    float norm = order[i].PlanOutQty / order[i].Normtime;
-
-                    if (norm > 0)
+                    if (order[i].PlanOutQty > 0)
                     {
-                        workingOut += order[i].FactOutQty / norm;
+                        workingOut += ((float)order[i].FactOutQty * (float)order[i].Normtime) / (float)order[i].PlanOutQty;
                     }
                 }
-            }*/
+            }
 
             return workingOut;
         }

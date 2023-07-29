@@ -129,8 +129,24 @@ namespace libINIFile
 
             return result;
         }
-        
 
+        public int GetWidthNumberCol()
+        {
+            int result = 0;
+
+            result = GetParameterNumber("columns", "wColNum");
+
+            return result;
+        }
+
+        public int GetWidthNameCol()
+        {
+            int result = 0;
+
+            result = GetParameterNumber("columns", "wColName");
+
+            return result;
+        }
 
         public int GetWidthWorkingOutCol()
         {
@@ -140,6 +156,19 @@ namespace libINIFile
 
             return result;
         }
+
+        public int GetWidthResultsCol()
+        {
+            int result = 0;
+
+            result = GetParameterNumber("columns", "wColsResults");
+
+            return result;
+        }
+
+
+
+
         public void SetNormTime(int value)
         {
             SetParameter("main", "normTime", value.ToString());

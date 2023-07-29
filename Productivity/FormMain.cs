@@ -1238,7 +1238,7 @@ namespace Productivity
         {
             float workingOut = 0;
 
-            for (int i = 0; i < order.Count; i++)
+            /*for (int i = 0; i < order.Count; i++)
             {
                 if (order[i].Flags == 576)
                 {
@@ -1256,20 +1256,18 @@ namespace Productivity
                         }
                     }
                 }
-            }
+            }*/
 
-            /*for (int i = 0; i < order.Count; i++)
+            for (int i = 0; i < order.Count; i++)
             {
                 if (order[i].Normtime > 0)
                 {
-                    float norm = (float)order[i].PlanOutQty / (float)order[i].Normtime;
-
-                    if (norm > 0)
+                    if (order[i].PlanOutQty > 0)
                     {
-                        workingOut += order[i].FactOutQty / norm;
+                        workingOut += ((float)order[i].FactOutQty * (float)order[i].Normtime) / (float)order[i].PlanOutQty;
                     }
                 }
-            }*/
+            }
 
             return workingOut;
         }
@@ -1278,7 +1276,7 @@ namespace Productivity
         {
             float workingOut = 0;
 
-            if (order.Flags == 576)
+            /*if (order.Flags == 576)
             {
                 workingOut += order.Normtime;
             }
@@ -1293,17 +1291,15 @@ namespace Productivity
                         workingOut += order.FactOutQty / norm;
                     }
                 }
-            }
-
-            /*if (order.Normtime > 0)
-            {
-                float norm = (float)order.PlanOutQty / (float)order.Normtime;
-
-                if (norm > 0)
-                {
-                    workingOut += order.FactOutQty / norm;
-                }
             }*/
+
+            if (order.Normtime > 0)
+            {
+                if (order.PlanOutQty > 0)
+                {
+                    workingOut += ((float)order.FactOutQty * (float)order.Normtime) / (float)order.PlanOutQty;
+                }
+            }
 
             return workingOut;
         }
