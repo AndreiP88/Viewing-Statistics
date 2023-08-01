@@ -35,7 +35,7 @@ namespace Viewing_Statistics
 
         DateTime timeLastChengePage;
 
-        int countOutValue = 3;
+        //int countOutValue = 3;
 
         private void StartDowloadUpdater()
         {
@@ -248,51 +248,10 @@ namespace Viewing_Statistics
 
         private List<Page> LoadPagesList()
         {
-            List<Page> pageList = new List<Page>();
+            ValuePagesList valuePagesList = new ValuePagesList();
 
-            string startStrSection = "page_";
+            List<Page> pageList = valuePagesList.LoadPagesList(false);
 
-            IniFile ini = new IniFile("view.ini");
-
-            string[] sections = ini.GetAllSections();
-
-            for (int i = 0; i < sections.Length; i++)
-            {
-                if (sections[i].StartsWith(startStrSection))
-                {
-                    if (ini.KeyExists("activePage", sections[i]))
-                    {
-                        if (ini.ReadBool("activePage", sections[i]))
-                        {
-                            int idCategory = Convert.ToInt32(sections[i].Substring(startStrSection.Length));
-
-                            string name = ini.ReadString("name", sections[i]);
-                            int typePage = ini.ReadInt("typePage", sections[i]);
-                            int timeForView = ini.ReadInt("timeForView", sections[i]);
-                            List<string> categoryesNames = ini.ReadString("categoryesNames", sections[i])?.Split(';')?.ToList();
-                            List<string> categoryAndEquips = ini.ReadString("categoryAndEquips", sections[i])?.Split(';')?.ToList();
-                            int typeLoad = ini.ReadInt("typeLoad", sections[i]);
-                            string nameMediaFile = ini.ReadString("nameMediaFile", sections[i]);
-
-                            pageList.Add(new Page(
-                                idCategory,
-                                typePage,
-                                name,
-                                timeForView,
-                                categoryesNames,
-                                categoryAndEquips,
-                                typeLoad,
-                                nameMediaFile
-                                ));
-                        }
-                    }
-
-                    //equipsForCategory = equipsStr?.Split(';')?.Select(Int32.Parse)?.ToList();
-
-                    //List<string> strings = equipsStr?.Split(';')?.ToList();
-                }
-            }
-            //categoryes.Add(Convert.ToInt32(sections[i].Substring(startStrSection.Length)));
             return pageList;
         }
 
@@ -366,6 +325,8 @@ namespace Viewing_Statistics
 
         private void AddTabPageFromPageList(List<Page> pageList, int period)
         {
+            ValuePagesList valuePagesList = new ValuePagesList();
+
             metroSetTabControl1.TabPages.Clear();
 
             for (int i = 0; i < pageList.Count; i++)
@@ -377,10 +338,11 @@ namespace Viewing_Statistics
                 if (pageList[i].TypePage == 0)
                 {
                     DateTime startPeriod = GetStartDate(period);
+                    int countOutValue = valuePagesList.GetCountOutValue(pageList[i].OutValues);
 
-                    DoubleBufferedDataGridView dataGrid = CreatGridView(i, startPeriod, period);
+                    DoubleBufferedDataGridView dataGrid = CreatGridView(i, startPeriod, period, countOutValue, pageList[i].OutValues);
 
-                    ViewStatistic(dataGrid, pageList[i], period);
+                    ViewStatistic(dataGrid, pageList[i], period, countOutValue, pageList[i].OutValues);
 
                     page.Controls.Add(dataGrid);
                 }
@@ -417,10 +379,10 @@ namespace Viewing_Statistics
             return selectDate;
         }
 
-        private void ViewStatistic(DoubleBufferedDataGridView dataGrid, Page page, int period)
+        private void ViewStatistic(DoubleBufferedDataGridView dataGrid, Page page, int period, int countOutValue, List<string> outValues)
         {
             AddUsersToGridView(dataGrid, page);
-            StartAddingWorkingTimeToListView(dataGrid, period);
+            StartAddingWorkingTimeToListView(dataGrid, period, countOutValue, outValues);
         }
 
         private void AddCellToGrid(DoubleBufferedDataGridView dataGrid, int indexRow, int indexCell, int collSpan = 1)
@@ -458,7 +420,7 @@ namespace Viewing_Statistics
             return pictureBox;
         }
 
-        private DoubleBufferedDataGridView CreatGridView(int indexPage, DateTime startPeriod, int period)
+        private DoubleBufferedDataGridView CreatGridView(int indexPage, DateTime startPeriod, int period, int countOutValue, List<string> outValues)
         {
             DoubleBufferedDataGridView gridView = new DoubleBufferedDataGridView
             {
@@ -786,7 +748,7 @@ namespace Viewing_Statistics
             }
         }
 
-        private void StartAddingWorkingTimeToListView(DoubleBufferedDataGridView dataGrid, int period)
+        private void StartAddingWorkingTimeToListView(DoubleBufferedDataGridView dataGrid, int period, int countOutValue, List<string> outValues)
         {
             if (cancelTokenSource != null)
             {
@@ -794,12 +756,12 @@ namespace Viewing_Statistics
             }
 
             cancelTokenSource = new CancellationTokenSource();
-            AddWorkingTimeUsersToListView(cancelTokenSource.Token, dataGrid, period);
-            Task taskDetails = new Task(() => AddWorkingTimeUsersToListView(cancelTokenSource.Token, dataGrid, period), cancelTokenSource.Token);
+            AddWorkingTimeUsersToListView(cancelTokenSource.Token, dataGrid, period, countOutValue, outValues);
+            Task taskDetails = new Task(() => AddWorkingTimeUsersToListView(cancelTokenSource.Token, dataGrid, period, countOutValue, outValues), cancelTokenSource.Token);
             //taskDetails.Start();
         }
 
-        private void AddWorkingTimeUsersToListView(CancellationToken token, DoubleBufferedDataGridView dataGrid, int period)
+        private void AddWorkingTimeUsersToListView(CancellationToken token, DoubleBufferedDataGridView dataGrid, int period, int countOutValue, List<string> values)
         {
             List<WorkingOut> equipsListWorkingOut = new List<WorkingOut>();
             List<WorkingOut> usersListWorkingOut = new List<WorkingOut>();
@@ -952,10 +914,27 @@ namespace Viewing_Statistics
 
                                 if (indexRow != -1)
                                 {
+                                    int nextCol = 0;
+
                                     //dataGrid.Rows[indexRow].Cells[(day) * countShifts * countOutValue + shiftNumber * countOutValue - 1].Value = timeValues.MinuteToTimeString(timeWorkigOut);
-                                    dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue)].Value = timeValues.MinuteToTimeString((int)Math.Round(timeWorkigOut));
-                                    dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 1].Value = percentWorkingOut.ToString("P1");
-                                    dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 2].Value = GetBonusWorkingOut((int)Math.Round(timeWorkigOut));
+                                    if (values[0] == "1")
+                                    {
+                                        dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + nextCol].Value = timeValues.MinuteToTimeString((int)Math.Round(timeWorkigOut));
+                                        nextCol++;
+                                    }
+                                        
+                                    if (values[1] == "1")
+                                    {
+                                        dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + nextCol].Value = percentWorkingOut.ToString("P1");
+                                        nextCol++;
+                                    }
+                                        
+                                    if (values[2] == "1")
+                                    {
+                                        dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + nextCol].Value = GetBonusWorkingOut((int)Math.Round(timeWorkigOut));
+                                        nextCol++;
+                                    }
+                                    
                                     dataGrid.Rows[indexRow].Cells[period * countOutValue * countShifts + 2].Value = timeValues.MinuteToTimeString((int)Math.Round(usersList[i].WorkingOutUser));
                                     //dataGrid.Rows[indexRow].Cells[days * countShifts + 3].Value = timeValues.MinuteToTimeString(usersList[i].WorkingOutBacklog);
                                 }
@@ -985,9 +964,25 @@ namespace Viewing_Statistics
 
                         if (indexRow != -1)
                         {
-                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue)].Value = timeValues.MinuteToTimeString((int)Math.Round(timeWorkigOut));
-                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 1].Value = percentWorkingOut.ToString("P1");
-                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 2].Value = GetBonusWorkingOut((int)Math.Round(timeWorkigOut));
+                            int nextCol = 0;
+
+                            if (values[0] == "1")
+                            {
+                                dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + nextCol].Value = timeValues.MinuteToTimeString((int)Math.Round(timeWorkigOut));
+                                nextCol++;
+                            }
+
+                            if (values[1] == "1")
+                            {
+                                dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + nextCol].Value = percentWorkingOut.ToString("P1");
+                                nextCol++;
+                            }
+
+                            if (values[2] == "1")
+                            {
+                                dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + nextCol].Value = GetBonusWorkingOut((int)Math.Round(timeWorkigOut));
+                                nextCol++;
+                            }                                
                         }
                     }));
                 }
@@ -1028,9 +1023,25 @@ namespace Viewing_Statistics
 
                         if (indexRow != -1)
                         {
-                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue)].Value = timeValues.MinuteToTimeString((int)Math.Round(timeWorkigOut));
-                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 1].Value = percentWorkingOut.ToString("P1");
-                            dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + 2].Value = GetBonusWorkingOut((int)Math.Round(timeWorkigOut));
+                            int nextCol = 0;
+
+                            if (values[0] == "1")
+                            {
+                                dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + nextCol].Value = timeValues.MinuteToTimeString((int)Math.Round(timeWorkigOut));
+                                nextCol++;
+                            }
+
+                            if (values[1] == "1")
+                            {
+                                dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + nextCol].Value = percentWorkingOut.ToString("P1");
+                                nextCol++;
+                            }
+
+                            if (values[2] == "1")
+                            {
+                                dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + nextCol].Value = GetBonusWorkingOut((int)Math.Round(timeWorkigOut));
+                                nextCol++;
+                            }                                
                         }
                     }));
                 }

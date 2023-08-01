@@ -46,6 +46,7 @@
     <Compile Include="INISettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueCategoryes.cs" />
+    <Compile Include="ValuePagesList.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\libData\libData.csproj">
