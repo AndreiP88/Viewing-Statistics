@@ -557,13 +557,22 @@ namespace Viewing_Statistics
             {
                 for (int j = 2; j <= countShifts; j++)
                 {
-                    for (int k = 1; k <= countOutValue; k++)
+                    for (int k = 0; k < countOutValue; k++)
                     {
-                        int n = i + (k - 1);
+                        int n = i + k;
 
                         AddCellToGrid(gridView, indexRow, n);
 
-                        gridView.Rows[indexRow].Cells[n].Value = colCaption[k - 1];
+                        gridView.Rows[indexRow].Cells[n].Value = colCaption[k];
+
+                        for (int v = k; v < outValues.Count; v++)
+                        {
+                            if (outValues[v] != "0")
+                            {
+                                gridView.Rows[indexRow].Cells[n].Value = colCaption[v];
+                                break;
+                            }
+                        }
                     }
                 }
             }
