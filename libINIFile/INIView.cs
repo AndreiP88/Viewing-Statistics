@@ -78,6 +78,11 @@ namespace libINIFile
             return result;
         }
 
+        public void SetNormTime(int value)
+        {
+            SetParameter("main", "normTime", value.ToString());
+        }
+
         /// <summary>
         /// Получить количество смен
         /// </summary>
@@ -89,6 +94,11 @@ namespace libINIFile
             result = GetParameterNumber("main", "countShifts");
 
             return result;
+        }
+
+        public void SetCountShifts(decimal value)
+        {
+            SetParameter("main", "countShifts", value.ToString());
         }
 
         /// <summary>
@@ -104,6 +114,11 @@ namespace libINIFile
             return result;
         }
 
+        public void SetPeriod(decimal value)
+        {
+            SetParameter("main", "period", value.ToString());
+        }
+
         /// <summary>
         /// Получить значение указывающее способ загрузки оборудования для сотрудника: загружать все оборудование или только указанное
         /// </summary>
@@ -115,6 +130,11 @@ namespace libINIFile
             result = GetParameterBoolean("main", "loadAllEquipForUser");
 
             return result;
+        }
+
+        public void SetLoadAllEquipForUser(bool value)
+        {
+            SetParameter("main", "loadAllEquipForUser", value.ToString());
         }
 
         /// <summary>
@@ -130,6 +150,53 @@ namespace libINIFile
             return result;
         }
 
+        public void SetGivenShiftNumber(bool value)
+        {
+            SetParameter("main", "givenShiftNumber", value.ToString());
+        }
+
+        public bool GetAutoAddDays()
+        {
+            bool result = false;
+
+            result = GetParameterBoolean("main", "autoAddDays");
+
+            return result;
+        }
+
+        public void SetAutoAddDays(bool value)
+        {
+            SetParameter("main", "autoAddDays", value.ToString());
+        }
+
+        public bool GetViewCurrentDay()
+        {
+            bool result = false;
+
+            result = GetParameterBoolean("main", "viewCurrentDay");
+
+            return result;
+        }
+
+        public void SetViewCurrentDay(bool value)
+        {
+            SetParameter("main", "viewCurrentDay", value.ToString());
+        }
+
+        public bool GetColWorksOutAutoWidth()
+        {
+            bool result = false;
+
+            result = GetParameterBoolean("columns", "wColWorksOutAutoWidth");
+
+            return result;
+        }
+
+        public void SetColWorksOutAutoWidth(bool value)
+        {
+            SetParameter("columns", "wColWorksOutAutoWidth", value.ToString());
+        }
+
         public int GetWidthNumberCol()
         {
             int result = 0;
@@ -137,6 +204,11 @@ namespace libINIFile
             result = GetParameterNumber("columns", "wColNum");
 
             return result;
+        }
+
+        public void SetWidthNumberCol(decimal value)
+        {
+            SetParameter("columns", "wColNum", value.ToString());
         }
 
         public int GetWidthNameCol()
@@ -148,6 +220,11 @@ namespace libINIFile
             return result;
         }
 
+        public void SetWidthNameCol(decimal value)
+        {
+            SetParameter("columns", "wColName", value.ToString());
+        }
+
         public int GetWidthWorkingOutCol()
         {
             int result = 0;
@@ -155,6 +232,11 @@ namespace libINIFile
             result = GetParameterNumber("columns", "wColsWorkOut");
 
             return result;
+        }
+
+        public void SetWidthWorkingOutCol(decimal value)
+        {
+            SetParameter("columns", "wColsWorkOut", value.ToString());
         }
 
         public int GetWidthResultsCol()
@@ -166,23 +248,18 @@ namespace libINIFile
             return result;
         }
 
-
-
-
-        public void SetNormTime(int value)
+        public void SetWidthResultsCol(decimal value)
         {
-            SetParameter("main", "normTime", value.ToString());
+            SetParameter("columns", "wColsResults", value.ToString());
         }
 
-        public void SetCountShifts(decimal value)
-        {
-            SetParameter("main", "countShifts", value.ToString());
-        }
 
-        public void SetLoadAllEquipForUser(bool value)
-        {
-            SetParameter("main", "loadAllEquipForUser", value.ToString());
-        }
+
+
+
+
+
+
 
         public bool GetLoadCurrentShift()
         {

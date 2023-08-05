@@ -13,6 +13,7 @@ using libINIFile;
 using libSql;
 using libTime;
 using Productivity.Properties;
+using System.Reflection;
 
 namespace Productivity
 {
@@ -26,6 +27,7 @@ namespace Productivity
         CancellationTokenSource cancelTokenSource;
 
         int metroSetTabControlPreviousIndex = -1;
+        int comboBoxSelectViewsPreviousIndex = -1;
         bool loadCategoryList = true;
 
         Dictionary<int, string> users = new Dictionary<int, string>();
@@ -33,6 +35,8 @@ namespace Productivity
         Dictionary<string, int> rowIndexes = new Dictionary<string, int>();
 
         List<User> usersList;
+        List<ViewPath> viewsList;
+        List<Page> pages;
 
         DateTime lastTimeUpdateShiftStatistic = DateTime.Now;
 
@@ -1881,6 +1885,15 @@ namespace Productivity
 
         private void metroSetTabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            SaveParameterBeforeClosing();
+
+            TabControlSelectedIndexChanged(metroSetTabControl1.SelectedIndex);
+
+            metroSetTabControlPreviousIndex = metroSetTabControl1.SelectedIndex;
+        }
+
+        private void SaveParameterBeforeClosing()
+        {
             if (metroSetTabControlPreviousIndex == 2)
             {
                 SaveCategoryToIniFile();
@@ -1889,9 +1902,10 @@ namespace Productivity
                 listViewEquips.Items.Clear();
             }
 
-            TabControlSelectedIndexChanged(metroSetTabControl1.SelectedIndex);
-
-            metroSetTabControlPreviousIndex = metroSetTabControl1.SelectedIndex;
+            if (metroSetTabControlPreviousIndex == 3)
+            {
+                SaveViewParameter();
+            }
         }
 
         private void TabControlSelectedIndexChanged(int selectedIndex)
@@ -1916,6 +1930,11 @@ namespace Productivity
             {
                 LoadCategoryToListView();
                 LoadParameterFromIniFile();
+            }
+
+            if (selectedIndex == 3)
+            {
+                LoadViewList();
             }
 
             settings.SetLastTabIndex(selectedIndex);
@@ -1972,6 +1991,23 @@ namespace Productivity
             bool givenShiftNumber = metroSetCheckBox2.Checked;
 
             settings.SetGivenShiftNumber(givenShiftNumber);
+        }
+
+        private void LoadViewList()
+        {
+            ValueView view = new ValueView();
+
+            viewsList = view.LoadView();
+
+            comboBox5.Items.Clear();
+
+            for (int i = 0; i < viewsList.Count; i++)
+            {
+                comboBox5.Items.Add(viewsList[i].Name);
+            }
+
+            comboBox5.Items.Add("новый");
+            comboBox5.SelectedIndex = 0;
         }
 
         private void listViewCategory_SelectedIndexChanged(object sender, EventArgs e)
@@ -2266,6 +2302,133 @@ namespace Productivity
             INISettings settings = new INISettings();
 
             settings.SetPeriodAutoUpdateStatistic((int)formattedNumericUpDown4.Value);
+        }
+
+
+
+        private void tableLayoutPanel12_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void comboBox5_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxSelectViewsPreviousIndex != -1)
+            {
+                SaveViewParameter();
+            }
+
+            ClearParameterViewMonitor();
+
+            if (comboBox5.SelectedIndex < comboBox5.Items.Count - 1)
+            {
+                string path = viewsList[comboBox5.SelectedIndex].Path;
+
+                label3.Text = path;
+
+                if (File.Exists(path))
+                {
+                    ValuePagesList valuePagesList = new ValuePagesList(path);
+
+                    label3.ForeColor = Color.DarkGreen;
+
+                    if (pages != null)
+                    {
+                        pages.Clear();
+                    }
+
+                    pages = valuePagesList.LoadPagesList();
+
+                    LoadViewParameter(path);
+                    LaodPagesToListView(pages);
+                }
+                else
+                {
+                    label3.ForeColor = Color.DarkRed;
+                }
+            }
+            else
+            {
+                label3.Text = "";
+
+            }
+
+            comboBoxSelectViewsPreviousIndex = comboBox5.SelectedIndex;
+        }
+
+        private void LaodPagesToListView(List<Page> pages)
+        {
+            for (int i = 0; i < pages.Count; i++)
+            {
+                ListViewItem item = new ListViewItem();
+
+                item.Name = pages[i].Id.ToString();
+                item.Text = (listViewPages.Items.Count + 1).ToString();
+                item.SubItems.Add(pages[i].Name);
+
+                item.Checked = pages[i].ActivePage;
+
+                listViewPages.Items.Add(item);
+
+            }
+        }
+
+        private void LoadViewParameter(string path)
+        {
+            INIView view = new INIView(path);
+
+            formattedNumericUpDown5.Value = view.GetPeriod();
+            formattedNumericUpDown6.Value = view.GetWidthNumberCol();
+            formattedNumericUpDown7.Value = view.GetWidthNameCol();
+            formattedNumericUpDown8.Value = view.GetWidthWorkingOutCol();
+            formattedNumericUpDown9.Value = view.GetWidthResultsCol();
+
+            metroSetCheckBox3.Checked = view.GetViewCurrentDay();
+            metroSetCheckBox4.Checked = view.GetColWorksOutAutoWidth();
+            metroSetCheckBox5.Checked = view.GetAutoAddDays();
+        }
+
+        private void SaveViewParameter()
+        {
+            if (comboBoxSelectViewsPreviousIndex != -1 && comboBoxSelectViewsPreviousIndex < viewsList.Count - 1)
+            {
+                string path = viewsList[comboBoxSelectViewsPreviousIndex].Path;
+                
+                if (File.Exists(path))
+                {
+                    INIView view = new INIView(path);
+
+                    view.SetPeriod(formattedNumericUpDown5.Value);
+                    view.SetWidthNumberCol(formattedNumericUpDown6.Value);
+                    view.SetWidthNameCol(formattedNumericUpDown7.Value);
+                    view.SetWidthWorkingOutCol(formattedNumericUpDown8.Value);
+                    view.SetWidthResultsCol(formattedNumericUpDown9.Value);
+
+                    view.SetViewCurrentDay(metroSetCheckBox3.Checked);
+                    view.SetColWorksOutAutoWidth(metroSetCheckBox4.Checked);
+                    view.SetAutoAddDays(metroSetCheckBox5.Checked);
+                }
+            }
+        }
+
+        private void ClearParameterViewMonitor()
+        {
+            listViewPages.Items.Clear();
+
+            formattedNumericUpDown5.Value = 0;
+            formattedNumericUpDown6.Value = 0;
+            formattedNumericUpDown7.Value = 0;
+            formattedNumericUpDown8.Value = 0;
+            formattedNumericUpDown9.Value = 0;
+
+            metroSetCheckBox3.Checked = false;
+            metroSetCheckBox4.Checked = false;
+            metroSetCheckBox5.Checked = false;
+        }
+
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveParameterBeforeClosing();
         }
     }
 }

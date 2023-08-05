@@ -120,6 +120,37 @@ namespace Productivity
             this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel11 = new System.Windows.Forms.TableLayoutPanel();
             this.comboBox5 = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.buttonEditViewPath = new System.Windows.Forms.Button();
+            this.buttonDelViewPath = new System.Windows.Forms.Button();
+            this.tableLayoutPanel12 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel13 = new System.Windows.Forms.TableLayoutPanel();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.metroSetCheckBox3 = new MetroSet_UI.Controls.MetroSetCheckBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.formattedNumericUpDown5 = new Productivity.FormattedNumericUpDown();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.formattedNumericUpDown9 = new Productivity.FormattedNumericUpDown();
+            this.formattedNumericUpDown8 = new Productivity.FormattedNumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
+            this.formattedNumericUpDown7 = new Productivity.FormattedNumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
+            this.formattedNumericUpDown6 = new Productivity.FormattedNumericUpDown();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.metroSetCheckBox4 = new MetroSet_UI.Controls.MetroSetCheckBox();
+            this.metroSetCheckBox5 = new MetroSet_UI.Controls.MetroSetCheckBox();
+            this.tableLayoutPanel14 = new System.Windows.Forms.TableLayoutPanel();
+            this.listViewPages = new Productivity.FormMain.MyListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tableLayoutPanel15 = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonViewAdd = new System.Windows.Forms.Button();
+            this.buttonViewEdit = new System.Windows.Forms.Button();
+            this.buttonViewDel = new System.Windows.Forms.Button();
+            this.buttonViewUp = new System.Windows.Forms.Button();
+            this.buttonViewDown = new System.Windows.Forms.Button();
             this.metroSetControlBox1 = new MetroSet_UI.Controls.MetroSetControlBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.metroSetTabControl1.SuspendLayout();
@@ -148,6 +179,18 @@ namespace Productivity
             this.metroSetSetTabPage4.SuspendLayout();
             this.tableLayoutPanel10.SuspendLayout();
             this.tableLayoutPanel11.SuspendLayout();
+            this.tableLayoutPanel12.SuspendLayout();
+            this.tableLayoutPanel13.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown5)).BeginInit();
+            this.groupBox6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown9)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown8)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown6)).BeginInit();
+            this.groupBox8.SuspendLayout();
+            this.tableLayoutPanel14.SuspendLayout();
+            this.tableLayoutPanel15.SuspendLayout();
             this.SuspendLayout();
             // 
             // metroSetTabControl1
@@ -1033,39 +1076,449 @@ namespace Productivity
             // 
             this.tableLayoutPanel10.BackColor = System.Drawing.SystemColors.ButtonHighlight;
             this.tableLayoutPanel10.ColumnCount = 1;
-            this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel10.Controls.Add(this.tableLayoutPanel11, 0, 0);
+            this.tableLayoutPanel10.Controls.Add(this.tableLayoutPanel12, 0, 1);
             this.tableLayoutPanel10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel10.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel10.Name = "tableLayoutPanel10";
             this.tableLayoutPanel10.RowCount = 2;
-            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.050847F));
-            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 91.94915F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel10.Size = new System.Drawing.Size(1268, 472);
             this.tableLayoutPanel10.TabIndex = 0;
             // 
             // tableLayoutPanel11
             // 
-            this.tableLayoutPanel11.ColumnCount = 2;
-            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 24.8019F));
-            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 75.1981F));
+            this.tableLayoutPanel11.ColumnCount = 5;
+            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
+            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90F));
+            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90F));
+            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 5F));
             this.tableLayoutPanel11.Controls.Add(this.comboBox5, 0, 0);
+            this.tableLayoutPanel11.Controls.Add(this.label3, 1, 0);
+            this.tableLayoutPanel11.Controls.Add(this.buttonEditViewPath, 2, 0);
+            this.tableLayoutPanel11.Controls.Add(this.buttonDelViewPath, 3, 0);
             this.tableLayoutPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel11.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel11.Name = "tableLayoutPanel11";
             this.tableLayoutPanel11.RowCount = 1;
-            this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel11.Size = new System.Drawing.Size(1262, 31);
+            this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel11.Size = new System.Drawing.Size(1262, 29);
             this.tableLayoutPanel11.TabIndex = 0;
             // 
             // comboBox5
             // 
             this.comboBox5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBox5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox5.FormattingEnabled = true;
             this.comboBox5.Location = new System.Drawing.Point(3, 3);
             this.comboBox5.Name = "comboBox5";
-            this.comboBox5.Size = new System.Drawing.Size(306, 24);
+            this.comboBox5.Size = new System.Drawing.Size(318, 24);
             this.comboBox5.TabIndex = 0;
+            this.comboBox5.SelectedIndexChanged += new System.EventHandler(this.comboBox5_SelectedIndexChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label3.Location = new System.Drawing.Point(327, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(697, 29);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "path";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // buttonEditViewPath
+            // 
+            this.buttonEditViewPath.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonEditViewPath.Location = new System.Drawing.Point(1030, 3);
+            this.buttonEditViewPath.Name = "buttonEditViewPath";
+            this.buttonEditViewPath.Size = new System.Drawing.Size(84, 23);
+            this.buttonEditViewPath.TabIndex = 2;
+            this.buttonEditViewPath.Text = "Изменить";
+            this.buttonEditViewPath.UseVisualStyleBackColor = true;
+            // 
+            // buttonDelViewPath
+            // 
+            this.buttonDelViewPath.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonDelViewPath.Location = new System.Drawing.Point(1120, 3);
+            this.buttonDelViewPath.Name = "buttonDelViewPath";
+            this.buttonDelViewPath.Size = new System.Drawing.Size(84, 23);
+            this.buttonDelViewPath.TabIndex = 3;
+            this.buttonDelViewPath.Text = "Удалить";
+            this.buttonDelViewPath.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel12
+            // 
+            this.tableLayoutPanel12.ColumnCount = 2;
+            this.tableLayoutPanel12.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel12.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanel12.Controls.Add(this.tableLayoutPanel13, 0, 0);
+            this.tableLayoutPanel12.Controls.Add(this.tableLayoutPanel14, 1, 0);
+            this.tableLayoutPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel12.Location = new System.Drawing.Point(3, 38);
+            this.tableLayoutPanel12.Name = "tableLayoutPanel12";
+            this.tableLayoutPanel12.RowCount = 1;
+            this.tableLayoutPanel12.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel12.Size = new System.Drawing.Size(1262, 431);
+            this.tableLayoutPanel12.TabIndex = 1;
+            this.tableLayoutPanel12.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel12_Paint);
+            // 
+            // tableLayoutPanel13
+            // 
+            this.tableLayoutPanel13.ColumnCount = 1;
+            this.tableLayoutPanel13.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel13.Controls.Add(this.groupBox5, 0, 0);
+            this.tableLayoutPanel13.Controls.Add(this.groupBox6, 0, 1);
+            this.tableLayoutPanel13.Controls.Add(this.groupBox8, 0, 2);
+            this.tableLayoutPanel13.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel13.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel13.Name = "tableLayoutPanel13";
+            this.tableLayoutPanel13.RowCount = 5;
+            this.tableLayoutPanel13.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
+            this.tableLayoutPanel13.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
+            this.tableLayoutPanel13.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 90F));
+            this.tableLayoutPanel13.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel13.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel13.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel13.Size = new System.Drawing.Size(498, 425);
+            this.tableLayoutPanel13.TabIndex = 0;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.metroSetCheckBox3);
+            this.groupBox5.Controls.Add(this.label4);
+            this.groupBox5.Controls.Add(this.formattedNumericUpDown5);
+            this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox5.Location = new System.Drawing.Point(3, 3);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(492, 64);
+            this.groupBox5.TabIndex = 0;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Отображение дней статистики";
+            // 
+            // metroSetCheckBox3
+            // 
+            this.metroSetCheckBox3.BackColor = System.Drawing.Color.Transparent;
+            this.metroSetCheckBox3.BackgroundColor = System.Drawing.Color.White;
+            this.metroSetCheckBox3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(155)))), ((int)(((byte)(155)))));
+            this.metroSetCheckBox3.Checked = false;
+            this.metroSetCheckBox3.CheckSignColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.metroSetCheckBox3.CheckState = MetroSet_UI.Enums.CheckState.Unchecked;
+            this.metroSetCheckBox3.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.metroSetCheckBox3.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(205)))), ((int)(((byte)(205)))));
+            this.metroSetCheckBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.metroSetCheckBox3.IsDerivedStyle = true;
+            this.metroSetCheckBox3.Location = new System.Drawing.Point(198, 25);
+            this.metroSetCheckBox3.Name = "metroSetCheckBox3";
+            this.metroSetCheckBox3.SignStyle = MetroSet_UI.Enums.SignStyle.Sign;
+            this.metroSetCheckBox3.Size = new System.Drawing.Size(213, 16);
+            this.metroSetCheckBox3.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetCheckBox3.StyleManager = null;
+            this.metroSetCheckBox3.TabIndex = 2;
+            this.metroSetCheckBox3.Text = "Отображать текущий день";
+            this.metroSetCheckBox3.ThemeAuthor = "Narwin";
+            this.metroSetCheckBox3.ThemeName = "MetroLite";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(65, 24);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(113, 17);
+            this.label4.TabIndex = 1;
+            this.label4.Text = "последних дней";
+            // 
+            // formattedNumericUpDown5
+            // 
+            this.formattedNumericUpDown5.Format = null;
+            this.formattedNumericUpDown5.Location = new System.Drawing.Point(6, 22);
+            this.formattedNumericUpDown5.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.formattedNumericUpDown5.Name = "formattedNumericUpDown5";
+            this.formattedNumericUpDown5.Size = new System.Drawing.Size(53, 23);
+            this.formattedNumericUpDown5.TabIndex = 0;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.label7);
+            this.groupBox6.Controls.Add(this.label8);
+            this.groupBox6.Controls.Add(this.formattedNumericUpDown9);
+            this.groupBox6.Controls.Add(this.formattedNumericUpDown8);
+            this.groupBox6.Controls.Add(this.label6);
+            this.groupBox6.Controls.Add(this.formattedNumericUpDown7);
+            this.groupBox6.Controls.Add(this.label5);
+            this.groupBox6.Controls.Add(this.formattedNumericUpDown6);
+            this.groupBox6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox6.Location = new System.Drawing.Point(3, 73);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(492, 64);
+            this.groupBox6.TabIndex = 1;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Ширина основных столбцов";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(432, 25);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(53, 17);
+            this.label7.TabIndex = 5;
+            this.label7.Text = "- итоги";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(281, 25);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(88, 17);
+            this.label8.TabIndex = 4;
+            this.label8.Text = "- выработка";
+            // 
+            // formattedNumericUpDown9
+            // 
+            this.formattedNumericUpDown9.Format = null;
+            this.formattedNumericUpDown9.Location = new System.Drawing.Point(379, 23);
+            this.formattedNumericUpDown9.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.formattedNumericUpDown9.Name = "formattedNumericUpDown9";
+            this.formattedNumericUpDown9.Size = new System.Drawing.Size(52, 23);
+            this.formattedNumericUpDown9.TabIndex = 4;
+            // 
+            // formattedNumericUpDown8
+            // 
+            this.formattedNumericUpDown8.Format = null;
+            this.formattedNumericUpDown8.Location = new System.Drawing.Point(228, 23);
+            this.formattedNumericUpDown8.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.formattedNumericUpDown8.Name = "formattedNumericUpDown8";
+            this.formattedNumericUpDown8.Size = new System.Drawing.Size(53, 23);
+            this.formattedNumericUpDown8.TabIndex = 3;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(176, 25);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(42, 17);
+            this.label6.TabIndex = 3;
+            this.label6.Text = "- имя";
+            // 
+            // formattedNumericUpDown7
+            // 
+            this.formattedNumericUpDown7.Format = null;
+            this.formattedNumericUpDown7.Location = new System.Drawing.Point(124, 23);
+            this.formattedNumericUpDown7.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.formattedNumericUpDown7.Name = "formattedNumericUpDown7";
+            this.formattedNumericUpDown7.Size = new System.Drawing.Size(52, 23);
+            this.formattedNumericUpDown7.TabIndex = 2;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(59, 25);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(58, 17);
+            this.label5.TabIndex = 1;
+            this.label5.Text = "- номер";
+            // 
+            // formattedNumericUpDown6
+            // 
+            this.formattedNumericUpDown6.Format = null;
+            this.formattedNumericUpDown6.Location = new System.Drawing.Point(7, 23);
+            this.formattedNumericUpDown6.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.formattedNumericUpDown6.Name = "formattedNumericUpDown6";
+            this.formattedNumericUpDown6.Size = new System.Drawing.Size(52, 23);
+            this.formattedNumericUpDown6.TabIndex = 0;
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.metroSetCheckBox4);
+            this.groupBox8.Controls.Add(this.metroSetCheckBox5);
+            this.groupBox8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox8.Location = new System.Drawing.Point(3, 143);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(492, 84);
+            this.groupBox8.TabIndex = 3;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Автоформатирование";
+            // 
+            // metroSetCheckBox4
+            // 
+            this.metroSetCheckBox4.BackColor = System.Drawing.Color.Transparent;
+            this.metroSetCheckBox4.BackgroundColor = System.Drawing.Color.White;
+            this.metroSetCheckBox4.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(155)))), ((int)(((byte)(155)))));
+            this.metroSetCheckBox4.Checked = false;
+            this.metroSetCheckBox4.CheckSignColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.metroSetCheckBox4.CheckState = MetroSet_UI.Enums.CheckState.Unchecked;
+            this.metroSetCheckBox4.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.metroSetCheckBox4.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(205)))), ((int)(((byte)(205)))));
+            this.metroSetCheckBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.metroSetCheckBox4.IsDerivedStyle = true;
+            this.metroSetCheckBox4.Location = new System.Drawing.Point(7, 44);
+            this.metroSetCheckBox4.Name = "metroSetCheckBox4";
+            this.metroSetCheckBox4.SignStyle = MetroSet_UI.Enums.SignStyle.Sign;
+            this.metroSetCheckBox4.Size = new System.Drawing.Size(479, 16);
+            this.metroSetCheckBox4.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetCheckBox4.StyleManager = null;
+            this.metroSetCheckBox4.TabIndex = 5;
+            this.metroSetCheckBox4.Text = "Увеличивать ширину столбцов выработки под ширину окна";
+            this.metroSetCheckBox4.ThemeAuthor = "Narwin";
+            this.metroSetCheckBox4.ThemeName = "MetroLite";
+            // 
+            // metroSetCheckBox5
+            // 
+            this.metroSetCheckBox5.BackColor = System.Drawing.Color.Transparent;
+            this.metroSetCheckBox5.BackgroundColor = System.Drawing.Color.White;
+            this.metroSetCheckBox5.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(155)))), ((int)(((byte)(155)))));
+            this.metroSetCheckBox5.Checked = false;
+            this.metroSetCheckBox5.CheckSignColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.metroSetCheckBox5.CheckState = MetroSet_UI.Enums.CheckState.Unchecked;
+            this.metroSetCheckBox5.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.metroSetCheckBox5.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(205)))), ((int)(((byte)(205)))));
+            this.metroSetCheckBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.metroSetCheckBox5.IsDerivedStyle = true;
+            this.metroSetCheckBox5.Location = new System.Drawing.Point(7, 22);
+            this.metroSetCheckBox5.Name = "metroSetCheckBox5";
+            this.metroSetCheckBox5.SignStyle = MetroSet_UI.Enums.SignStyle.Sign;
+            this.metroSetCheckBox5.Size = new System.Drawing.Size(478, 16);
+            this.metroSetCheckBox5.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetCheckBox5.StyleManager = null;
+            this.metroSetCheckBox5.TabIndex = 0;
+            this.metroSetCheckBox5.Text = "При возможности добавлять дни отображения статистики";
+            this.metroSetCheckBox5.ThemeAuthor = "Narwin";
+            this.metroSetCheckBox5.ThemeName = "MetroLite";
+            // 
+            // tableLayoutPanel14
+            // 
+            this.tableLayoutPanel14.ColumnCount = 1;
+            this.tableLayoutPanel14.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel14.Controls.Add(this.listViewPages, 0, 0);
+            this.tableLayoutPanel14.Controls.Add(this.tableLayoutPanel15, 0, 1);
+            this.tableLayoutPanel14.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel14.Location = new System.Drawing.Point(507, 3);
+            this.tableLayoutPanel14.Name = "tableLayoutPanel14";
+            this.tableLayoutPanel14.RowCount = 2;
+            this.tableLayoutPanel14.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel14.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+            this.tableLayoutPanel14.Size = new System.Drawing.Size(752, 425);
+            this.tableLayoutPanel14.TabIndex = 1;
+            // 
+            // listViewPages
+            // 
+            this.listViewPages.CheckBoxes = true;
+            this.listViewPages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+            this.listViewPages.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewPages.FullRowSelect = true;
+            this.listViewPages.GridLines = true;
+            this.listViewPages.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listViewPages.HideSelection = false;
+            this.listViewPages.Location = new System.Drawing.Point(3, 3);
+            this.listViewPages.MultiSelect = false;
+            this.listViewPages.Name = "listViewPages";
+            this.listViewPages.ShowItemToolTips = true;
+            this.listViewPages.Size = new System.Drawing.Size(746, 384);
+            this.listViewPages.TabIndex = 3;
+            this.listViewPages.UseCompatibleStateImageBehavior = false;
+            this.listViewPages.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "№";
+            this.columnHeader1.Width = 40;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Категория";
+            this.columnHeader2.Width = 250;
+            // 
+            // tableLayoutPanel15
+            // 
+            this.tableLayoutPanel15.ColumnCount = 6;
+            this.tableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.tableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.tableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.tableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.tableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.tableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel15.Controls.Add(this.buttonViewAdd, 0, 0);
+            this.tableLayoutPanel15.Controls.Add(this.buttonViewEdit, 1, 0);
+            this.tableLayoutPanel15.Controls.Add(this.buttonViewDel, 2, 0);
+            this.tableLayoutPanel15.Controls.Add(this.buttonViewUp, 3, 0);
+            this.tableLayoutPanel15.Controls.Add(this.buttonViewDown, 4, 0);
+            this.tableLayoutPanel15.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel15.Location = new System.Drawing.Point(3, 393);
+            this.tableLayoutPanel15.Name = "tableLayoutPanel15";
+            this.tableLayoutPanel15.RowCount = 1;
+            this.tableLayoutPanel15.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel15.Size = new System.Drawing.Size(746, 29);
+            this.tableLayoutPanel15.TabIndex = 0;
+            // 
+            // buttonViewAdd
+            // 
+            this.buttonViewAdd.Location = new System.Drawing.Point(3, 3);
+            this.buttonViewAdd.Name = "buttonViewAdd";
+            this.buttonViewAdd.Size = new System.Drawing.Size(74, 23);
+            this.buttonViewAdd.TabIndex = 0;
+            this.buttonViewAdd.Text = "Add";
+            this.buttonViewAdd.UseVisualStyleBackColor = true;
+            // 
+            // buttonViewEdit
+            // 
+            this.buttonViewEdit.Location = new System.Drawing.Point(83, 3);
+            this.buttonViewEdit.Name = "buttonViewEdit";
+            this.buttonViewEdit.Size = new System.Drawing.Size(74, 23);
+            this.buttonViewEdit.TabIndex = 1;
+            this.buttonViewEdit.Text = "Edit";
+            this.buttonViewEdit.UseVisualStyleBackColor = true;
+            // 
+            // buttonViewDel
+            // 
+            this.buttonViewDel.Location = new System.Drawing.Point(163, 3);
+            this.buttonViewDel.Name = "buttonViewDel";
+            this.buttonViewDel.Size = new System.Drawing.Size(74, 23);
+            this.buttonViewDel.TabIndex = 2;
+            this.buttonViewDel.Text = "Delete";
+            this.buttonViewDel.UseVisualStyleBackColor = true;
+            // 
+            // buttonViewUp
+            // 
+            this.buttonViewUp.Location = new System.Drawing.Point(243, 3);
+            this.buttonViewUp.Name = "buttonViewUp";
+            this.buttonViewUp.Size = new System.Drawing.Size(74, 23);
+            this.buttonViewUp.TabIndex = 3;
+            this.buttonViewUp.Text = "Up";
+            this.buttonViewUp.UseVisualStyleBackColor = true;
+            // 
+            // buttonViewDown
+            // 
+            this.buttonViewDown.Location = new System.Drawing.Point(323, 3);
+            this.buttonViewDown.Name = "buttonViewDown";
+            this.buttonViewDown.Size = new System.Drawing.Size(74, 23);
+            this.buttonViewDown.TabIndex = 4;
+            this.buttonViewDown.Text = "Down";
+            this.buttonViewDown.UseVisualStyleBackColor = true;
             // 
             // metroSetControlBox1
             // 
@@ -1114,6 +1567,7 @@ namespace Productivity
             this.TextColor = System.Drawing.SystemColors.GrayText;
             this.UseSlideAnimation = true;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.metroSetTabControl1.ResumeLayout(false);
             this.metroSetSetTabPage1.ResumeLayout(false);
@@ -1142,6 +1596,21 @@ namespace Productivity
             this.metroSetSetTabPage4.ResumeLayout(false);
             this.tableLayoutPanel10.ResumeLayout(false);
             this.tableLayoutPanel11.ResumeLayout(false);
+            this.tableLayoutPanel11.PerformLayout();
+            this.tableLayoutPanel12.ResumeLayout(false);
+            this.tableLayoutPanel13.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown5)).EndInit();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown9)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown8)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown6)).EndInit();
+            this.groupBox8.ResumeLayout(false);
+            this.tableLayoutPanel14.ResumeLayout(false);
+            this.tableLayoutPanel15.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1208,6 +1677,37 @@ namespace Productivity
         private TableLayoutPanel tableLayoutPanel10;
         private TableLayoutPanel tableLayoutPanel11;
         private ComboBox comboBox5;
+        private TableLayoutPanel tableLayoutPanel12;
+        private Label label3;
+        private TableLayoutPanel tableLayoutPanel13;
+        private GroupBox groupBox5;
+        private Label label4;
+        private FormattedNumericUpDown formattedNumericUpDown5;
+        private MetroSet_UI.Controls.MetroSetCheckBox metroSetCheckBox3;
+        private GroupBox groupBox6;
+        private Label label7;
+        private FormattedNumericUpDown formattedNumericUpDown9;
+        private Label label6;
+        private FormattedNumericUpDown formattedNumericUpDown7;
+        private Label label5;
+        private FormattedNumericUpDown formattedNumericUpDown6;
+        private MetroSet_UI.Controls.MetroSetCheckBox metroSetCheckBox4;
+        private Label label8;
+        private FormattedNumericUpDown formattedNumericUpDown8;
+        private GroupBox groupBox8;
+        private MetroSet_UI.Controls.MetroSetCheckBox metroSetCheckBox5;
+        private TableLayoutPanel tableLayoutPanel14;
+        private MyListView listViewPages;
+        private ColumnHeader columnHeader1;
+        private ColumnHeader columnHeader2;
+        private TableLayoutPanel tableLayoutPanel15;
+        private Button buttonViewAdd;
+        private Button buttonViewEdit;
+        private Button buttonViewDel;
+        private Button buttonViewUp;
+        private Button buttonViewDown;
+        private Button buttonEditViewPath;
+        private Button buttonDelViewPath;
     }
 }
 

@@ -7,13 +7,25 @@ namespace libINIFile
 {
     public class ValuePagesList
     {
+        private string iniFile;
+
+        public ValuePagesList(string iniFile)
+        {
+            this.iniFile = iniFile;
+        }
+
+        public ValuePagesList()
+        {
+            this.iniFile = "view.ini";
+        }
+
         public List<Page> LoadPagesList(bool loadAllPages = true)
         {
             List<Page> pageList = new List<Page>();
 
             string startStrSection = "page_";
 
-            IniFile ini = new IniFile("view.ini");
+            IniFile ini = new IniFile(iniFile);
 
             string[] sections = ini.GetAllSections();
 

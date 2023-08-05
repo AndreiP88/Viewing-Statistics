@@ -49,6 +49,7 @@
     <Compile Include="UserShift.cs" />
     <Compile Include="UserShiftOrder.cs" />
     <Compile Include="WorkingOut.cs" />
+    <Compile Include="ViewPath.cs" />
     <Compile Include="WorkingOutValue.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
