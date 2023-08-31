@@ -97,6 +97,42 @@ namespace libINIFile
             return pageList;
         }
 
+        public Page LoadPage(int pageID)
+        {
+            string startStrSection = "page_";
+
+            IniFile ini = new IniFile(iniFile);
+
+            string section = startStrSection + pageID;
+
+            int idCategory = Convert.ToInt32(section.Substring(startStrSection.Length));
+
+            bool activePage = ini.ReadBool("activePage", section);
+            string name = ini.ReadString("name", section);
+            int typePage = ini.ReadInt("typePage", section);
+            int timeForView = ini.ReadInt("timeForView", section);
+            List<string> categoryesNames = ini.ReadString("categoryesNames", section)?.Split(';')?.ToList();
+            List<string> categoryAndEquips = ini.ReadString("categoryAndEquips", section)?.Split(';')?.ToList();
+            List<string> outValues = ini.ReadString("outValues", section)?.Split(';')?.ToList();
+            int typeLoad = ini.ReadInt("typeLoad", section);
+            string nameMediaFile = ini.ReadString("nameMediaFile", section);
+
+            Page page = (new Page(
+                    idCategory,
+                    typePage,
+                    name,
+                    activePage,
+                    timeForView,
+                    categoryesNames,
+                    categoryAndEquips,
+                    outValues,
+                    typeLoad,
+                    nameMediaFile
+                ));
+
+            return page;
+        }
+
         public int GetCountOutValue(List<string> list)
         {
             int count = 0;

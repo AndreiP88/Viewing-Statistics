@@ -184,10 +184,7 @@ namespace Viewing_Statistics
         {
             try
             {
-                if (usersList != null)
-                {
-                    usersList.Clear();
-                }
+                usersList?.Clear();
 
                 //usersList = new List<User>();
 
@@ -309,10 +306,7 @@ namespace Viewing_Statistics
 
             DateTime startDate = GetStartDate(period);
 
-            if (pages != null)
-            {
-                pages.Clear();
-            }
+            pages?.Clear();
 
             pages = LoadPagesList();
 

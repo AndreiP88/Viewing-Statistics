@@ -2332,10 +2332,7 @@ namespace Productivity
 
                     label3.ForeColor = Color.DarkGreen;
 
-                    if (pages != null)
-                    {
-                        pages.Clear();
-                    }
+                    pages?.Clear();
 
                     pages = valuePagesList.LoadPagesList();
 
@@ -2429,6 +2426,25 @@ namespace Productivity
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveParameterBeforeClosing();
+        }
+
+        private void buttonViewAdd_Click(object sender, EventArgs e)
+        {
+            string path = viewsList[comboBox5.SelectedIndex].Path;
+
+            FormAddEditViewing fm = new FormAddEditViewing(path);
+            fm.ShowDialog();
+        }
+
+        private void buttonViewEdit_Click(object sender, EventArgs e)
+        {
+            if (listViewPages.SelectedItems.Count > 0)
+            {
+                string path = viewsList[comboBox5.SelectedIndex].Path;
+
+                FormAddEditViewing fm = new FormAddEditViewing(path, Convert.ToInt32(listViewPages.Items[listViewPages.SelectedIndices[0]].Name));
+                fm.ShowDialog();
+            }
         }
     }
 }

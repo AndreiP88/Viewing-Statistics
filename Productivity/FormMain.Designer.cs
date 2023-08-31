@@ -1483,6 +1483,7 @@ namespace Productivity
             this.buttonViewAdd.TabIndex = 0;
             this.buttonViewAdd.Text = "Add";
             this.buttonViewAdd.UseVisualStyleBackColor = true;
+            this.buttonViewAdd.Click += new System.EventHandler(this.buttonViewAdd_Click);
             // 
             // buttonViewEdit
             // 
@@ -1492,6 +1493,7 @@ namespace Productivity
             this.buttonViewEdit.TabIndex = 1;
             this.buttonViewEdit.Text = "Edit";
             this.buttonViewEdit.UseVisualStyleBackColor = true;
+            this.buttonViewEdit.Click += new System.EventHandler(this.buttonViewEdit_Click);
             // 
             // buttonViewDel
             // 

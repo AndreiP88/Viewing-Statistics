@@ -8,6 +8,70 @@ namespace libTime
 {
     public class ValueDateTime
     {
+        public string SelectStartDateTimeFromShiftNumberAndDateForFBC(DateTime date, int shiftNumber)
+        {
+            string result = "";
+
+            if (shiftNumber == 1)
+            {
+                result = date.ToString("yyyy-MM-dd") + "T05:00:00.000";
+            }
+            else
+            {
+                result = date.ToString("yyyy-MM-dd") + "T17:00:00.000";
+            }
+
+            return result;
+        }
+
+        public string SelectEndDateTimeFromShiftNumberAndDateForFBC(DateTime date, int shiftNumber)
+        {
+            string result = "";
+
+            if (shiftNumber == 1)
+            {
+                result = date.ToString("yyyy-MM-dd") + "T11:00:00.000";
+            }
+            else
+            {
+                result = date.ToString("yyyy-MM-dd") + "T23:00:00.000";
+            }
+
+            return result;
+        }
+
+        public string SelectStartDateTimeFromShiftNumberAndDateOnlyTimeForFBC(DateTime date, int shiftNumber)
+        {
+            string result = "";
+
+            if (shiftNumber == 1)
+            {
+                result = date.ToString("yyyy-MM-dd") + "T05:00:00.000";
+            }
+            else
+            {
+                result = date.ToString("yyyy-MM-dd") + "T17:00:00.000";
+            }
+            
+            return result;
+        }
+
+        public string SelectEndDateTimeFromShiftNumberAndDateOnlyTimeForFBC(DateTime date, int shiftNumber)
+        {
+            string result = "";
+
+            if (shiftNumber == 1)
+            {
+                result = date.ToString("yyyy-MM-dd") + "T11:00:00.000";
+            }
+            else
+            {
+                result = date.ToString("yyyy-MM-dd") + "T23:00:00.000";
+            }
+
+            return result;
+        }
+
         public string SelectStartDateTimeFromShiftNumberAndDate(DateTime date, int shiftNumber)
         {
             string result = "";
