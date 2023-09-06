@@ -1442,6 +1442,7 @@ namespace Productivity
             this.listViewPages.TabIndex = 3;
             this.listViewPages.UseCompatibleStateImageBehavior = false;
             this.listViewPages.View = System.Windows.Forms.View.Details;
+            this.listViewPages.SelectedIndexChanged += new System.EventHandler(this.listViewPages_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
@@ -1487,6 +1488,7 @@ namespace Productivity
             // 
             // buttonViewEdit
             // 
+            this.buttonViewEdit.Enabled = false;
             this.buttonViewEdit.Location = new System.Drawing.Point(83, 3);
             this.buttonViewEdit.Name = "buttonViewEdit";
             this.buttonViewEdit.Size = new System.Drawing.Size(74, 23);
@@ -1497,30 +1499,36 @@ namespace Productivity
             // 
             // buttonViewDel
             // 
+            this.buttonViewDel.Enabled = false;
             this.buttonViewDel.Location = new System.Drawing.Point(163, 3);
             this.buttonViewDel.Name = "buttonViewDel";
             this.buttonViewDel.Size = new System.Drawing.Size(74, 23);
             this.buttonViewDel.TabIndex = 2;
             this.buttonViewDel.Text = "Delete";
             this.buttonViewDel.UseVisualStyleBackColor = true;
+            this.buttonViewDel.Click += new System.EventHandler(this.buttonViewDel_Click);
             // 
             // buttonViewUp
             // 
+            this.buttonViewUp.Enabled = false;
             this.buttonViewUp.Location = new System.Drawing.Point(243, 3);
             this.buttonViewUp.Name = "buttonViewUp";
             this.buttonViewUp.Size = new System.Drawing.Size(74, 23);
             this.buttonViewUp.TabIndex = 3;
             this.buttonViewUp.Text = "Up";
             this.buttonViewUp.UseVisualStyleBackColor = true;
+            this.buttonViewUp.Click += new System.EventHandler(this.buttonViewUp_Click);
             // 
             // buttonViewDown
             // 
+            this.buttonViewDown.Enabled = false;
             this.buttonViewDown.Location = new System.Drawing.Point(323, 3);
             this.buttonViewDown.Name = "buttonViewDown";
             this.buttonViewDown.Size = new System.Drawing.Size(74, 23);
             this.buttonViewDown.TabIndex = 4;
             this.buttonViewDown.Text = "Down";
             this.buttonViewDown.UseVisualStyleBackColor = true;
+            this.buttonViewDown.Click += new System.EventHandler(this.buttonViewDown_Click);
             // 
             // metroSetControlBox1
             // 

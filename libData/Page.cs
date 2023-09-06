@@ -6,6 +6,7 @@ namespace libData
     {
         public int Id;
         public int TypePage;
+        public string categoryesNames;
         public string Name;
         public bool ActivePage;
         public int TimeForView;

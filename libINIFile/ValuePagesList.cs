@@ -133,6 +133,73 @@ namespace libINIFile
             return page;
         }
 
+        public void SavePage(Page page)
+        {
+            string startStrSection = "page_";
+
+            IniFile ini = new IniFile(iniFile);
+
+            string section = startStrSection + page.Id;
+
+            string categoryesNames = String.Join(";", page.CategoryesNames.ToArray());
+            string categoryAndEquips = String.Join(";", page.CategoryAndEquips.ToArray());
+            string outValues = String.Join(";", page.OutValues.ToArray());
+
+            ini.Write("activePage", page.ActivePage.ToString(), section);
+            ini.Write("name", page.Name, section);
+            ini.Write("typePage", page.TypePage.ToString(), section);
+            ini.Write("timeForView", page.TimeForView.ToString(), section);
+            ini.Write("categoryesNames", categoryesNames, section);
+            ini.Write("categoryAndEquips", categoryAndEquips, section);
+            ini.Write("outValues", outValues, section);
+            ini.Write("typeLoad", page.TypeLoad.ToString(), section);
+            ini.Write("nameMediaFile", page.NameMediaFile, section);
+        }
+
+        public void SwapPage(int firstIndex, int secondIndex)
+        {
+            Page firstPage = LoadPage(firstIndex);
+            Page secondPage = LoadPage(secondIndex);
+
+            firstPage.Id = secondIndex;
+            secondPage.Id = firstIndex;
+
+            SavePage(firstPage);
+            SavePage(secondPage);
+        }
+
+        public void DeletePage(int pageID)
+        {
+            string startStrSection = "page_";
+
+            IniFile ini = new IniFile(iniFile);
+
+            string section = startStrSection + pageID;
+
+            ini.DeleteSection(section);
+        }
+
+        public int GetCountOfPages()
+        {
+            int result = 0;
+
+            string startStrSection = "page_";
+
+            IniFile ini = new IniFile(iniFile);
+
+            string[] sections = ini.GetAllSections();
+
+            for (int i = 0; i < sections.Length; i++)
+            {
+                if (sections[i].StartsWith(startStrSection))
+                {
+                    result++;
+                }
+            }
+
+            return result;
+        }
+
         public int GetCountOutValue(List<string> list)
         {
             int count = 0;

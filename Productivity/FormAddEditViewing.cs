@@ -4,6 +4,7 @@ using libSql;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Productivity
@@ -60,11 +61,11 @@ namespace Productivity
         {
             if (IndexPage == -1)
             {
-                //AddNewPage();
+                AddNewPage();
             }
             else
             {
-                //SaveCurreentPage();
+                SaveCurreentPage();
             }
 
             NewValue = true;
@@ -78,12 +79,26 @@ namespace Productivity
             Close();
         }
 
+        private void AddNewPage()
+        {
+            ValuePagesList valuePages = new ValuePagesList(Path);
+
+            int countPages = valuePages.GetCountOfPages();
+
+            SavePage(countPages + 1);
+        }
+
+        private void SaveCurreentPage()
+        {
+            SavePage(IndexPage);
+        }
+
         private void LoadPageValue(Page currentPage)
         {
             if (currentPage.TypePage == 0)
             {
                 metroSetCheckBox1.Checked = currentPage.ActivePage;
-                metroSetTextBox1.Text = currentPage.Name;
+                textBox1.Text = currentPage.Name;
                 formattedNumericUpDown1.Value = currentPage.TimeForView;
                 comboBox1.SelectedIndex = currentPage.TypeLoad;
 
@@ -125,7 +140,7 @@ namespace Productivity
         private void LoadPageValueDefault()
         {
             metroSetCheckBox1.Checked = true;
-            metroSetTextBox1.Text = "";
+            textBox1.Text = "";
             formattedNumericUpDown1.Value = 40;
             comboBox1.SelectedIndex = 0;
 
@@ -195,19 +210,101 @@ namespace Productivity
             return result;
         }
 
-        private List<string> GetCheckedEquips()
+        private List<string[]> GetCheckedEquips()
         {
-            List<string> selectedEquips = new List<string>();
+            List<string[]> selectedEquips = new List<string[]>();
 
             for (int i = 0; i < listViewEquips.Items.Count; i++)
             {
                 if (listViewEquips.Items[i].Checked)
                 {
-                    selectedEquips.Add(listViewEquips.Items[i].Name);
+                    string[] strings = { listViewEquips.Items[i].Group.Header, listViewEquips.Items[i].Name };
+                    selectedEquips.Add(strings);
                 }
             }
 
             return selectedEquips;
+        }
+
+        private void SavePage(int pageIndex)
+        {
+            try
+            {
+                ValuePagesList valuePages = new ValuePagesList(Path);
+
+                int typePage = 0;
+                string name = textBox1.Text;
+                bool actyvePage = metroSetCheckBox1.Checked;
+                int timeForView = (int)formattedNumericUpDown1.Value;
+
+                List<string> categories = new List<string>();
+                List<string> equips = new List<string>();
+
+                List<string[]> selectedGroupsAndEquips = GetCheckedEquips();
+
+                for (int i = 0; i <  selectedGroupsAndEquips.Count; i++)
+                {
+                    string[] strings = selectedGroupsAndEquips[i];
+
+                    if (!categories.Contains(strings[0]))
+                    {
+                        categories.Add(strings[0]);
+                    }
+
+                    equips.Add((categories.Count - 1) + ":" + strings[1]);
+                }
+
+                List<string> outValue = new List<string>();
+
+                if (metroSetCheckBox2.Checked)
+                {
+                    outValue.Add("1");
+                }
+                else
+                {
+                    outValue.Add("0");
+                }
+
+                if (metroSetCheckBox3.Checked)
+                {
+                    outValue.Add("1");
+                }
+                else
+                {
+                    outValue.Add("0");
+                }
+
+                if (metroSetCheckBox4.Checked)
+                {
+                    outValue.Add("1");
+                }
+                else
+                {
+                    outValue.Add("0");
+                }
+
+                int typeLoad = comboBox1.SelectedIndex;
+                string nameMediaFile = "";
+
+                Page currentPage = new Page(
+                    pageIndex,
+                    typePage,
+                    name,
+                    actyvePage,
+                    timeForView,
+                    categories,
+                    equips,
+                    outValue,
+                    typeLoad,
+                    nameMediaFile
+                    );
+
+                valuePages.SavePage(currentPage);
+            }
+            catch ( Exception ex )
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private bool CheckEquipIsHere(int idEquip)
@@ -245,6 +342,8 @@ namespace Productivity
 
                     LoadPageValue(page);
                     LoadAllEquipsAndCategory(page);
+
+                    button1.Text = "Сохранить";
                 }
                 else
                 {

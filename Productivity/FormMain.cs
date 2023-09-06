@@ -2318,6 +2318,13 @@ namespace Productivity
                 SaveViewParameter();
             }
 
+            LoadPages();
+
+            comboBoxSelectViewsPreviousIndex = comboBox5.SelectedIndex;
+        }
+
+        private void LoadPages()
+        {
             ClearParameterViewMonitor();
 
             if (comboBox5.SelectedIndex < comboBox5.Items.Count - 1)
@@ -2328,9 +2335,9 @@ namespace Productivity
 
                 if (File.Exists(path))
                 {
-                    ValuePagesList valuePagesList = new ValuePagesList(path);
-
                     label3.ForeColor = Color.DarkGreen;
+
+                    ValuePagesList valuePagesList = new ValuePagesList(path);
 
                     pages?.Clear();
 
@@ -2349,8 +2356,6 @@ namespace Productivity
                 label3.Text = "";
 
             }
-
-            comboBoxSelectViewsPreviousIndex = comboBox5.SelectedIndex;
         }
 
         private void LaodPagesToListView(List<Page> pages)
@@ -2434,6 +2439,11 @@ namespace Productivity
 
             FormAddEditViewing fm = new FormAddEditViewing(path);
             fm.ShowDialog();
+
+            if (fm.NewValue)
+            {
+                LoadPages();
+            }
         }
 
         private void buttonViewEdit_Click(object sender, EventArgs e)
@@ -2444,6 +2454,104 @@ namespace Productivity
 
                 FormAddEditViewing fm = new FormAddEditViewing(path, Convert.ToInt32(listViewPages.Items[listViewPages.SelectedIndices[0]].Name));
                 fm.ShowDialog();
+
+                if (fm.NewValue)
+                {
+                    LoadPages();
+                }
+            }
+        }
+
+        private void buttonViewUp_Click(object sender, EventArgs e)
+        {
+            if (listViewPages.SelectedItems.Count > 0 && listViewPages.SelectedIndices[0] != 0)
+            {
+                string path = viewsList[comboBox5.SelectedIndex].Path;
+
+                ValuePagesList valuePages = new ValuePagesList(path);
+
+                int selectIndex = Convert.ToInt32(listViewPages.Items[listViewPages.SelectedIndices[0]].Name);
+
+                int secondIndex = selectIndex - 1;
+
+                valuePages.SwapPage(selectIndex, secondIndex);
+
+                LoadPages();
+            }
+        }
+
+        private void buttonViewDown_Click(object sender, EventArgs e)
+        {
+            if (listViewPages.SelectedItems.Count > 0 && listViewPages.SelectedIndices[0] != listViewPages.Items.Count - 1)
+            {
+                string path = viewsList[comboBox5.SelectedIndex].Path;
+
+                ValuePagesList valuePages = new ValuePagesList(path);
+
+                int selectIndex = Convert.ToInt32(listViewPages.Items[listViewPages.SelectedIndices[0]].Name);
+
+                int secondIndex = selectIndex + 1;
+
+                valuePages.SwapPage(selectIndex, secondIndex);
+
+                LoadPages();
+            }
+        }
+
+        private void buttonViewDel_Click(object sender, EventArgs e)
+        {
+            if (listViewPages.SelectedItems.Count > 0 && listViewPages.SelectedIndices[0] != 0)
+            {
+                DialogResult result;
+
+                result = MessageBox.Show("Вы действительно хотите удалить: " + listViewPages.SelectedItems[0].SubItems[1].Text + "?", "Удаление страницы", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    string path = viewsList[comboBox5.SelectedIndex].Path;
+
+                    ValuePagesList valuePages = new ValuePagesList(path);
+
+                    int selectIndex = Convert.ToInt32(listViewPages.Items[listViewPages.SelectedIndices[0]].Name);
+
+                    valuePages.DeletePage(selectIndex);
+
+                    LoadPages();
+                }
+            }
+        }
+
+        private void listViewPages_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listViewPages.SelectedIndices.Count > 0)
+            {
+                buttonViewEdit.Enabled = true;
+                buttonViewDel.Enabled = true;
+
+                if (listViewPages.SelectedIndices[0] == 0)
+                {
+                    buttonViewUp.Enabled = false;
+                }
+                else
+                {
+                    buttonViewUp.Enabled = true;
+                }
+
+                if (listViewPages.SelectedIndices[0] == listViewPages.Items.Count - 1)
+                {
+                    buttonViewDown.Enabled = false;
+                }
+                else
+                {
+                    buttonViewDown.Enabled = true;
+                }
+            }
+            else
+            {
+                buttonViewEdit.Enabled = false;
+                buttonViewDel.Enabled = false;
+                buttonViewUp.Enabled = false;
+                buttonViewDown.Enabled = false;
             }
         }
     }
