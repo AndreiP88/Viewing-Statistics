@@ -27,8 +27,9 @@ namespace Productivity
         CancellationTokenSource cancelTokenSource;
 
         int metroSetTabControlPreviousIndex = -1;
-        int comboBoxSelectViewsPreviousIndex = -1;
+        //int comboBoxSelectViewsPreviousIndex = -1;
         bool loadCategoryList = true;
+        bool loadPageList = true;
 
         Dictionary<int, string> users = new Dictionary<int, string>();
         Dictionary<int, string> machines = new Dictionary<int, string>();
@@ -1997,7 +1998,7 @@ namespace Productivity
         {
             ValueView view = new ValueView();
 
-            viewsList = view.LoadView();
+            viewsList = view.LoadViewList();
 
             comboBox5.Items.Clear();
 
@@ -2315,9 +2316,9 @@ namespace Productivity
         {
             if (comboBoxSelectViewsPreviousIndex != -1)
             {
-                SaveViewParameter();
+                //SaveViewParameter();
             }
-
+            
             LoadPages();
 
             comboBoxSelectViewsPreviousIndex = comboBox5.SelectedIndex;
@@ -2355,11 +2356,25 @@ namespace Productivity
             {
                 label3.Text = "";
 
+                FormAddEditViewingSource fm = new FormAddEditViewingSource();
+                fm.ShowDialog();
+
+                if (fm.NewValue)
+                {
+                    LoadViewList();
+                    comboBox5.SelectedIndex = comboBox5.Items.Count - 2;
+                }
+                else
+                {
+                    comboBox5.SelectedIndex = comboBoxSelectViewsPreviousIndex;
+                }
             }
         }
 
         private void LaodPagesToListView(List<Page> pages)
         {
+            loadPageList = true;
+
             for (int i = 0; i < pages.Count; i++)
             {
                 ListViewItem item = new ListViewItem();
@@ -2373,6 +2388,8 @@ namespace Productivity
                 listViewPages.Items.Add(item);
 
             }
+
+            loadPageList = false;
         }
 
         private void LoadViewParameter(string path)
@@ -2392,10 +2409,10 @@ namespace Productivity
 
         private void SaveViewParameter()
         {
-            if (comboBoxSelectViewsPreviousIndex != -1 && comboBoxSelectViewsPreviousIndex < viewsList.Count - 1)
+            if (comboBoxSelectViewsPreviousIndex != -1 && comboBoxSelectViewsPreviousIndex < viewsList.Count)
             {
                 string path = viewsList[comboBoxSelectViewsPreviousIndex].Path;
-                
+
                 if (File.Exists(path))
                 {
                     INIView view = new INIView(path);
@@ -2447,6 +2464,11 @@ namespace Productivity
         }
 
         private void buttonViewEdit_Click(object sender, EventArgs e)
+        {
+            LoadPageForEdit();
+        }
+        
+        private void LoadPageForEdit()
         {
             if (listViewPages.SelectedItems.Count > 0)
             {
@@ -2553,6 +2575,37 @@ namespace Productivity
                 buttonViewUp.Enabled = false;
                 buttonViewDown.Enabled = false;
             }
+        }
+
+        private void listViewPages_DoubleClick(object sender, EventArgs e)
+        {
+            LoadPageForEdit();
+        }
+
+        private void listViewPages_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            if (!loadPageList)
+            {
+                string path = viewsList[comboBox5.SelectedIndex].Path;
+
+                ValuePagesList valuePages = new ValuePagesList(path);
+
+                int selectIndex = Convert.ToInt32(e.Item.Name);
+
+                valuePages.ChangeActivePage(selectIndex);
+
+                //LoadPages();
+            }
+        }
+
+        private void buttonSettingsSave_Click(object sender, EventArgs e)
+        {
+            SaveViewParameter();
+        }
+
+        private void buttonSettingsReload_Click(object sender, EventArgs e)
+        {
+            LoadPages();
         }
     }
 }

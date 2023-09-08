@@ -174,9 +174,31 @@ namespace libINIFile
 
             IniFile ini = new IniFile(iniFile);
 
+            //string section = startStrSection + pageID;
+            //ini.DeleteSection(section);
+
+            int countPages = GetCountOfPages();
+
+            for (int i = pageID; i < countPages; i++)
+            {
+                SwapPage(i, i + 1);
+            }
+
+            string section = startStrSection + countPages;
+            ini.DeleteSection(section);
+        }
+
+        public void ChangeActivePage(int pageID)
+        {
+            string startStrSection = "page_";
+
+            IniFile ini = new IniFile(iniFile);
+
             string section = startStrSection + pageID;
 
-            ini.DeleteSection(section);
+            bool activePage = !ini.ReadBool("activePage", section);
+
+            ini.Write("activePage", activePage.ToString(), section);
         }
 
         public int GetCountOfPages()
