@@ -180,7 +180,7 @@ namespace Viewing_Statistics
             }
         }
 
-        private void LoadUsersList(List<int> equips, DateTime startDate, int countDays)
+        private void LoadUsersList(List<int> equips, DateTime startDate)
         {
             try
             {
@@ -192,7 +192,7 @@ namespace Viewing_Statistics
 
                 //usersList = usersValue.LoadUsersList(equips, date);
                 //usersList = usersValue.LoadUsersListFromLastAnyDays(equips, countDays);
-                usersList = usersValue.LoadUsersListFromLastAnyDays(equips, startDate, countDays);
+                usersList = usersValue.LoadUsersListFromLastAnyDays(equips, startDate);
             }
             catch (Exception ex)
             {
@@ -226,7 +226,7 @@ namespace Viewing_Statistics
 
             LoadAllUsers();
             LoadMachine();
-            LoadUsersList(equips, startDate, countDays);
+            LoadUsersList(equips, startDate);
             LoadShiftsForUsersList(startDate, countDays);
         }
 
@@ -296,6 +296,35 @@ namespace Viewing_Statistics
                     }
                 }
             }
+        }
+
+        private int GetPeriodForView()
+        {
+            INIView view = new INIView();
+
+            int period = view.GetPeriod();
+
+            int width = metroSetTabControl1.Width;
+
+            int countShifts = view.GetCountShifts();
+            int wColNum = view.GetWidthNumberCol();
+            int wColName = view.GetWidthNameCol();
+            int wColVal = view.GetWidthWorkingOutCol();
+            int wColResults = view.GetWidthResultsCol();
+
+            bool autoDayAdded = view.GetAutoAddDays();
+            bool autoWidthColVal = view.GetColWorksOutAutoWidth();
+
+            if (autoDayAdded)
+            {
+                //Сделать
+                /*int fullWidthColForDay = wColVal * countOutValue * countShifts;
+                int widthForColsVal = width - (wColNum + wColName + wColResults * 3);
+                //MessageBox.Show(width + "");
+                period = widthForColsVal / fullWidthColForDay;*/
+            }
+
+            return period;
         }
 
         private void UpdatePagesListsFromFile()
@@ -440,12 +469,14 @@ namespace Viewing_Statistics
 
             List<string> nameCol = new List<string>();
 
-            int width = gridView.Width;
+            int width = metroSetTabControl1.Width;
 
             int wColNum = view.GetWidthNumberCol();
             int wColName = view.GetWidthNameCol();
             int wColVal = view.GetWidthWorkingOutCol();
             int wColResults = view.GetWidthResultsCol();
+
+            bool autoWidthColVal = view.GetColWorksOutAutoWidth();
 
             int indexCol;
 

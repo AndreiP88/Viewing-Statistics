@@ -141,6 +141,9 @@ namespace Productivity
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.metroSetCheckBox4 = new MetroSet_UI.Controls.MetroSetCheckBox();
             this.metroSetCheckBox5 = new MetroSet_UI.Controls.MetroSetCheckBox();
+            this.tableLayoutPanel16 = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonSettingsSave = new System.Windows.Forms.Button();
+            this.buttonSettingsReload = new System.Windows.Forms.Button();
             this.tableLayoutPanel14 = new System.Windows.Forms.TableLayoutPanel();
             this.listViewPages = new Productivity.FormMain.MyListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -153,9 +156,6 @@ namespace Productivity
             this.buttonViewDown = new System.Windows.Forms.Button();
             this.metroSetControlBox1 = new MetroSet_UI.Controls.MetroSetControlBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.tableLayoutPanel16 = new System.Windows.Forms.TableLayoutPanel();
-            this.buttonSettingsSave = new System.Windows.Forms.Button();
-            this.buttonSettingsReload = new System.Windows.Forms.Button();
             this.metroSetTabControl1.SuspendLayout();
             this.metroSetSetTabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -192,9 +192,9 @@ namespace Productivity
             ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown7)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown6)).BeginInit();
             this.groupBox8.SuspendLayout();
+            this.tableLayoutPanel16.SuspendLayout();
             this.tableLayoutPanel14.SuspendLayout();
             this.tableLayoutPanel15.SuspendLayout();
-            this.tableLayoutPanel16.SuspendLayout();
             this.SuspendLayout();
             // 
             // metroSetTabControl1
@@ -206,7 +206,7 @@ namespace Productivity
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage2);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage3);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage4);
-            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.metroSetTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroSetTabControl1.IsDerivedStyle = true;
             this.metroSetTabControl1.ItemSize = new System.Drawing.Size(130, 38);
@@ -1143,6 +1143,7 @@ namespace Productivity
             this.buttonEditViewPath.TabIndex = 2;
             this.buttonEditViewPath.Text = "Изменить";
             this.buttonEditViewPath.UseVisualStyleBackColor = true;
+            this.buttonEditViewPath.Click += new System.EventHandler(this.buttonEditViewPath_Click);
             // 
             // buttonDelViewPath
             // 
@@ -1153,6 +1154,7 @@ namespace Productivity
             this.buttonDelViewPath.TabIndex = 3;
             this.buttonDelViewPath.Text = "Удалить";
             this.buttonDelViewPath.UseVisualStyleBackColor = true;
+            this.buttonDelViewPath.Click += new System.EventHandler(this.buttonDelViewPath_Click);
             // 
             // tableLayoutPanel12
             // 
@@ -1376,7 +1378,6 @@ namespace Productivity
             this.metroSetCheckBox4.CheckState = MetroSet_UI.Enums.CheckState.Unchecked;
             this.metroSetCheckBox4.Cursor = System.Windows.Forms.Cursors.Hand;
             this.metroSetCheckBox4.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(205)))), ((int)(((byte)(205)))));
-            this.metroSetCheckBox4.Enabled = false;
             this.metroSetCheckBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.metroSetCheckBox4.IsDerivedStyle = true;
             this.metroSetCheckBox4.Location = new System.Drawing.Point(7, 44);
@@ -1400,7 +1401,6 @@ namespace Productivity
             this.metroSetCheckBox5.CheckState = MetroSet_UI.Enums.CheckState.Unchecked;
             this.metroSetCheckBox5.Cursor = System.Windows.Forms.Cursors.Hand;
             this.metroSetCheckBox5.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(205)))), ((int)(((byte)(205)))));
-            this.metroSetCheckBox5.Enabled = false;
             this.metroSetCheckBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.metroSetCheckBox5.IsDerivedStyle = true;
             this.metroSetCheckBox5.Location = new System.Drawing.Point(7, 22);
@@ -1413,6 +1413,44 @@ namespace Productivity
             this.metroSetCheckBox5.Text = "При возможности добавлять дни отображения статистики";
             this.metroSetCheckBox5.ThemeAuthor = "Narwin";
             this.metroSetCheckBox5.ThemeName = "MetroLite";
+            // 
+            // tableLayoutPanel16
+            // 
+            this.tableLayoutPanel16.ColumnCount = 3;
+            this.tableLayoutPanel16.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel16.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel16.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel16.Controls.Add(this.buttonSettingsSave, 1, 0);
+            this.tableLayoutPanel16.Controls.Add(this.buttonSettingsReload, 2, 0);
+            this.tableLayoutPanel16.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel16.Location = new System.Drawing.Point(3, 233);
+            this.tableLayoutPanel16.Name = "tableLayoutPanel16";
+            this.tableLayoutPanel16.RowCount = 1;
+            this.tableLayoutPanel16.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel16.Size = new System.Drawing.Size(555, 29);
+            this.tableLayoutPanel16.TabIndex = 4;
+            // 
+            // buttonSettingsSave
+            // 
+            this.buttonSettingsSave.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonSettingsSave.Location = new System.Drawing.Point(358, 3);
+            this.buttonSettingsSave.Name = "buttonSettingsSave";
+            this.buttonSettingsSave.Size = new System.Drawing.Size(94, 23);
+            this.buttonSettingsSave.TabIndex = 0;
+            this.buttonSettingsSave.Text = "Сохранить";
+            this.buttonSettingsSave.UseVisualStyleBackColor = true;
+            this.buttonSettingsSave.Click += new System.EventHandler(this.buttonSettingsSave_Click);
+            // 
+            // buttonSettingsReload
+            // 
+            this.buttonSettingsReload.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonSettingsReload.Location = new System.Drawing.Point(458, 3);
+            this.buttonSettingsReload.Name = "buttonSettingsReload";
+            this.buttonSettingsReload.Size = new System.Drawing.Size(94, 23);
+            this.buttonSettingsReload.TabIndex = 1;
+            this.buttonSettingsReload.Text = "Сбросить";
+            this.buttonSettingsReload.UseVisualStyleBackColor = true;
+            this.buttonSettingsReload.Click += new System.EventHandler(this.buttonSettingsReload_Click);
             // 
             // tableLayoutPanel14
             // 
@@ -1569,44 +1607,6 @@ namespace Productivity
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // tableLayoutPanel16
-            // 
-            this.tableLayoutPanel16.ColumnCount = 3;
-            this.tableLayoutPanel16.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel16.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.tableLayoutPanel16.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.tableLayoutPanel16.Controls.Add(this.buttonSettingsSave, 1, 0);
-            this.tableLayoutPanel16.Controls.Add(this.buttonSettingsReload, 2, 0);
-            this.tableLayoutPanel16.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel16.Location = new System.Drawing.Point(3, 233);
-            this.tableLayoutPanel16.Name = "tableLayoutPanel16";
-            this.tableLayoutPanel16.RowCount = 1;
-            this.tableLayoutPanel16.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel16.Size = new System.Drawing.Size(555, 29);
-            this.tableLayoutPanel16.TabIndex = 4;
-            // 
-            // buttonSettingsSave
-            // 
-            this.buttonSettingsSave.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonSettingsSave.Location = new System.Drawing.Point(358, 3);
-            this.buttonSettingsSave.Name = "buttonSettingsSave";
-            this.buttonSettingsSave.Size = new System.Drawing.Size(94, 23);
-            this.buttonSettingsSave.TabIndex = 0;
-            this.buttonSettingsSave.Text = "Сохранить";
-            this.buttonSettingsSave.UseVisualStyleBackColor = true;
-            this.buttonSettingsSave.Click += new System.EventHandler(this.buttonSettingsSave_Click);
-            // 
-            // buttonSettingsReload
-            // 
-            this.buttonSettingsReload.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonSettingsReload.Location = new System.Drawing.Point(458, 3);
-            this.buttonSettingsReload.Name = "buttonSettingsReload";
-            this.buttonSettingsReload.Size = new System.Drawing.Size(94, 23);
-            this.buttonSettingsReload.TabIndex = 1;
-            this.buttonSettingsReload.Text = "Сбросить";
-            this.buttonSettingsReload.UseVisualStyleBackColor = true;
-            this.buttonSettingsReload.Click += new System.EventHandler(this.buttonSettingsReload_Click);
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
@@ -1665,9 +1665,9 @@ namespace Productivity
             ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown7)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.formattedNumericUpDown6)).EndInit();
             this.groupBox8.ResumeLayout(false);
+            this.tableLayoutPanel16.ResumeLayout(false);
             this.tableLayoutPanel14.ResumeLayout(false);
             this.tableLayoutPanel15.ResumeLayout(false);
-            this.tableLayoutPanel16.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

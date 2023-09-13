@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -108,6 +109,9 @@ namespace Productivity
 
                 textBox1.Text = view.Name;
                 textBox2.Text = view.Path;
+
+                //openFileDialog1.FileName = view.Path;
+                openFileDialog1.InitialDirectory = Path.GetDirectoryName(view.Path);
 
                 button1.Text = "Сохранить";
             }

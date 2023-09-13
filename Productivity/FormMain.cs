@@ -27,7 +27,7 @@ namespace Productivity
         CancellationTokenSource cancelTokenSource;
 
         int metroSetTabControlPreviousIndex = -1;
-        //int comboBoxSelectViewsPreviousIndex = -1;
+        int comboBoxSelectViewsPreviousIndex = -1;
         bool loadCategoryList = true;
         bool loadPageList = true;
 
@@ -1891,6 +1891,7 @@ namespace Productivity
             TabControlSelectedIndexChanged(metroSetTabControl1.SelectedIndex);
 
             metroSetTabControlPreviousIndex = metroSetTabControl1.SelectedIndex;
+            comboBoxSelectViewsPreviousIndex = -1;
         }
 
         private void SaveParameterBeforeClosing()
@@ -2008,7 +2009,15 @@ namespace Productivity
             }
 
             comboBox5.Items.Add("новый");
-            comboBox5.SelectedIndex = 0;
+
+            if (comboBoxSelectViewsPreviousIndex == -1)
+            {
+                comboBox5.SelectedIndex = 0;
+            }
+            else
+            {
+                //comboBox5.SelectedIndex = comboBoxSelectViewsPreviousIndex;
+            }
         }
 
         private void listViewCategory_SelectedIndexChanged(object sender, EventArgs e)
@@ -2314,11 +2323,6 @@ namespace Productivity
 
         private void comboBox5_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxSelectViewsPreviousIndex != -1)
-            {
-                //SaveViewParameter();
-            }
-            
             LoadPages();
 
             comboBoxSelectViewsPreviousIndex = comboBox5.SelectedIndex;
@@ -2409,9 +2413,9 @@ namespace Productivity
 
         private void SaveViewParameter()
         {
-            if (comboBoxSelectViewsPreviousIndex != -1 && comboBoxSelectViewsPreviousIndex < viewsList.Count)
+            if (comboBox5.SelectedIndex < viewsList.Count)
             {
-                string path = viewsList[comboBoxSelectViewsPreviousIndex].Path;
+                string path = viewsList[comboBox5.SelectedIndex].Path;
 
                 if (File.Exists(path))
                 {
@@ -2606,6 +2610,47 @@ namespace Productivity
         private void buttonSettingsReload_Click(object sender, EventArgs e)
         {
             LoadPages();
+        }
+
+        private void buttonEditViewPath_Click(object sender, EventArgs e)
+        {
+            FormAddEditViewingSource fm = new FormAddEditViewingSource(comboBox5.SelectedIndex + 1);
+            fm.ShowDialog();
+
+            if (fm.NewValue)
+            {
+                LoadViewList();
+                comboBox5.SelectedIndex = comboBoxSelectViewsPreviousIndex;
+            }
+            else
+            {
+                //comboBox5.SelectedIndex = comboBoxSelectViewsPreviousIndex;
+            }
+        }
+
+        private void buttonDelViewPath_Click(object sender, EventArgs e)
+        {
+            DialogResult result;
+
+            result = MessageBox.Show("Вы действительно хотите удалить: " + comboBox5.Text + "?", "Удаление источника", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                ValueView valueView = new ValueView();
+
+                valueView.DeleteViewSource(comboBox5.SelectedIndex + 1);
+
+                LoadViewList();
+
+                if (comboBoxSelectViewsPreviousIndex > 0)
+                {
+                    comboBox5.SelectedIndex = comboBoxSelectViewsPreviousIndex - 1;
+                }
+                else
+                {
+                    comboBox5.SelectedIndex = 0;
+                }
+            }
         }
     }
 }
