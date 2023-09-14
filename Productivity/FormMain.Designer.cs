@@ -1217,7 +1217,7 @@ namespace Productivity
             this.metroSetCheckBox3.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(205)))), ((int)(((byte)(205)))));
             this.metroSetCheckBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.metroSetCheckBox3.IsDerivedStyle = true;
-            this.metroSetCheckBox3.Location = new System.Drawing.Point(198, 25);
+            this.metroSetCheckBox3.Location = new System.Drawing.Point(340, 25);
             this.metroSetCheckBox3.Name = "metroSetCheckBox3";
             this.metroSetCheckBox3.SignStyle = MetroSet_UI.Enums.SignStyle.Sign;
             this.metroSetCheckBox3.Size = new System.Drawing.Size(213, 16);
@@ -1227,15 +1227,16 @@ namespace Productivity
             this.metroSetCheckBox3.Text = "Отображать текущий день";
             this.metroSetCheckBox3.ThemeAuthor = "Narwin";
             this.metroSetCheckBox3.ThemeName = "MetroLite";
+            this.metroSetCheckBox3.Visible = false;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(65, 24);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(113, 17);
+            this.label4.Size = new System.Drawing.Size(198, 17);
             this.label4.TabIndex = 1;
-            this.label4.Text = "последних дней";
+            this.label4.Text = "количество дней для показа";
             // 
             // formattedNumericUpDown5
             // 
