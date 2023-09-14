@@ -796,7 +796,7 @@ namespace Productivity
 
             DateTime selectDate = ReturnDateFromInputParameter(year, month);
 
-            usersList = valueShifts.LoadShifts(usersList, selectDate, countShifts, givenShiftNumber);
+            usersList = valueShifts.LoadShiftsForSelectedMonth(usersList, selectDate, countShifts, givenShiftNumber);
 
             StartAddingWorkingTimeToListView();
         }

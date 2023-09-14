@@ -200,7 +200,7 @@ namespace Viewing_Statistics
             }
         }
 
-        private void LoadShiftsForUsersList(DateTime startDate, int countDays)
+        private void LoadShiftsForUsersList(DateTime startDate)
         {
             try
             {
@@ -209,8 +209,9 @@ namespace Viewing_Statistics
 
                 int countShifts = view.GetCountShifts();
                 bool givenShiftNumber = view.GetGivenShiftNumber();
+                DateTime date = DateTime.Now;
 
-                usersList = valueShifts.LoadShifts(usersList, startDate, countDays, countShifts, givenShiftNumber);
+                usersList = valueShifts.LoadShifts(usersList, startDate, countShifts, givenShiftNumber);
             }
             catch (Exception ex)
             {
@@ -218,16 +219,16 @@ namespace Viewing_Statistics
             }
         }
 
-        private void ReloadDataFromBase(List<Page> pagesList, DateTime startDate, int countDays)
+        private void ReloadDataFromBase(List<Page> pagesList, DateTime startDate)
         {
             List<int> equips = GetAllEquipsFromPagesList(pagesList);
 
             DisposingAllControlsFromTabPages();
-
+            
             LoadAllUsers();
             LoadMachine();
             LoadUsersList(equips, startDate);
-            LoadShiftsForUsersList(startDate, countDays);
+            LoadShiftsForUsersList(startDate);
         }
 
         private void DisposingAllControlsFromTabPages()
@@ -298,30 +299,48 @@ namespace Viewing_Statistics
             }
         }
 
-        private int GetPeriodForView()
+        private int GetMinCountOutValue(List<Page> pageList)
+        {
+            int countOutValue = 3;
+
+            ValuePagesList valuePagesList = new ValuePagesList();
+
+            for (int i = 0; i < pageList.Count; i++)
+            {
+                int countValue = valuePagesList.GetCountOutValue(pageList[i].OutValues);
+
+                if (countValue < countOutValue)
+                {
+                    countOutValue = countValue;
+                }
+            }
+
+            return countOutValue;
+        }
+
+        private int GetPeriodForView(int countOutValue)
         {
             INIView view = new INIView();
 
             int period = view.GetPeriod();
 
-            int width = metroSetTabControl1.Width;
-
-            int countShifts = view.GetCountShifts();
-            int wColNum = view.GetWidthNumberCol();
-            int wColName = view.GetWidthNameCol();
-            int wColVal = view.GetWidthWorkingOutCol();
-            int wColResults = view.GetWidthResultsCol();
-
             bool autoDayAdded = view.GetAutoAddDays();
-            bool autoWidthColVal = view.GetColWorksOutAutoWidth();
 
             if (autoDayAdded)
             {
+                int width = metroSetTabControl1.Width;
+
+                int countShifts = view.GetCountShifts();
+                int wColNum = view.GetWidthNumberCol();
+                int wColName = view.GetWidthNameCol();
+                int wColVal = view.GetWidthWorkingOutCol();
+                int wColResults = view.GetWidthResultsCol();
+
                 //Сделать
-                /*int fullWidthColForDay = wColVal * countOutValue * countShifts;
+                int fullWidthColForDay = wColVal * countOutValue * countShifts;
                 int widthForColsVal = width - (wColNum + wColName + wColResults * 3);
                 //MessageBox.Show(width + "");
-                period = widthForColsVal / fullWidthColForDay;*/
+                period = widthForColsVal / fullWidthColForDay;
             }
 
             return period;
@@ -331,22 +350,25 @@ namespace Viewing_Statistics
         {
             INIView view = new INIView();
 
-            int period = view.GetPeriod();
-
-            DateTime startDate = GetStartDate(period);
-
             pages?.Clear();
 
             pages = LoadPagesList();
 
-            ReloadDataFromBase(pages, startDate, period);
+            int countOutValue = GetMinCountOutValue(pages);
+            
+            //int period = view.GetPeriod();
+            int period = GetPeriodForView(countOutValue);
 
-            AddTabPageFromPageList(pages, period);
+            DateTime startDate = GetStartDate(period);
+
+            ReloadDataFromBase(pages, startDate);
+
+            AddTabPageFromPageList(pages);
 
             //
         }
 
-        private void AddTabPageFromPageList(List<Page> pageList, int period)
+        private void AddTabPageFromPageList(List<Page> pageList)
         {
             ValuePagesList valuePagesList = new ValuePagesList();
 
@@ -360,11 +382,12 @@ namespace Viewing_Statistics
 
                 if (pageList[i].TypePage == 0)
                 {
-                    DateTime startPeriod = GetStartDate(period);
                     int countOutValue = valuePagesList.GetCountOutValue(pageList[i].OutValues);
 
-                    DoubleBufferedDataGridView dataGrid = CreatGridView(i, startPeriod, period, countOutValue, pageList[i].OutValues);
+                    int period = GetPeriodForView(countOutValue);
 
+                    DoubleBufferedDataGridView dataGrid = CreatGridView(i, period, countOutValue, pageList[i].OutValues);
+                    
                     ViewStatistic(dataGrid, pageList[i], period, countOutValue, pageList[i].OutValues);
 
                     page.Controls.Add(dataGrid);
@@ -376,8 +399,6 @@ namespace Viewing_Statistics
 
                     page.Controls.Add(pictureBox);
                 }
-
-                
 
                 metroSetTabControl1.TabPages.Add(page);
             }
@@ -443,7 +464,7 @@ namespace Viewing_Statistics
             return pictureBox;
         }
 
-        private DoubleBufferedDataGridView CreatGridView(int indexPage, DateTime startPeriod, int period, int countOutValue, List<string> outValues)
+        private DoubleBufferedDataGridView CreatGridView(int indexPage, int period, int countOutValue, List<string> outValues)
         {
             DoubleBufferedDataGridView gridView = new DoubleBufferedDataGridView
             {
@@ -457,6 +478,8 @@ namespace Viewing_Statistics
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 MultiSelect = false
             };
+
+            DateTime startPeriod = GetStartDate(period);
 
             string[] colCaption = { "Т", "%", "П" };
 
@@ -477,6 +500,15 @@ namespace Viewing_Statistics
             int wColResults = view.GetWidthResultsCol();
 
             bool autoWidthColVal = view.GetColWorksOutAutoWidth();
+
+            if (autoWidthColVal)
+            {
+                int wForValue = width - (wColNum + wColName + wColResults * 3);
+                int wTemp = wForValue / (period * countOutValue * 2);
+
+                if (wTemp >= wColVal)
+                    wColVal = wForValue / (period * countOutValue * 2);
+            }
 
             int indexCol;
 
@@ -608,6 +640,22 @@ namespace Viewing_Statistics
             return gridView;
         }
 
+        private bool CheckUserShiftsFromViewPeriod(DataGridView dataGrid, List<UserShift> userShifts)
+        {
+            bool result = false;
+
+            for (int i = 0; i < userShifts.Count; i++)
+            {
+                if (GetDataGridColumnIndexFromKey(dataGrid, userShifts[i].ShiftDate) != -1)
+                {
+                    result = true;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
         private void AddUsersToGridView(DoubleBufferedDataGridView dataGrid, Page page)
         {
             //ValueCategoryes valueCategoryes = new ValueCategoryes();
@@ -654,26 +702,29 @@ namespace Viewing_Statistics
                     {
                         if (usersList[j].Equip == equips[i])
                         {
-                            countUserForCurrentEquip++;
-                            string user = "    ";
-
-                            if (users.ContainsKey(usersList[j].Id))
+                            if (CheckUserShiftsFromViewPeriod(dataGrid, usersList[j].Shifts))
                             {
-                                user += users[usersList[j].Id];
-                            }
-                            else
-                            {
-                                user += "Работник " + usersList[j].Id;
-                            }
+                                countUserForCurrentEquip++;
+                                string user = "    ";
 
-                            Color color = Color.White;
+                                if (users.ContainsKey(usersList[j].Id))
+                                {
+                                    user += users[usersList[j].Id];
+                                }
+                                else
+                                {
+                                    user += "Работник " + usersList[j].Id;
+                                }
 
-                            if (countUserForCurrentEquip % 2 == 0)
-                            {
-                                color = Color.LightGray;
+                                Color color = Color.White;
+
+                                if (countUserForCurrentEquip % 2 == 0)
+                                {
+                                    color = Color.LightGray;
+                                }
+
+                                AddItemToGrid(dataGrid, CreateNameListViewItem(equips[i], usersList[j].Id), countUserForCurrentEquip.ToString(), user, color);
                             }
-
-                            AddItemToGrid(dataGrid, CreateNameListViewItem(equips[i], usersList[j].Id), countUserForCurrentEquip.ToString(), user, color);
                         }
                     }
                 }
@@ -687,14 +738,17 @@ namespace Viewing_Statistics
                 {
                     for (int j = 0; j < usersList.Count; j++)
                     {
-                        if (!usersCurrent.Contains(usersList[j].Id) && usersList[j].Equip == equips[i])
+                        if (CheckUserShiftsFromViewPeriod(dataGrid, usersList[j].Shifts))
                         {
-                            usersCurrent.Add(usersList[j].Id);
-                        }
+                            if (!usersCurrent.Contains(usersList[j].Id) && usersList[j].Equip == equips[i])
+                            {
+                                usersCurrent.Add(usersList[j].Id);
+                            }
 
-                        if (viewAllEquipsForUser && !equipsCurrent.Contains(usersList[j].Equip))
-                        {
-                            equipsCurrent.Add(usersList[j].Equip);
+                            if (viewAllEquipsForUser && !equipsCurrent.Contains(usersList[j].Equip))
+                            {
+                                equipsCurrent.Add(usersList[j].Equip);
+                            }
                         }
                     }
                 }
@@ -946,7 +1000,7 @@ namespace Viewing_Statistics
                                 int indexRow = GetDataGridRowIndexFromKey(dataGrid, key);
                                 int indexCol = GetDataGridColumnIndexFromKey(dataGrid, usersList[i].Shifts[j].ShiftDate);
 
-                                if (indexRow != -1)
+                                if (indexRow != -1 && indexCol != -1)
                                 {
                                     int nextCol = 0;
 
@@ -956,23 +1010,24 @@ namespace Viewing_Statistics
                                         dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + nextCol].Value = timeValues.MinuteToTimeString((int)Math.Round(timeWorkigOut));
                                         nextCol++;
                                     }
-                                        
+
                                     if (values[1] == "1")
                                     {
                                         dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + nextCol].Value = percentWorkingOut.ToString("P1");
                                         nextCol++;
                                     }
-                                        
+
                                     if (values[2] == "1")
                                     {
                                         dataGrid.Rows[indexRow].Cells[indexCol + ((shiftNumber - 1) * countOutValue) + nextCol].Value = GetBonusWorkingOut((int)Math.Round(timeWorkigOut));
                                         nextCol++;
                                     }
-                                    
+
                                     dataGrid.Rows[indexRow].Cells[period * countOutValue * countShifts + 2].Value = timeValues.MinuteToTimeString((int)Math.Round(usersList[i].WorkingOutUser));
                                     //dataGrid.Rows[indexRow].Cells[days * countShifts + 3].Value = timeValues.MinuteToTimeString(usersList[i].WorkingOutBacklog);
                                 }
-                            }));
+                             }
+                            ));
                         }
                     }
                 }
@@ -996,7 +1051,7 @@ namespace Viewing_Statistics
                         int indexRow = GetDataGridRowIndexFromKey(dataGrid, key);
                         int indexCol = GetDataGridColumnIndexFromKey(dataGrid, equipsListWorkingOut[i].WorkingOutList[j].ShiftDate);
 
-                        if (indexRow != -1)
+                        if (indexRow != -1 && indexCol != -1)
                         {
                             int nextCol = 0;
 
@@ -1055,7 +1110,7 @@ namespace Viewing_Statistics
                         int indexRow = GetDataGridRowIndexFromKey(dataGrid, key);
                         int indexCol = GetDataGridColumnIndexFromKey(dataGrid, usersListWorkingOut[i].WorkingOutList[j].ShiftDate);
 
-                        if (indexRow != -1)
+                        if (indexRow != -1 && indexCol != -1)
                         {
                             int nextCol = 0;
 
@@ -1222,7 +1277,7 @@ namespace Viewing_Statistics
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            StartCheckUpdate();
+            //StartCheckUpdate();
             UpdatePagesListsFromFile();
             timer1.Enabled = true;
         }

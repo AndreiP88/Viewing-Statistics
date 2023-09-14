@@ -111,10 +111,13 @@ namespace libSql
             string endDate = date.AddMonths(1).ToString("yyyy-MM") + "-01T07:10:00.000";*/
 
             DateTime date = DateTime.Now;
+
+            int period = (date - startDatePeriod).Days;
+
             DateTime dateStart = startDatePeriod;
             //DateTime dateEnd = DateTime.MinValue.AddYears(startDatePeriod.Year - 1).AddMonths(startDatePeriod.Month - 1).AddDays(startDatePeriod.Day + period + 1);
-            DateTime dateEnd = DateTime.MinValue.AddYears(startDatePeriod.Year - 1).AddMonths(startDatePeriod.Month - 1).AddDays(date.Day + 1);
-
+            //DateTime dateEnd = DateTime.MinValue.AddYears(startDatePeriod.Year - 1).AddMonths(startDatePeriod.Month - 1).AddDays(period + 1);
+            DateTime dateEnd = DateTime.MinValue.AddYears(startDatePeriod.Year - 1).AddMonths(startDatePeriod.Month - 1).AddDays(startDatePeriod.Day + period - 1);
 
             /*if (date.Hour >= 8 && date.Hour <= 23)
             {

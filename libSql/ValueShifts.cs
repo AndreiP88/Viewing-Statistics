@@ -15,7 +15,7 @@ namespace libSql
         {
             
         }
-        public List<User> LoadShifts(List<User> listUsers, DateTime selectDate, int countShifts, bool givenShiftNumber = true)
+        public List<User> LoadShiftsForSelectedMonth(List<User> listUsers, DateTime selectDate, int countShifts, bool givenShiftNumber = true)
         {
             List<User> usersList = listUsers;
 
@@ -58,9 +58,18 @@ namespace libSql
         /// <param name="selectDate"></param>
         /// <param name="countShifts"></param>
         /// <returns></returns>
-        public List<User> LoadShifts(List<User> listUsers, DateTime selectDate, int period, int countShifts, bool givenShiftNumber = true)
+        public List<User> LoadShifts(List<User> listUsers, DateTime selectDate, int countShifts, bool givenShiftNumber = true)
         {
             List<User> usersList = listUsers;
+
+            DateTime date = DateTime.Now;
+
+            int period = (date - selectDate).Days;
+
+            if (date.Hour < 8)
+            {
+                period++;
+            }
 
             for (int currentDay = 0; currentDay <= period; currentDay++)
             {
