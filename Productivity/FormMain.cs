@@ -12,8 +12,6 @@ using libData;
 using libINIFile;
 using libSql;
 using libTime;
-using Productivity.Properties;
-using System.Reflection;
 
 namespace Productivity
 {
@@ -346,7 +344,7 @@ namespace Productivity
 
             for (int i = categoryId + 1; i <= categories.Count; i++)
             {
-                ChangeCategoryID(i, i - 1);
+                valueCategoryes.ChangeCategoryID(i, i - 1);
             }
 
             ini.DeleteSection(sectionLast);
@@ -357,87 +355,20 @@ namespace Productivity
 
         private void MoveCategoryUp(int categoryId)
         {
-            SwapCategory(categoryId, categoryId - 1);
+            ValueCategoryes categoryes = new ValueCategoryes();
+
+            categoryes.SwapCategory(categoryId, categoryId - 1);
 
             LoadCategoryToListView();
         }
 
         private void MoveCategoryDown(int categoryId)
         {
-            SwapCategory(categoryId, categoryId + 1);
+            ValueCategoryes categoryes = new ValueCategoryes();
+
+            categoryes.SwapCategory(categoryId, categoryId + 1);
 
             LoadCategoryToListView();
-        }
-
-        private void SwapCategory(int firstCategory, int secondCategory)
-        {
-            IniFile ini = new IniFile("settings.ini");
-
-            string firstSection = "category_" + firstCategory;
-            string secondSection = "category_" + secondCategory;
-
-            string firstName = "";
-            bool firstSelected = false;
-            string firstEquipsStr = "";
-
-            if (ini.KeyExists("name", firstSection))
-                firstName = ini.ReadString("name", firstSection);
-
-            if (ini.KeyExists("selected", firstSection))
-                firstSelected = ini.ReadBool("selected", firstSection);
-
-            if (ini.KeyExists("equips", firstSection))
-                firstEquipsStr = ini.ReadString("equips", firstSection);
-
-            string secondName = "";
-            bool secondSelected = false;
-            string secondEquipsStr = "";
-
-            if (ini.KeyExists("name", secondSection))
-                secondName = ini.ReadString("name", secondSection);
-
-            if (ini.KeyExists("selected", secondSection))
-                secondSelected = ini.ReadBool("selected", secondSection);
-
-            if (ini.KeyExists("equips", secondSection))
-                secondEquipsStr = ini.ReadString("equips", secondSection);
-
-            //ini.DeleteSection(oldSection);
-
-            ini.Write("name", secondName, firstSection);
-            ini.Write("selected", secondSelected.ToString(), firstSection);
-            ini.Write("equips", secondEquipsStr, firstSection);
-
-            ini.Write("name", firstName, secondSection);
-            ini.Write("selected", firstSelected.ToString(), secondSection);
-            ini.Write("equips", firstEquipsStr, secondSection);
-        }
-
-        private void ChangeCategoryID(int oldCategoryId, int newCategoryId)
-        {
-            IniFile ini = new IniFile("settings.ini");
-
-            string oldSection = "category_" + oldCategoryId;
-            string newSection = "category_" + newCategoryId;
-
-            string name = "";
-            bool selected = false;
-            string equipsStr = "";
-
-            if (ini.KeyExists("name", oldSection))
-                name = ini.ReadString("name", oldSection);
-
-            if (ini.KeyExists("selected", oldSection))
-                selected = ini.ReadBool("selected", oldSection);
-
-            if (ini.KeyExists("equips", oldSection))
-                equipsStr = ini.ReadString("equips", oldSection);
-
-            ini.DeleteSection(oldSection);
-
-            ini.Write("name", name, newSection);
-            ini.Write("selected", selected.ToString(), newSection);
-            ini.Write("equips", equipsStr, newSection);
         }
 
         private void AddNewEquips(List<string> equipsList)
@@ -567,6 +498,12 @@ namespace Productivity
             dataGridView1.Rows.Clear();
             dataGridView1.Columns.Clear();
 
+            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            //dataGridView1.AllowUserToResizeColumns = false;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dataGridView1.AllowUserToResizeRows = false;
+            dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+
             int width = dataGridView1.Width;
 
             int w = 50;//(width - 560) / (days);
@@ -594,13 +531,28 @@ namespace Productivity
                 pColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             }
 
-            dataGridView1.Columns.Add(@"colGroup", @"Выработка");
-            dataGridView1.Columns[days * countShifts + 2].Width = 100;
-            dataGridView1.Columns[days * countShifts + 2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            int indexColumn;
 
-            dataGridView1.Columns.Add(@"colTask", @"Отставание");
-            dataGridView1.Columns[days * countShifts + 3].Width = 100;
-            dataGridView1.Columns[days * countShifts + 3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            indexColumn = dataGridView1.Columns.Add(@"colGroup", @"Норма смен");
+            dataGridView1.Columns[indexColumn].Width = 100;
+            dataGridView1.Columns[indexColumn].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            indexColumn = dataGridView1.Columns.Add(@"colGroup", @"Норма часов");
+            dataGridView1.Columns[indexColumn].Width = 100;
+            dataGridView1.Columns[indexColumn].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            indexColumn = dataGridView1.Columns.Add(@"colGroup", @"Выработка");
+            dataGridView1.Columns[indexColumn].Width = 100;
+            dataGridView1.Columns[indexColumn].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            indexColumn = dataGridView1.Columns.Add(@"colTask", @"Отставание");
+            dataGridView1.Columns[indexColumn].Width = 100;
+            dataGridView1.Columns[indexColumn].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            indexColumn = dataGridView1.Columns.Add(@"colTask", @"Эффективность");
+            dataGridView1.Columns[indexColumn].Width = 100;
+            dataGridView1.Columns[indexColumn].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
 
             dataGridView1.Rows.Add();
             dataGridView1.Rows[0].Frozen = true;
@@ -609,7 +561,10 @@ namespace Productivity
             dataGridView1.Rows[0].Cells[0].Value = "";
 
             AddCellToGrid(0, days * countShifts + 2, 2);
-            dataGridView1.Rows[0].Cells[days * countShifts + 2].Value = "";
+            dataGridView1.Rows[0].Cells[days * countShifts + 2].Value = "Отработано";
+
+            AddCellToGrid(0, days * countShifts + 4, 3);
+            dataGridView1.Rows[0].Cells[days * countShifts + 4].Value = "Производительность";
 
             for (int i = 2; i <= days * countShifts; i+=countShifts)
             {
@@ -625,10 +580,19 @@ namespace Productivity
             dataGridView1.Rows[1].Cells[0].Value = "Имя";
 
             AddCellToGrid(1, days * countShifts + 2);
-            dataGridView1.Rows[1].Cells[days * countShifts + 2].Value = "Выработка";
+            dataGridView1.Rows[1].Cells[days * countShifts + 2].Value = "Смен";
 
             AddCellToGrid(1, days * countShifts + 3);
-            dataGridView1.Rows[1].Cells[days * countShifts + 3].Value = "Отставание";
+            dataGridView1.Rows[1].Cells[days * countShifts + 3].Value = "Часов";
+
+            AddCellToGrid(1, days * countShifts + 4);
+            dataGridView1.Rows[1].Cells[days * countShifts + 4].Value = "Выработка";
+
+            AddCellToGrid(1, days * countShifts + 5);
+            dataGridView1.Rows[1].Cells[days * countShifts + 5].Value = "Отставание";
+
+            AddCellToGrid(1, days * countShifts + 6);
+            dataGridView1.Rows[1].Cells[days * countShifts + 6].Value = "%";
 
             for (int i = 2; i <= days * countShifts + 1; i += countShifts)
             {
@@ -801,7 +765,7 @@ namespace Productivity
             StartAddingWorkingTimeToListView();
         }
 
-        private void AddUsersToListView(int countDaysFromSellectedMonth)
+        private void AddUsersToListView()
         {
             ValueCategoryes valueCategoryes = new ValueCategoryes();
             INISettings settings = new INISettings();
@@ -1136,8 +1100,11 @@ namespace Productivity
                                     int indexRow = rowIndexes[key];
 
                                     dataGridView1.Rows[indexRow].Cells[(day - 1) * countShifts + shiftNumber + 1].Value = timeValues.MinuteToTimeString((int)Math.Round(timeWorkigOut));
-                                    dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 2].Value = timeValues.MinuteToTimeString((int)Math.Round(usersList[i].WorkingOutUser));
-                                    dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString((int)Math.Round(usersList[i].WorkingOutBacklog));
+                                    dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 2].Value = usersList[i].Shifts.Count;
+                                    dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString((int)Math.Round(usersList[i].WorkingOutUser + usersList[i].WorkingOutBacklog));
+                                    dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 4].Value = timeValues.MinuteToTimeString((int)Math.Round(usersList[i].WorkingOutUser));
+                                    dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 5].Value = timeValues.MinuteToTimeString((int)Math.Round(usersList[i].WorkingOutBacklog));
+                                    dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 6].Value = (usersList[i].WorkingOutUser / (usersList[i].WorkingOutUser + usersList[i].WorkingOutBacklog)).ToString("P1");
                                 }
                             }));
                         }
@@ -1184,9 +1151,12 @@ namespace Productivity
                     {
                         int indexRow = rowIndexes[key];
 
-                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 2].Value = timeValues.MinuteToTimeString((int)Math.Round(equipsListWorkingOut[i].WorkingOutSumm));
-                        //dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutBacklog);
-                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutList.Count * fullOutput - (int)Math.Round(equipsListWorkingOut[i].WorkingOutSumm));
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 2].Value = equipsListWorkingOut[i].WorkingOutList.Count;
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutList.Count * fullOutput);
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 4].Value = timeValues.MinuteToTimeString((int)Math.Round(equipsListWorkingOut[i].WorkingOutSumm));
+                        //dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 4].Value = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutBacklog);
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 5].Value = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutList.Count * fullOutput - (int)Math.Round(equipsListWorkingOut[i].WorkingOutSumm));
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 6].Value = (equipsListWorkingOut[i].WorkingOutSumm / (equipsListWorkingOut[i].WorkingOutList.Count * fullOutput)).ToString("P1");
                     }
 
                 }));
@@ -1231,9 +1201,12 @@ namespace Productivity
                     {
                         int indexRow = rowIndexes[key];
 
-                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 2].Value = timeValues.MinuteToTimeString((int)Math.Round(usersListWorkingOut[i].WorkingOutSumm));
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 2].Value = usersListWorkingOut[i].WorkingOutList.Count;
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString((int)usersListWorkingOut[i].WorkingOutList.Count * fullOutput);
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 4].Value = timeValues.MinuteToTimeString((int)Math.Round(usersListWorkingOut[i].WorkingOutSumm));
                         //dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutBacklog);
-                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString(usersListWorkingOut[i].WorkingOutList.Count * fullOutput - (int)Math.Round(usersListWorkingOut[i].WorkingOutSumm));
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 5].Value = timeValues.MinuteToTimeString(usersListWorkingOut[i].WorkingOutList.Count * fullOutput - (int)Math.Round(usersListWorkingOut[i].WorkingOutSumm));
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 6].Value = (usersListWorkingOut[i].WorkingOutSumm / (usersListWorkingOut[i].WorkingOutList.Count * fullOutput)).ToString("P1");
                     }
                 }));
             }
@@ -1345,7 +1318,7 @@ namespace Productivity
 
             LoadUsersList(categoryEquips, selectDate);
 
-            AddUsersToListView(countDaysFromSellectedMonth);
+            AddUsersToListView();
 
             LoadShifts();
         }
@@ -1513,47 +1486,36 @@ namespace Productivity
             return result;
         }
 
-        private int AddDinnerTimeToWorkingOut(string firstTime, string secondTime)
+        private int AddDinnerTimeToWorkingOut(DateTime selectDate, string firstTime, string secondTime)
         {
             int result = 0;
 
-            int dinnerTime = 35;
+            DateTime firstDateTime = Convert.ToDateTime(firstTime);
+            DateTime secondDateTime = Convert.ToDateTime(secondTime);
 
-            string fDinnerTimeDay = "11:30";
-            string sDinnerTimeDay = "15:30";
+            string[] breakeTimesDay = { "11:30", "30", "15:30", "30", "18:00", "10", "23:30", "30" };
+            string[] breakeTimesNight = { "03:30", "30", "06:00", "10" };
 
-            TimeSpan firstDinnerTimeDay = TimeSpan.Parse(fDinnerTimeDay);
-            TimeSpan secondDinnerTimeDay = TimeSpan.Parse(sDinnerTimeDay);
-
-            string fDinnerTimeNight = "23:30";
-            string sDinnerTimeNight = "03:30";
-
-            TimeSpan firstDinnerTimeNight = TimeSpan.Parse(fDinnerTimeNight);
-            TimeSpan secondDinnerTimeNight = TimeSpan.Parse(sDinnerTimeNight);
-
-            //DateTime firstDinnerStart = DateTime.;
-
-            DateTime dtFirstTime = Convert.ToDateTime(firstTime);
-            DateTime dtSecondTime = Convert.ToDateTime(secondTime);
-
-            if (dtFirstTime.TimeOfDay < firstDinnerTimeDay && firstDinnerTimeDay < dtSecondTime.TimeOfDay)
+            for (int i = 0; i < breakeTimesDay.Length; i+=2)
             {
-                result += dinnerTime;
+                DateTime breakeDateTime = Convert.ToDateTime(selectDate.ToString("dd.MM.yyyy") + " " + breakeTimesDay[i] + ":00");
+                int breakTime = Convert.ToInt32(breakeTimesDay[i + 1]);
+
+                if (firstDateTime < breakeDateTime && breakeDateTime < secondDateTime)
+                {
+                    result += breakTime;
+                }
             }
 
-            if (dtFirstTime.TimeOfDay < secondDinnerTimeDay && secondDinnerTimeDay < dtSecondTime.TimeOfDay)
+            for (int i = 0; i < breakeTimesNight.Length; i += 2)
             {
-                result += dinnerTime;
-            }
+                DateTime breakeDateTime = Convert.ToDateTime(selectDate.AddDays(1).ToString("dd.MM.yyyy") + " " + breakeTimesNight[i] + ":00");
+                int breakTime = Convert.ToInt32(breakeTimesNight[i + 1]);
 
-            if (dtFirstTime.TimeOfDay < firstDinnerTimeNight && firstDinnerTimeNight < dtSecondTime.TimeOfDay)
-            {
-                result += dinnerTime;
-            }
-
-            if (dtFirstTime.TimeOfDay < secondDinnerTimeNight && secondDinnerTimeNight < dtSecondTime.TimeOfDay)
-            {
-                result += dinnerTime;
+                if (firstDateTime < breakeDateTime && breakeDateTime < secondDateTime)
+                {
+                    result += breakTime;
+                }
             }
 
             return result;
@@ -1568,6 +1530,12 @@ namespace Productivity
             dataGridViewOneShift.Rows.Clear();
             dataGridViewOneShift.Columns.Clear();
 
+            dataGridViewOneShift.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            //dataGridViewOneShift.AllowUserToResizeColumns = false;
+            dataGridViewOneShift.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dataGridViewOneShift.AllowUserToResizeRows = false;
+            dataGridViewOneShift.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+
             string[] colNames = { "№", "Имя", "Заказ", "Заказчик", "Остаток | Тираж", "Дано времени", "Начало", "Завершение", "Продолжительность", "Планируемое время завершения", "Отклонение", "Сделано", "Выработка" };
             int[] colWidth = { 35, 300, 90, 260, 160, 120, 160, 160, 120, 160, 120, 80, 80 };
 
@@ -1576,7 +1544,7 @@ namespace Productivity
                 int indexCol = dataGridViewOneShift.Columns.Add(colNames[i], colNames[i]);
                 dataGridViewOneShift.Columns[indexCol].Width = colWidth[i];
                 dataGridViewOneShift.Columns[indexCol].SortMode = DataGridViewColumnSortMode.NotSortable;
-
+                
                 if (i == 0)
                 {
                     dataGridViewOneShift.Columns[indexCol].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
@@ -1659,7 +1627,7 @@ namespace Productivity
 
                 dataGridViewOneShift.Rows[indexRow].Cells[0].Value = (i + 1).ToString();
                 dataGridViewOneShift.Rows[indexRow].Cells[1].Value = users[usersCurrent[i]];
-                dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.Font = new Font(dataGridView1.Font, FontStyle.Bold);
+                dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.Font = new Font(dataGridViewOneShift.Font, FontStyle.Bold);
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.BackColor = Color.Gray;
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
 
@@ -1706,7 +1674,7 @@ namespace Productivity
                             string firstTimeEnd = user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateEnd;
                             string lastTimeEnd = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
 
-                            dinnerTime += AddDinnerTimeToWorkingOut(firstTimeBegin, lastTimeEnd);
+                            //dinnerTime += AddDinnerTimeToWorkingOut(firstTimeBegin, lastTimeEnd);
 
                             float workingOut = 0;
                             int done = 0;
@@ -1773,11 +1741,11 @@ namespace Productivity
                                     normTimeFull = normTimeMakeReady + normTimeWork;
                                 }
 
-                                timeEnd = lastTimeEnd;
-
+                                dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, lastTimeEnd);
                                 timePlanedEndOrder = time.DateTimeAmountMunutes(timeStartShift, (int)Math.Round(userWorkingOut) + dinnerTime);
 
                                 differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, lastTimeEnd);
+                                timeEnd = lastTimeEnd + " ";
                             }
 
                             if (order.Status != 2)
@@ -1796,19 +1764,21 @@ namespace Productivity
                                 //if (user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin == user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd)
                                 if (lastTimeBegin == lastTimeEnd)
                                 {
-                                    timeEnd = "выполняется";
+                                    dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, DateTime.Now.ToString());
                                     timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull + dinnerTime);
                                     differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, DateTime.Now.ToString());
                                     duration = time.DateDifferenceToMinutes(DateTime.Now.ToString(), firstTimeBegin);
+                                    timeEnd = "выполняется ";
                                 }
                                 else
                                 {
-                                    timeEnd = lastTimeEnd;
+                                    dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, lastTimeEnd);
                                     timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, (int)Math.Round(workingOut) + dinnerTime);
                                     differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, lastTimeEnd);
+                                    timeEnd = lastTimeEnd + " ";
                                 }
                             }
-
+                            
                             indexRow = dataGridViewOneShift.Rows.Add();
 
                             dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
@@ -1827,13 +1797,22 @@ namespace Productivity
                             dataGridViewOneShift.Rows[indexRow].Cells[10].Value = time.MinuteToTimeString(differentTime);
                             dataGridViewOneShift.Rows[indexRow].Cells[11].Value = done.ToString("N0");
                             dataGridViewOneShift.Rows[indexRow].Cells[12].Value = time.MinuteToTimeString((int)Math.Round(workingOut));
+
+                            if (differentTime >= 0)
+                            {
+                                dataGridViewOneShift.Rows[indexRow].Cells[10].Style.ForeColor = Color.Green;
+                            }
+                            else
+                            {
+                                dataGridViewOneShift.Rows[indexRow].Cells[10].Style.ForeColor = Color.Red;
+                            }
                         }
                     }
                 }
 
                 indexRow = dataGridViewOneShift.Rows.Add();
                 
-                dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.Font = new Font(dataGridView1.Font, FontStyle.Bold);
+                dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.Font = new Font(dataGridViewOneShift.Font, FontStyle.Bold);
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.BackColor = Color.Silver;
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
 

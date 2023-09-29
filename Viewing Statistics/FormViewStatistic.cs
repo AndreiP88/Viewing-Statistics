@@ -372,7 +372,7 @@ namespace Viewing_Statistics
         {
             ValuePagesList valuePagesList = new ValuePagesList();
 
-            metroSetTabControl1.TabPages.Clear();
+            metroSetTabControl1?.TabPages?.Clear();
 
             for (int i = 0; i < pageList.Count; i++)
             {
@@ -476,7 +476,8 @@ namespace Viewing_Statistics
                 AllowUserToDeleteRows = false,
                 ReadOnly = true,
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-                MultiSelect = false
+                MultiSelect = false,
+                BackgroundColor = Color.White
             };
 
             DateTime startPeriod = GetStartDate(period);
@@ -503,7 +504,7 @@ namespace Viewing_Statistics
 
             if (autoWidthColVal)
             {
-                int wForValue = width - (wColNum + wColName + wColResults * 3);
+                int wForValue = width - (wColNum + wColName + wColResults * 3) - 8;
                 int wTemp = wForValue / (period * countOutValue * 2);
 
                 if (wTemp >= wColVal)
@@ -1279,6 +1280,9 @@ namespace Viewing_Statistics
         {
             //StartCheckUpdate();
             UpdatePagesListsFromFile();
+            metroSetTabControl1.UseAnimation = false;
+            metroSetTabControl1.AnimateEasingType = MetroSet_UI.Enums.EasingType.CubeOut;
+            metroSetTabControl1.AnimateTime = 3000;
             timer1.Enabled = true;
         }
 

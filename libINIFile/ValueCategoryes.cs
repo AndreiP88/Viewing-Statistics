@@ -82,5 +82,76 @@ namespace libINIFile
 
             return categories;
         }
+
+        public void SwapCategory(int firstCategory, int secondCategory)
+        {
+            IniFile ini = new IniFile("settings.ini");
+
+            string firstSection = "category_" + firstCategory;
+            string secondSection = "category_" + secondCategory;
+
+            string firstName = "";
+            bool firstSelected = false;
+            string firstEquipsStr = "";
+
+            if (ini.KeyExists("name", firstSection))
+                firstName = ini.ReadString("name", firstSection);
+
+            if (ini.KeyExists("selected", firstSection))
+                firstSelected = ini.ReadBool("selected", firstSection);
+
+            if (ini.KeyExists("equips", firstSection))
+                firstEquipsStr = ini.ReadString("equips", firstSection);
+
+            string secondName = "";
+            bool secondSelected = false;
+            string secondEquipsStr = "";
+
+            if (ini.KeyExists("name", secondSection))
+                secondName = ini.ReadString("name", secondSection);
+
+            if (ini.KeyExists("selected", secondSection))
+                secondSelected = ini.ReadBool("selected", secondSection);
+
+            if (ini.KeyExists("equips", secondSection))
+                secondEquipsStr = ini.ReadString("equips", secondSection);
+
+            //ini.DeleteSection(oldSection);
+
+            ini.Write("name", secondName, firstSection);
+            ini.Write("selected", secondSelected.ToString(), firstSection);
+            ini.Write("equips", secondEquipsStr, firstSection);
+
+            ini.Write("name", firstName, secondSection);
+            ini.Write("selected", firstSelected.ToString(), secondSection);
+            ini.Write("equips", firstEquipsStr, secondSection);
+        }
+
+        public void ChangeCategoryID(int oldCategoryId, int newCategoryId)
+        {
+            IniFile ini = new IniFile("settings.ini");
+
+            string oldSection = "category_" + oldCategoryId;
+            string newSection = "category_" + newCategoryId;
+
+            string name = "";
+            bool selected = false;
+            string equipsStr = "";
+
+            if (ini.KeyExists("name", oldSection))
+                name = ini.ReadString("name", oldSection);
+
+            if (ini.KeyExists("selected", oldSection))
+                selected = ini.ReadBool("selected", oldSection);
+
+            if (ini.KeyExists("equips", oldSection))
+                equipsStr = ini.ReadString("equips", oldSection);
+
+            ini.DeleteSection(oldSection);
+
+            ini.Write("name", name, newSection);
+            ini.Write("selected", selected.ToString(), newSection);
+            ini.Write("equips", equipsStr, newSection);
+        }
     }
 }

@@ -112,7 +112,7 @@ namespace libSql
 
             DateTime date = DateTime.Now;
 
-            int period = (date - startDatePeriod).Days;
+            int period = (date - startDatePeriod).Days + 1;
 
             DateTime dateStart = startDatePeriod;
             //DateTime dateEnd = DateTime.MinValue.AddYears(startDatePeriod.Year - 1).AddMonths(startDatePeriod.Month - 1).AddDays(startDatePeriod.Day + period + 1);
