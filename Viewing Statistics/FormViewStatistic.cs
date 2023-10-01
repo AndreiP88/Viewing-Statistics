@@ -189,7 +189,7 @@ namespace Viewing_Statistics
                 //usersList = new List<User>();
 
                 ValueUsers usersValue = new ValueUsers();
-
+                
                 //usersList = usersValue.LoadUsersList(equips, date);
                 //usersList = usersValue.LoadUsersListFromLastAnyDays(equips, countDays);
                 usersList = usersValue.LoadUsersListFromLastAnyDays(equips, startDate);

@@ -14,6 +14,7 @@ namespace libData
         public List<WorkingOutValue> WorkingOutList;
         public float WorkingOutSumm;
         public float WorkingOutBacklog;
+        public int NumberOfShiftsWorked;
 
         //public Equips(int equip,  string shiftDate, int shiftNumber)
         public WorkingOut(int id)

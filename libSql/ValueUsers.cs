@@ -8,63 +8,6 @@ namespace libSql
 {
     public class ValueUsers
     {
-        //Не используемый метод
-        /*public List<User> LoadUsersList(List<int> equips, DateTime date)
-        {
-            List<User> usersList = new List<User>();
-
-            string startDate = date.ToString("yyyy-MM") + "-01T07:40:00.000";
-            string endDate = date.AddMonths(1).ToString("yyyy-MM") + "-01T07:10:00.000";
-
-            using (SqlConnection connection = DBConnection.GetDBConnection())
-            {
-                connection.Open();
-                SqlCommand Command = new SqlCommand
-                {
-                    Connection = connection,
-
-                    CommandText =
-                        @"SELECT
-	                            id_common_employee,
-	                            id_equip
-                            FROM
-	                            dbo.man_factjob
-                            WHERE
-                                date_begin IS NOT NULL AND 
-	                            date_begin >= CONVERT ( VARCHAR ( 32 ), @startDate, 21 ) AND
-	                            date_begin <= CONVERT ( VARCHAR ( 32 ), @endDate, 21 ) AND
-                                id_common_employee IS NOT NULL AND
-                                id_equip IS NOT NULL"
-                };
-                Command.Parameters.AddWithValue("@startDate", startDate);
-                Command.Parameters.AddWithValue("@endDate", endDate);
-
-                DbDataReader sqlReader = Command.ExecuteReader();
-
-                while (sqlReader.Read())
-                {
-                    int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
-                    int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
-
-                    if (equips.Contains(loadEquip))
-                    {
-                        //int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
-
-                        if (usersList.FindIndex((v) => v.Id == loadUser && v.Equip == loadEquip) == -1)
-                        //if (usersList.FindIndex((v) => v.Id == loadUser) == -1)
-                        {
-                            usersList.Add(new User(loadUser, loadEquip));
-                            usersList[usersList.Count - 1].Shifts = new List<UserShift>();
-                        }
-                    }
-                }
-
-                connection.Close();
-            }
-
-            return usersList;
-        }//*/
-
         /// <summary>
         /// Получить список сотрудников с оборудованием за указанное количство дней
         /// </summary>
@@ -157,7 +100,7 @@ namespace libSql
 
             DateTime dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1);
             DateTime dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month);
-
+            
             string startDate = dateStart.ToString("yyyy-MM-dd") + "T07:40:00.000";
             string endDate = dateEnd.ToString("yyyy-MM-dd") + "T07:10:00.000";
 

@@ -179,6 +179,17 @@ namespace libTime
             return result;
         }
 
+        public string EndShiftPlanedDateTime(string date)
+        {
+            string result = "";
+
+            DateTime dateTime = Convert.ToDateTime(date);
+
+            result = dateTime.AddHours(12).ToString("dd.MM.yyyy HH:mm") + ":00";
+
+            return result;
+        }
+
         public string MinuteToTimeString(int totalMinutes)
         {
             string result = "00:00";

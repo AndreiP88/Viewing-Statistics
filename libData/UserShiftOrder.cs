@@ -19,8 +19,9 @@ namespace libData
         public int PlanOutQty;
         public int Normtime;
         public int IdManOrderJobItem;
+        public int IDFBCBrigade;
 
-        public UserShiftOrder(string orderNumber, string orderName, int status, int flags, string dateBegin, string dateEnd, int duration, int factOutQty, int planOutQty, int normtime, int idManOrderJobItem)
+        public UserShiftOrder(string orderNumber, string orderName, int status, int flags, string dateBegin, string dateEnd, int duration, int factOutQty, int planOutQty, int normtime, int idManOrderJobItem, int idFBCBrigade)
         {
             this.OrderNumber = orderNumber;
             this.OrderName = orderName;
@@ -33,6 +34,7 @@ namespace libData
             this.PlanOutQty = planOutQty;
             this.Normtime = normtime;
             this.IdManOrderJobItem = idManOrderJobItem;
+            this.IDFBCBrigade = idFBCBrigade;
         }
     }
 }
