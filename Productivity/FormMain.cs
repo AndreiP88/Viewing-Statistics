@@ -59,9 +59,10 @@ namespace Productivity
             {
                 downloader.DownloadFile(link, path);
             }
-            catch
+            catch(Exception ex)
             {
                 //MessageBox.Show("Ошибка подключения", "Ошибка", MessageBoxButtons.OK);
+                LogWrite(ex);
             }
 
             Invoke(new Action(() =>
@@ -81,76 +82,45 @@ namespace Productivity
             }
         }
 
-        private void StartCheckUpdate()
+        private void LogWrite(Exception ex)
         {
-            //MessageBox.Show("Запуск");
-
-            CreateFolder();
-
-            string pathTemp = @"TempDownload";
-
-            string fileTemp = "changlog.txt";
-
-            string link = "https://drive.google.com/uc?export=download&id=1gMfdWRsRONkljPkjlQt90vwPTF3kqL9w";
-
-            var task = Task.Run(() => CheckUpdate(link, pathTemp + "\\" + fileTemp));
+            Logger.WriteLine(ex.StackTrace + ", " + ex.Message);
         }
 
-        private void CheckUpdate(string link, string path)
+        private void StartTaskUpdateApplication()
         {
-            FileDownloader downloader = new FileDownloader();
-            INISettings ini = new INISettings();
+            var task = Task.Run(() => StartUpdateApplication());
+        }
 
-            string[] chLog = null;
+        private void StartUpdateApplication()
+        {
+            INIUpdate iniUpdate = new INIUpdate();
 
-            int lastDateV = 0;
-            int currentDateV = 0;
-
-            string lastDateVersion = ini.GetLastDateVersion();
-            string currentDateVersion = "";
+            DateTime currentTime = DateTime.Now;
+            DateTime lastCheckUpdateTime = iniUpdate.GetLastTimeCheckUpdate();
+            int periodCheckUpdate = iniUpdate.GetPeriodCheckUpdate();
 
             try
             {
-                var p = new Process();
-                p.StartInfo.FileName = "Update.exe";
-                p.StartInfo.Arguments = "update";
+                int timeDifferece = (int)currentTime.Subtract(lastCheckUpdateTime).TotalMinutes;
 
-                downloader.DownloadFile(link, path);
-                //downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
-                //downloader.DownloadFileCompleted += Downloader_DownloadFileCompleted;
-
-                chLog = File.ReadAllLines(path, Encoding.UTF8);
-                currentDateVersion = chLog[0].Substring(7);
-
-                if (currentDateVersion != "")
-                    currentDateV = Convert.ToInt32(currentDateVersion);
-
-                if (lastDateVersion != "")
+                if (timeDifferece > periodCheckUpdate)
                 {
-                    lastDateV = Convert.ToInt32(lastDateVersion);
+                    Logger.WriteLine("Проверка новой версии.");
 
+                    var p = new Process();
+                    p.StartInfo.FileName = "Updater.exe";
+                    p.StartInfo.Arguments = "update";
 
-                    if (currentDateV > lastDateV)
-                    {
-                        p.Start();
-                    }
-                }
-                else
-                {
                     p.Start();
+
+                    iniUpdate.SetLastTimeCheckUpdate(currentTime);
                 }
-
             }
-            catch
+            catch(Exception ex)
             {
-                //MessageBox.Show("Ошибка подключения", "Ошибка", MessageBoxButtons.OK);
+                LogWrite(ex);
             }
-
-            Invoke(new Action(() =>
-            {
-                //MessageBox.Show(currentDateV.ToString() + " " + lastDateV.ToString());
-
-            }));
         }
 
         private void LoadAllUsers()
@@ -164,6 +134,7 @@ namespace Productivity
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Ошибка подключения");
+                LogWrite(ex);
             }
         }
 
@@ -178,6 +149,7 @@ namespace Productivity
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Ошибка подключения");
+                LogWrite(ex);
             }
         }
 
@@ -687,6 +659,7 @@ namespace Productivity
             catch (Exception ex)
             {
                 MessageBox.Show("Ошибка получения года " + ex.Message, "Ошибка");
+                LogWrite(ex);
             }
 
             return result;
@@ -703,6 +676,7 @@ namespace Productivity
             catch (Exception ex)
             {
                 MessageBox.Show("Ошибка получения месяца " + ex.Message, "Ошибка");
+                LogWrite(ex);
             }
 
             return result;
@@ -745,6 +719,7 @@ namespace Productivity
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Ошибка подключения");
+                LogWrite(ex);
             }
         }
 
@@ -1921,7 +1896,7 @@ namespace Productivity
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            StartCheckUpdate();
+            //StartTaskUpdateApplication();
             LoadStartsValues();
         }
 
@@ -2311,17 +2286,24 @@ namespace Productivity
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            DateTime currentDateTime = DateTime.Now;
+
             if (metroSetSwitch2.Switched)
             {
                 int updatePeriod = (int)formattedNumericUpDown4.Value;
-                int lostMin = lastTimeUpdateShiftStatistic.AddMinutes(updatePeriod).Subtract(DateTime.Now).Minutes + 1;
+                int lostMin = lastTimeUpdateShiftStatistic.AddMinutes(updatePeriod).Subtract(currentDateTime).Minutes + 1;
 
                 button2.Text = "Обновление (" + lostMin + ")";
 
-                if (lastTimeUpdateShiftStatistic.AddMinutes(updatePeriod) <= DateTime.Now)
+                if (lastTimeUpdateShiftStatistic.AddMinutes(updatePeriod) <= currentDateTime)
                 {
                     LoadOrdersForSelectedDate();
                 }
+            }
+            
+            if (currentDateTime.Second == 0)
+            {
+                StartTaskUpdateApplication();
             }
         }
 

@@ -57,6 +57,7 @@
       <DependentUpon>FormViewStatistic.cs</DependentUpon>
     </Compile>
     <Compile Include="HMergedCell.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FormViewStatistic.resx">
