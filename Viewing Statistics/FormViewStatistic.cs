@@ -90,28 +90,13 @@ namespace Viewing_Statistics
 
         private void StartUpdateApplication()
         {
-            INIUpdate iniUpdate = new INIUpdate();
-
-            DateTime currentTime = DateTime.Now;
-            DateTime lastCheckUpdateTime = iniUpdate.GetLastTimeCheckUpdate();
-            int periodCheckUpdate = iniUpdate.GetPeriodCheckUpdate();
-
             try
             {
-                int timeDifferece = (int)currentTime.Subtract(lastCheckUpdateTime).TotalMinutes;
+                var p = new Process();
+                p.StartInfo.FileName = "Updater.exe";
+                p.StartInfo.Arguments = "update";
 
-                if (timeDifferece > periodCheckUpdate)
-                {
-                    Logger.WriteLine("Проверка новой версии.");
-
-                    var p = new Process();
-                    p.StartInfo.FileName = "Updater.exe";
-                    p.StartInfo.Arguments = "update";
-
-                    p.Start();
-
-                    iniUpdate.SetLastTimeCheckUpdate(currentTime);
-                }
+                p.Start();
             }
             catch (Exception ex)
             {
@@ -1254,6 +1239,7 @@ namespace Viewing_Statistics
         private void Form1_Load(object sender, EventArgs e)
         {
             //StartCheckUpdate();
+            StartTaskUpdateApplication();
             UpdatePagesListsFromFile();
             metroSetTabControl1.UseAnimation = false;
             metroSetTabControl1.AnimateEasingType = MetroSet_UI.Enums.EasingType.CubeOut;

@@ -94,28 +94,13 @@ namespace Productivity
 
         private void StartUpdateApplication()
         {
-            INIUpdate iniUpdate = new INIUpdate();
-
-            DateTime currentTime = DateTime.Now;
-            DateTime lastCheckUpdateTime = iniUpdate.GetLastTimeCheckUpdate();
-            int periodCheckUpdate = iniUpdate.GetPeriodCheckUpdate();
-
             try
             {
-                int timeDifferece = (int)currentTime.Subtract(lastCheckUpdateTime).TotalMinutes;
+                var p = new Process();
+                p.StartInfo.FileName = "Updater.exe";
+                p.StartInfo.Arguments = "update";
 
-                if (timeDifferece > periodCheckUpdate)
-                {
-                    Logger.WriteLine("Проверка новой версии.");
-
-                    var p = new Process();
-                    p.StartInfo.FileName = "Updater.exe";
-                    p.StartInfo.Arguments = "update";
-
-                    p.Start();
-
-                    iniUpdate.SetLastTimeCheckUpdate(currentTime);
-                }
+                p.Start();
             }
             catch(Exception ex)
             {
@@ -1896,7 +1881,7 @@ namespace Productivity
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            //StartTaskUpdateApplication();
+            StartTaskUpdateApplication();
             LoadStartsValues();
         }
 

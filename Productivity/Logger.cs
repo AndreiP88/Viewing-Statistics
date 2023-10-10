@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Productivity
 {
-    internal class Logger
+    static class Logger
     {
         //----------------------------------------------------------
         // Статический метод записи строки в файл лога без переноса
