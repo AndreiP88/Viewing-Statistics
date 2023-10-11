@@ -45,6 +45,7 @@
     <Compile Include="Equip.cs" />
     <Compile Include="Page.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shift.cs" />
     <Compile Include="User.cs" />
     <Compile Include="UserShift.cs" />
     <Compile Include="UserShiftOrder.cs" />

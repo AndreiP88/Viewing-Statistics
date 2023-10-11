@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 
 
@@ -100,6 +101,15 @@ namespace libSql
         }
 
         public List<User> LoadOrders(DateTime currentDate, int currentShift, bool givenShiftNumber = true)
+        {
+            //List<User> usersList = LoadOrdersFromFactjob(currentDate, currentShift, givenShiftNumber);
+            //List<User> usersList = LoadOrdersForFBC(currentDate, currentShift, givenShiftNumber);
+            List<User> usersList = LoadOrdersForFBCWhereTimeInterval(currentDate, currentShift, givenShiftNumber);
+
+            return usersList;
+        }
+
+        public List<User> LoadOrdersFromFactjob(DateTime currentDate, int currentShift, bool givenShiftNumber = true)
         {
             ValueDateTime timeValues = new ValueDateTime();
 
@@ -275,6 +285,274 @@ namespace libSql
                 }
 
                 connection.Close();
+            }
+
+            return usersList;
+        }
+
+        public List<User> LoadOrdersForFBCWhereTimeInterval(DateTime currentDate, int currentShift, bool givenShiftNumber = true)
+        {
+            ValueDateTime timeValues = new ValueDateTime();
+
+            List<User> usersList = new List<User>();
+            List<Shift> shifts = new List<Shift>();
+
+            string dateShift = currentDate.ToString("dd.MM.yyyy");
+
+            string startDateTimeFBC = timeValues.SelectStartDateTimeFromShiftNumberAndDateForFBC(currentDate, currentShift);
+            string endDateTimeFBC = timeValues.SelectEndDateTimeFromShiftNumberAndDateForFBC(currentDate, currentShift);
+
+            string cLineFBC = @"fbc_brigade.date_begin >= CONVERT ( VARCHAR ( 24 ), @startDate, 21 ) AND 
+                             fbc_brigade.date_begin <= CONVERT ( VARCHAR ( 24 ), @endDate, 21 ) AND 
+                             fbc_brigade.shift_no = @shiftNum";
+
+            if (!givenShiftNumber)
+            {
+                startDateTimeFBC = timeValues.SelectStartDateTimeFromShiftNumberAndDateOnlyTimeForFBC(currentDate, currentShift);
+                endDateTimeFBC = timeValues.SelectEndDateTimeFromShiftNumberAndDateOnlyTimeForFBC(currentDate, currentShift);
+
+                cLineFBC = @"fbc_brigade.date_begin >= CONVERT ( VARCHAR ( 24 ), @startDate, 21 ) AND 
+                          fbc_brigade.date_begin <= CONVERT ( VARCHAR ( 24 ), @endDate, 21 )";
+            }
+
+            using (SqlConnection connection = DBConnection.GetDBConnection())
+            {
+                connection.Open();
+                SqlCommand Command = new SqlCommand
+                {
+                    Connection = connection,
+
+                    CommandText =
+                        @"SELECT
+                            id_common_employee,
+                            shift_no,
+                            date_begin,
+                            date_end
+                        FROM
+	                        dbo.fbc_brigade
+                        WHERE
+                            " + cLineFBC
+
+                };
+                Command.Parameters.AddWithValue("@startDate", startDateTimeFBC);
+                Command.Parameters.AddWithValue("@endDate", endDateTimeFBC);
+                Command.Parameters.AddWithValue("@shiftNum", currentShift);
+
+                DbDataReader sqlReader = Command.ExecuteReader();
+
+                while (sqlReader.Read())
+                {
+                    string shiftEnd = "";
+
+                    if (DBNull.Value.Equals(sqlReader["date_end"]))
+                    {
+                        shiftEnd = "";
+                    }
+                    else
+                    {
+                        shiftEnd = sqlReader["date_end"].ToString();
+                    }
+
+                    int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
+                    int loadShifNo = Convert.ToInt32(sqlReader["shift_no"]);
+                    string shiftStart = sqlReader["date_begin"].ToString();
+
+                    shifts.Add(new Shift(
+                            dateShift,
+                            loadUser,
+                            loadShifNo,
+                            shiftStart,
+                            shiftEnd
+
+                        ));
+                }
+
+                connection.Close();
+            }
+
+            for (int i = 0; i < shifts.Count; i++)
+            {
+                string startDateTime = shifts[i].ShiftStart;
+                string endDateTime = shifts[i].ShiftEnd;
+                int shiftNum = shifts[i].ShiftNumber;
+                int user = shifts[i].IdUser;
+
+                if (endDateTime == "")
+                {
+                    endDateTime = timeValues.SelectEndDateTimeFromShiftNumberAndDateOnlyTime(currentDate, currentShift);
+                }
+
+                string cLine;
+
+                //Выборка из таблицы выполненных заказов с указанием номера смены, а нужно ли оно если идет выбока с указание смены из таблицы смен
+                /*string cLine = @"man_factjob.date_begin >= CONVERT ( VARCHAR ( 24 ), @startDate, 21 ) AND 
+                             man_factjob.date_begin <= CONVERT ( VARCHAR ( 24 ), @endDate, 21 ) AND
+                             man_factjob.shift_num = @shiftNum AND ";*/
+
+                //if (!givenShiftNumber)
+                {
+                    /*startDateTime = timeValues.SelectStartDateTimeFromShiftNumberAndDateOnlyTime(currentDate, currentShift);
+                    endDateTime = timeValues.SelectEndDateTimeFromShiftNumberAndDateOnlyTime(currentDate, currentShift);*/
+                    //почему date_end???
+                    cLine = @"man_factjob.date_begin >= CONVERT ( VARCHAR ( 24 ), @startDate, 21 ) AND 
+                          man_factjob.date_begin <= CONVERT ( VARCHAR ( 24 ), @endDate, 21 ) AND ";
+                }
+
+                using (SqlConnection connection = DBConnection.GetDBConnection())
+                {
+                    connection.Open();
+                    SqlCommand Command = new SqlCommand
+                    {
+                        Connection = connection,
+
+                        CommandText =
+                        @"SELECT
+	                        order_head.id_order_head, 
+	                        man_planjob.id_man_planjob, 
+	                        man_planjob.status,  
+                            man_factjob.id_common_employee,
+                            man_factjob.id_equip,
+	                        common_equip_directory.equip_name, 
+	                        man_factjob.shift_num, 
+	                        order_head.order_num, 
+	                        common_ul_directory.ul_name, 
+	                        order_head.order_name, 
+	                        man_factjob.date_begin, 
+	                        man_factjob.date_end, 
+	                        man_factjob.duration, 
+	                        man_factjob.fact_out_qty, 
+	                        man_factjob.flags, 
+	                        man_planjob_list.plan_out_qty, 
+	                        man_planjob_list.normtime, 
+	                        man_factjob.norm_time, 
+	                        man_factjob.id_man_factjob, 
+	                        man_planjob_list.id_norm_operation, 
+	                        man_planjob_list.id_man_order_job_item, 
+	                        man_planjob_list.id_man_planjob_list,
+                            man_factjob.id_fbc_brigade
+                        FROM
+	                        dbo.man_factjob
+                        INNER JOIN
+	                        dbo.man_planjob_list
+	                    ON 
+		                    man_factjob.id_man_planjob_list = man_planjob_list.id_man_planjob_list
+	                    RIGHT JOIN
+	                        dbo.common_employee
+	                    ON 
+		                    man_factjob.id_common_employee = common_employee.id_common_employee
+	                    INNER JOIN
+	                        dbo.common_equip_directory
+	                    ON 
+		                    man_factjob.id_equip = common_equip_directory.id_common_equip_directory
+	                    LEFT JOIN
+	                        dbo.man_order_job_item
+	                    ON 
+		                    man_planjob_list.id_man_order_job_item = man_order_job_item.id_man_order_job_item
+	                    INNER JOIN
+	                        dbo.man_order_job
+	                    ON 
+		                    man_order_job_item.id_man_order_job = man_order_job.id_man_order_job
+	                    INNER JOIN
+	                        dbo.order_head
+	                    ON 
+		                    man_order_job.id_order_head = order_head.id_order_head
+	                    LEFT JOIN
+	                        dbo.common_ul_directory
+	                    ON 
+		                    order_head.id_customer = common_ul_directory.id_common_ul_directory
+	                    LEFT JOIN
+	                        dbo.man_planjob
+	                    ON 
+		                    man_order_job_item.id_man_order_job_item = man_planjob.id_man_order_job_item
+                        WHERE
+                            man_factjob.date_begin IS NOT NULL AND " +
+                            cLine +
+                            @"man_factjob.id_common_employee IS NOT NULL AND
+                            man_factjob.id_common_employee = @user AND 
+                            man_factjob.id_equip IS NOT NULL AND
+                            --man_factjob.fact_out_qty IS NOT NULL AND
+                            man_planjob_list.normtime IS NOT NULL AND
+                            man_planjob_list.plan_out_qty IS NOT NULL
+                        ORDER BY man_factjob.date_begin"
+                    };
+                    Command.Parameters.AddWithValue("@startDate", startDateTime);
+                    Command.Parameters.AddWithValue("@endDate", endDateTime);
+                    Command.Parameters.AddWithValue("@shiftNum", shiftNum);
+                    Command.Parameters.AddWithValue("@user", user);
+
+                    DbDataReader sqlReader = Command.ExecuteReader();
+
+                    while (sqlReader.Read())
+                    {
+                        int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
+                        int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
+
+                        int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser &&
+                                                                           v.Equip == loadEquip);
+
+                        if (indexFromUserList == -1)
+                        {
+                            usersList.Add(new User(
+                                loadUser,
+                                loadEquip
+                            ));
+
+                            indexFromUserList = usersList.Count - 1;
+
+                            usersList[indexFromUserList].Shifts = new List<UserShift>();
+                        }
+
+                        int indexFromUserListShifts = usersList[indexFromUserList].Shifts.FindIndex(
+                                                            (v) => v.ShiftDate == dateShift &&
+                                                                   v.ShiftNumber == currentShift);
+
+                        int indexShift = indexFromUserListShifts;
+
+                        if (indexFromUserListShifts == -1)
+                        {
+                            usersList[indexFromUserList].Shifts.Add(new UserShift(
+                            dateShift,
+                            currentShift
+                            ));
+
+                            indexShift = usersList[indexFromUserList].Shifts.Count - 1;
+
+                            usersList[indexFromUserList].Shifts[indexShift].Orders = new List<UserShiftOrder>();
+                        }
+
+                        int factOut = 0;
+
+                        if (!DBNull.Value.Equals(sqlReader["fact_out_qty"]))
+                        {
+                            factOut = Convert.ToInt32(sqlReader["fact_out_qty"]);
+                        }
+
+                        int idFBCBrigade = -1;
+
+                        if (!DBNull.Value.Equals(sqlReader["id_fbc_brigade"]))
+                        {
+                            idFBCBrigade = Convert.ToInt32(sqlReader["id_fbc_brigade"]);
+                        }
+
+                        usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
+                            sqlReader["order_num"].ToString(),
+                            sqlReader["ul_name"].ToString(),
+                            Convert.ToInt32(sqlReader["status"]),
+                            Convert.ToInt32(sqlReader["flags"]),
+                            sqlReader["date_begin"].ToString(),
+                            sqlReader["date_end"].ToString(),
+                            Convert.ToInt32(sqlReader["duration"]),
+                            //Convert.ToInt32(sqlReader["fact_out_qty"]),
+                            factOut,
+                            Convert.ToInt32(sqlReader["plan_out_qty"]),
+                            Convert.ToInt32(sqlReader["normtime"]),
+                            Convert.ToInt32(sqlReader["id_man_order_job_item"]),
+                            idFBCBrigade
+                        ));
+                    }
+
+                    connection.Close();
+                }
             }
 
             return usersList;
