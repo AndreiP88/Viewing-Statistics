@@ -1,4 +1,6 @@
-﻿namespace libData
+﻿using System.Collections.Generic;
+
+namespace libData
 {
     public class Shift
     {
@@ -7,6 +9,7 @@
         public int ShiftNumber;
         public string ShiftStart;
         public string ShiftEnd;
+        public List<int> Equips;
 
         public Shift(string dateShift, int user, int shiftNum, string shiftStart, string shiftEnd)
         {

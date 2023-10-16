@@ -1520,7 +1520,7 @@ namespace Productivity
             string[] breakeTimesDay = { "11:30", "30", "15:30", "30", "18:00", "10", "23:30", "30" };
             string[] breakeTimesNight = { "03:30", "30", "06:00", "10" };
 
-            for (int i = 0; i < breakeTimesDay.Length; i+=2)
+            for (int i = 0; i < breakeTimesDay.Length; i += 2)
             {
                 DateTime breakeDateTime = Convert.ToDateTime(selectDate.ToString("dd.MM.yyyy") + " " + breakeTimesDay[i] + ":00");
                 int breakTime = Convert.ToInt32(breakeTimesDay[i + 1]);
@@ -1619,8 +1619,38 @@ namespace Productivity
             string timeEndShift = time.EndShiftPlanedDateTime(timeStartShift);
 
             List<User> usersShiftList = shifts.LoadOrders(selectDate, selectShift, givenShiftNumber);
+            List<Shift> shiftList = shifts.LoadShiftsList(selectDate, selectShift, givenShiftNumber);
 
             List<int> usersCurrent = new List<int>();
+
+            /*for (int k = 0; k < shiftList.Count; k++)
+            {
+                if (!usersCurrent.Contains(shiftList[k].IdUser))
+                {
+                    usersCurrent.Add(shiftList[k].IdUser);
+                }
+            }*/
+
+            /*for (int i = 0; i < equips.Count; i++)
+            {
+                for (int j = 0; j < shiftList.Count; j++)
+                {
+                    Console.WriteLine(shiftList[j].DateShift + ", " + shiftList[j].ShiftNumber + ". Count " + shiftList[j].Equips.Count);
+
+                    for (int l = 0; l < shiftList[j].Equips.Count; l++)
+                    {
+                        Console.WriteLine(shiftList[j].Equips[l]);
+                    }
+
+                    if (shiftList[j].Equips.Contains(equips[i]))
+                    {
+                        if (!usersCurrent.Contains(shiftList[j].IdUser))
+                        {
+                            usersCurrent.Add(shiftList[j].IdUser);
+                        }
+                    }
+                }
+            }*/
 
             //Пока так, потом сделаю отдельную выборку оборудования с сортировкой, либо без сортирвки а в порядке загрузки
             //если бы БД адекватно хранила индексы смены, а не херила их после редактирования записи, то было бы проще привязываться к смене в fbc_brigade
@@ -1628,7 +1658,6 @@ namespace Productivity
             {
                 for (int j = 0; j < usersShiftList.Count; j++)
                 {
-
                     if (usersShiftList[j].Equip == equips[i])
                     {
                         if (!usersCurrent.Contains(usersShiftList[j].Id))
