@@ -1599,6 +1599,12 @@ namespace Productivity
 
         private void LoadOrdersSelectedDateAndShift(DateTime selectDate, int selectShift)
         {
+            LoadOrdersSelectedDateAndShiftDetails(selectDate, selectShift);
+            LoadOrdersSelectedDateAndShift(selectDate, selectShift);
+        }
+
+        private void LoadOrdersSelectedDateAndShiftDetails(DateTime selectDate, int selectShift)
+        {
             ChangeStateTimer();
 
             CreateColomnsToDataGridForOneShift();
