@@ -14,6 +14,7 @@ using libSql;
 using libTime;
 using System.Runtime.InteropServices.ComTypes;
 using Productivity.Properties;
+using System.Security.Policy;
 
 namespace Productivity
 {
@@ -1667,7 +1668,37 @@ namespace Productivity
                     if (usersShiftList[j].Id == usersCurrent[i])
                     {
                         User user = usersShiftList[j];
-                        List<int> ordersIdManOrderJobItem = new List<int>();
+                        UserShift userShift = user.Shifts[0];
+
+                        for (int  k = 0; k < userShift.Orders.Count; k++)
+                        {
+                            UserShiftOrder order = userShift.Orders[k];
+
+                            indexRow = dataGridViewOneShift.Rows.Add();
+
+                            dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
+
+                            dataGridViewOneShift.Rows[indexRow].Cells[0].Value = (k + 1).ToString();
+                            dataGridViewOneShift.Rows[indexRow].Cells[1].Value = "    " + machines[user.Equip];
+                            dataGridViewOneShift.Rows[indexRow].Cells[2].Value = order.OrderNumber;
+                            dataGridViewOneShift.Rows[indexRow].Cells[3].Value = order.OrderName;
+                            /*dataGridViewOneShift.Rows[indexRow].Cells[4].Value = lastAmount.ToString("N0") + " | " + amount.ToString("N0");
+                            dataGridViewOneShift.Rows[indexRow].Cells[5].Value = time.MinuteToTimeString(normTimeFull);
+                            dataGridViewOneShift.Rows[indexRow].Cells[6].Value = firstTimeBegin;
+                            //dataGridViewOneShift.Rows[indexRow].Cells[7].Value = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
+                            dataGridViewOneShift.Rows[indexRow].Cells[7].Value = timeEnd;
+                            dataGridViewOneShift.Rows[indexRow].Cells[8].Value = time.MinuteToTimeString(duration);
+                            dataGridViewOneShift.Rows[indexRow].Cells[9].Value = timePlanedEndOrder;
+                            dataGridViewOneShift.Rows[indexRow].Cells[10].Value = time.MinuteToTimeString(differentTime);
+                            dataGridViewOneShift.Rows[indexRow].Cells[11].Value = done.ToString("N0");
+                            dataGridViewOneShift.Rows[indexRow].Cells[12].Value = time.MinuteToTimeString((int)Math.Round(workingOut));*/
+                        }
+
+                        
+
+
+
+                        /*List<int> ordersIdManOrderJobItem = new List<int>();
 
                         //List<UserShiftOrder> ordersIdManOrderJobItem = new List<UserShiftOrder>();
 
@@ -1805,11 +1836,11 @@ namespace Productivity
                                         differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, lastTimeEnd);
                                         timeEnd = lastTimeEnd + " ";
 
-                                        /*dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, timeEndShift);
+                                        *//*dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, timeEndShift);
                                         timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull + dinnerTime);
                                         differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, timeEndShift);
                                         duration = time.DateDifferenceToMinutes(timeEndShift, firstTimeBegin);
-                                        timeEnd = timeEndShift;*/
+                                        timeEnd = timeEndShift;*//*
                                     }
                                 }
                                 else
@@ -1848,7 +1879,7 @@ namespace Productivity
                             {
                                 dataGridViewOneShift.Rows[indexRow].Cells[10].Style.ForeColor = Color.Red;
                             }
-                        }
+                        }*/
                     }
                 }
 
