@@ -31,6 +31,7 @@ namespace Productivity
         int comboBoxSelectViewsPreviousIndex = -1;
         bool loadCategoryList = true;
         bool loadPageList = true;
+        bool loadParameter = true;
 
         Dictionary<int, string> users = new Dictionary<int, string>();
         Dictionary<int, string> machines = new Dictionary<int, string>();
@@ -1561,8 +1562,8 @@ namespace Productivity
             dataGridViewOneShift.AllowUserToResizeRows = false;
             dataGridViewOneShift.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
 
-            string[] colNames = { "№", "Имя", "Заказ", "Заказчик", "Остаток | Тираж", "Дано времени", "Начало", "Завершение", "Продолжительность", "Планируемое время завершения", "Отклонение", "Сделано", "Выработка" };
-            int[] colWidth = { 35, 300, 90, 260, 160, 120, 160, 160, 120, 160, 120, 80, 80 };
+            string[] colNames = { "№", "Имя", "Заказ", "Заказчик", "Операция", "Остаток | Тираж", "Дано времени", "Начало", "Завершение", "Продолжительность", "Планируемое время завершения", "Отклонение", "Сделано", "Выработка" };
+            int[] colWidth = { 35, 300, 90, 260, 200, 160, 70, 160, 160, 120, 160, 120, 80, 80 };
 
             for (int i = 0; i < colNames.Length; i++)
             {
@@ -1598,10 +1599,77 @@ namespace Productivity
             }
         }
 
+        private bool AreThereAnyMoreOrders(List <UserShiftOrder> userShiftOrders, int startIndex, int idManOrderJobItem, int maxSteps = 2)
+        {
+            bool result = false;
+            int currentStep = 0;
+
+            for (int i = startIndex; i < userShiftOrders.Count; i++)
+            {
+                currentStep++;
+
+                if (currentStep <= maxSteps)
+                {
+                    if (idManOrderJobItem == userShiftOrders[i].IdManOrderJobItem)
+                    {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private List<UserShiftOrder> SelectedFullStepsForCurrentOrder(UserShift userShift, int idManOrderJobItem, int maxSteps = 10)
+        {
+            //UserShift userShift = user.Shifts[0];
+
+            List<UserShiftOrder> userShiftOrder = new List<UserShiftOrder>();
+            
+            int lastIndex = -1;
+            int currentStep = 0;
+
+            for (int i = 0; i < userShift.Orders.Count; i++)
+            {
+                //userShiftOrder.Add(userShift.Orders[i]);
+
+                if (userShift.Orders[i].IdManOrderJobItem == idManOrderJobItem)
+                {
+                    if (i - currentStep <= maxSteps)
+                    {
+                        userShiftOrder.Add(userShift.Orders[i]);
+
+                        lastIndex = i;
+                        currentStep = i;
+                    }
+                    
+                    /*lastIndex = i;
+                    currentStep = i;*/
+
+                    Console.WriteLine(i + "out: " + userShift.ShiftDate + "; " + idManOrderJobItem + ", " + userShift.Orders[i].IdManOrderJobItem + ": " + userShift.Orders[i].OrderNumber + ", " + userShift.Orders[i].IDFBCBrigade);
+                }
+                else if (lastIndex >= 0 && i > lastIndex)
+                {
+                    if (AreThereAnyMoreOrders(userShift.Orders, i, idManOrderJobItem))
+                    {
+                        if (userShift.Orders[i].IdletimeName != "")
+                        {
+                            userShiftOrder.Add(userShift.Orders[i]);
+                        }
+                        
+                        Console.WriteLine(i + "in: " + userShift.ShiftDate + "; " + idManOrderJobItem + ", " + userShift.Orders[i].IdManOrderJobItem + ": " + userShift.Orders[i].OrderNumber + ", " + userShift.Orders[i].IDFBCBrigade);
+                    }
+                }
+            }
+            Console.WriteLine("---------");
+            return userShiftOrder;
+        }
+
         private void LoadOrdersSelectedDateAndShift(DateTime selectDate, int selectShift)
         {
-            //LoadOrdersSelectedDateAndShiftDetails(selectDate, selectShift);
-            LoadOrdersSelectedDateAndShiftCompact(selectDate, selectShift);
+            LoadOrdersSelectedDateAndShiftDetails(selectDate, selectShift);
+            //LoadOrdersSelectedDateAndShiftCompact(selectDate, selectShift);
         }
 
         private void LoadOrdersSelectedDateAndShiftDetails(DateTime selectDate, int selectShift)
@@ -1626,7 +1694,7 @@ namespace Productivity
             string timeEndShift = time.EndShiftPlanedDateTime(timeStartShift);
 
             List<User> usersShiftList = shifts.LoadOrders(selectDate, selectShift, givenShiftNumber);
-
+            
             List<int> usersCurrent = new List<int>();
 
             //Пока так, потом сделаю отдельную выборку оборудования с сортировкой, либо без сортирвки а в порядке загрузки
@@ -1665,220 +1733,210 @@ namespace Productivity
                 {
                     if (usersShiftList[j].Id == usersCurrent[i])
                     {
-                        User user = usersShiftList[j];
-                        UserShift userShift = user.Shifts[0];
+                        UserShift userShift = usersShiftList[j].Shifts[0];
 
-                        for (int  k = 0; k < userShift.Orders.Count; k++)
-                        {
-                            UserShiftOrder order = userShift.Orders[k];
-
-                            indexRow = dataGridViewOneShift.Rows.Add();
-
-                            dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
-
-                            dataGridViewOneShift.Rows[indexRow].Cells[0].Value = (k + 1).ToString();
-                            dataGridViewOneShift.Rows[indexRow].Cells[1].Value = "    " + machines[user.Equip];
-                            dataGridViewOneShift.Rows[indexRow].Cells[2].Value = order.OrderNumber;
-                            dataGridViewOneShift.Rows[indexRow].Cells[3].Value = order.OrderName;
-
-                            //тут еще ничего не работает
-                            dataGridViewOneShift.Rows[indexRow].Cells[4].Value = order.PlanOutQty.ToString("N0") + " | " + order.FactOutQty.ToString("N0");
-                            /*dataGridViewOneShift.Rows[indexRow].Cells[4].Value = lastAmount.ToString("N0") + " | " + amount.ToString("N0");
-                            dataGridViewOneShift.Rows[indexRow].Cells[5].Value = time.MinuteToTimeString(normTimeFull);
-                            dataGridViewOneShift.Rows[indexRow].Cells[6].Value = firstTimeBegin;
-                            //dataGridViewOneShift.Rows[indexRow].Cells[7].Value = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
-                            dataGridViewOneShift.Rows[indexRow].Cells[7].Value = timeEnd;
-                            dataGridViewOneShift.Rows[indexRow].Cells[8].Value = time.MinuteToTimeString(duration);
-                            dataGridViewOneShift.Rows[indexRow].Cells[9].Value = timePlanedEndOrder;
-                            dataGridViewOneShift.Rows[indexRow].Cells[10].Value = time.MinuteToTimeString(differentTime);
-                            dataGridViewOneShift.Rows[indexRow].Cells[11].Value = done.ToString("N0");
-                            dataGridViewOneShift.Rows[indexRow].Cells[12].Value = time.MinuteToTimeString((int)Math.Round(workingOut));*/
-                        }
-
-
-
-                        /*List<int> ordersIdManOrderJobItem = new List<int>();
+                        List<int> idManOrderJobItemList = new List<int>();
+                        List<int> idManOrderJobItemListUsed = new List<int>();
 
                         //List<UserShiftOrder> ordersIdManOrderJobItem = new List<UserShiftOrder>();
 
-                        for (int k = 0; k < user.Shifts[0].Orders.Count; k++)
+                        for (int k = 0; k < userShift.Orders.Count; k++)
                         {
-                            if (!ordersIdManOrderJobItem.Contains(user.Shifts[0].Orders[k].IdManOrderJobItem))
+                            //if (userShift.Orders[k].IdletimeName == "")
                             {
-                                ordersIdManOrderJobItem.Add(user.Shifts[0].Orders[k].IdManOrderJobItem);
+                                if (!idManOrderJobItemList.Contains(userShift.Orders[k].IdManOrderJobItem))
+                                {
+                                    idManOrderJobItemList.Add(userShift.Orders[k].IdManOrderJobItem);
+                                }
                             }
                         }
 
-                        for (int k = 0; k < ordersIdManOrderJobItem.Count; k++)
+                        for (int k = 0; k < idManOrderJobItemList.Count; k++)
                         {
-                            List<int> indexesUserShiftsOrders = new List<int>();
+                            List<UserShiftOrder> userShiftOrders = SelectedFullStepsForCurrentOrder(userShift, idManOrderJobItemList[k]);
 
-                            for (int l = 0; l < user.Shifts[0].Orders.Count; l++)
+                            if (!idManOrderJobItemListUsed.Contains(idManOrderJobItemList[k]))
                             {
-                                if (user.Shifts[0].Orders[l].IdManOrderJobItem == ordersIdManOrderJobItem[k])
+                                for (int l = 0; l < userShiftOrders.Count; l++)
                                 {
-                                    indexesUserShiftsOrders.Add(l);
-                                }
-                            }
+                                    UserShiftOrder order = userShiftOrders[l];
+                                    ViewOrder view = new ViewOrder();
 
-                            UserShiftOrder order = user.Shifts[0].Orders[indexesUserShiftsOrders[0]];
+                                    view.WorkingOut += CalculateWorkTimeForOneOrder(order);
 
-                            int orderPreviousAmount = shifts.GetAmountDoneFromPreviousShifts(ordersIdManOrderJobItem[k], order.DateBegin);
-
-                            string firstTimeBegin = user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin;
-                            string lastTimeBegin = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateBegin;
-                            string firstTimeEnd = user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateEnd;
-                            string lastTimeEnd = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
-
-                            //dinnerTime += AddDinnerTimeToWorkingOut(firstTimeBegin, lastTimeEnd);
-
-                            float workingOut = 0;
-                            int done = 0;
-                            int duration = 0;
-                            int amount = 0;
-                            string timeEnd = "";
-                            string timePlanedEndOrder = "";
-                            int normTimeMakeReady = 0;
-                            int normTimeWork = 0;
-                            int differentTime = 0;
-
-                            for (int l = 0; l < indexesUserShiftsOrders.Count; l++)
-                            {
-                                UserShiftOrder orderCur = user.Shifts[0].Orders[indexesUserShiftsOrders[l]];
-
-                                workingOut += CalculateWorkTimeForOneOrder(orderCur);
-
-                                if (orderCur.Flags != 576)
-                                {
-                                    done += orderCur.FactOutQty;
-                                    amount = orderCur.PlanOutQty;
-                                    normTimeWork = orderCur.Normtime;
-                                }
-
-                                if (orderCur.Flags == 576)
-                                {
-                                    normTimeMakeReady = orderCur.Normtime;
-                                }
-
-                                duration += orderCur.Duration;
-                            }
-
-                            string lastTimeEndPlanedOrder = time.DateTimeAmountMunutes(timeStartShift, (int)Math.Round(userWorkingOut));
-
-                            int lastAmount = amount - orderPreviousAmount;
-                            //MessageBox.Show(lastAmount + " = " + order.PlanOutQty + " - " + orderPreviousAmount);
-
-                            userWorkingOut += workingOut;
-                            userDone += done;
-
-                            int[] normtime = shifts.GetNormTimeForOrder(order.IdManOrderJobItem);
-                            int normTimeFull = 0;
-
-                            float lastTime = 0;
-
-                            if (normtime[1] > 0)
-                            {
-                                float norm = amount / normtime[1];
-
-                                if (norm > 0)
-                                {
-                                    lastTime = lastAmount / norm;
-                                }
-                            }
-
-                            if (order.Status == 2)
-                            {
-                                if (orderPreviousAmount > 0)
-                                {
-                                    normTimeFull = (int)lastTime;
-                                }
-                                else
-                                {
-                                    normTimeFull = normTimeMakeReady + normTimeWork;
-                                }
-
-                                dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, lastTimeEnd);
-                                timePlanedEndOrder = time.DateTimeAmountMunutes(timeStartShift, (int)Math.Round(userWorkingOut) + dinnerTime);
-
-                                differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, lastTimeEnd);
-                                timeEnd = lastTimeEnd + " ";
-                            }
-
-                            if (order.Status != 2)
-                            {
-                                if (orderPreviousAmount > 0)
-                                {
-                                    normTimeFull = (int)lastTime;
-                                }
-                                else
-                                {
-                                    normTimeFull = normtime[0] + normtime[1];
-                                }
-
-                                //timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull);
-
-                                //if (user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin == user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd)
-                                if (lastTimeBegin == lastTimeEnd)
-                                {
-                                    if (shifts.CheckShiftIsActive(order.IDFBCBrigade))
+                                    if (order.Flags != 576)
                                     {
-                                        dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, DateTime.Now.ToString());
-                                        timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull + dinnerTime);
-                                        differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, DateTime.Now.ToString());
-                                        duration = time.DateDifferenceToMinutes(DateTime.Now.ToString(), firstTimeBegin);
-                                        timeEnd = "выполняется ";
+                                        view.Done += order.FactOutQty;
+                                        view.Amount = order.PlanOutQty;
+                                        view.NormTimeWork = order.Normtime;
+                                        view.IdletimeName = "работа";
+                                    }
+
+                                    if (order.Flags == 576)
+                                    {
+                                        view.NormTimeMakeReady = order.Normtime;
+                                        view.IdletimeName = "приладка";
+                                    }
+
+                                    if (order.IdletimeName != "")
+                                    {
+                                        view.IdletimeName = order.IdletimeName;
+                                    }
+
+                                    view.Duration += order.Duration;
+
+                                    userWorkingOut += view.WorkingOut;
+                                    userDone += view.Done;
+
+                                    string lastTimeEndPlanedOrder = time.DateTimeAmountMunutes(timeStartShift, (int)Math.Round(userWorkingOut));
+
+                                    int orderPreviousAmount = shifts.GetAmountDoneFromPreviousShifts(idManOrderJobItemList[k], order.DateBegin);
+                                    int lastAmount = view.Amount - orderPreviousAmount;
+
+                                    int[] normtime = shifts.GetNormTimeForOrder(order.IdManOrderJobItem);
+                                    int normTimeFull = 0;
+
+                                    float lastTime = 0;
+
+                                    if (normtime[1] > 0)
+                                    {
+                                        float norm = view.Amount / normtime[1];
+
+                                        if (norm > 0)
+                                        {
+                                            lastTime = lastAmount / norm;
+                                        }
+                                    }
+
+                                    if (order.Status == 2)
+                                    {
+                                        if (orderPreviousAmount > 0)
+                                        {
+                                            normTimeFull = (int)lastTime;
+                                        }
+                                        else
+                                        {
+                                            normTimeFull = view.NormTimeMakeReady + view.NormTimeWork;
+                                        }
+
+                                        dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, order.DateEnd);
+                                        view.TimePlanedEndOrder = time.DateTimeAmountMunutes(timeStartShift, (int)Math.Round(userWorkingOut) + dinnerTime);
+
+                                        view.DifferentTime = time.DateDifferenceToMinutes(view.TimePlanedEndOrder, order.DateEnd);
+                                        view.TimeEnd = order.DateEnd + " ";
+                                    }
+
+                                    if (order.Status != 2)
+                                    {
+                                        if (orderPreviousAmount > 0)
+                                        {
+                                            normTimeFull = (int)lastTime;
+                                        }
+                                        else
+                                        {
+                                            normTimeFull = normtime[0] + normtime[1];
+                                        }
+
+                                        //timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull);
+
+                                        //if (user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin == user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd)
+                                        if (order.DateBegin == order.DateEnd)
+                                        {
+                                            if (shifts.CheckShiftIsActive(order.IDFBCBrigade))
+                                            {
+                                                dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, DateTime.Now.ToString());
+                                                view.TimePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull + dinnerTime);
+                                                view.DifferentTime = time.DateDifferenceToMinutes(view.TimePlanedEndOrder, DateTime.Now.ToString());
+                                                view.Duration = time.DateDifferenceToMinutes(DateTime.Now.ToString(), order.DateBegin);
+                                                view.TimeEnd = "выполняется ";
+                                            }
+                                            else
+                                            {
+                                                dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, order.DateEnd);
+                                                view.TimePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, (int)Math.Round(view.WorkingOut) + dinnerTime);
+                                                view.DifferentTime = time.DateDifferenceToMinutes(view.TimePlanedEndOrder, order.DateEnd);
+                                                view.TimeEnd = order.DateEnd + " ";
+
+                                                /*dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, timeEndShift);
+                                                timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull + dinnerTime);
+                                                differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, timeEndShift);
+                                                duration = time.DateDifferenceToMinutes(timeEndShift, firstTimeBegin);
+                                                timeEnd = timeEndShift; */
+                                            }
+                                        }
+                                        else
+                                        {
+                                            dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, order.DateEnd);
+                                            view.TimePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, (int)Math.Round(view.WorkingOut) + dinnerTime);
+                                            view.DifferentTime = time.DateDifferenceToMinutes(view.TimePlanedEndOrder, order.DateEnd);
+                                            view.TimeEnd = order.DateEnd + " ";
+                                        }
+                                    }
+
+                                    indexRow = dataGridViewOneShift.Rows.Add();
+
+                                    dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
+
+                                    dataGridViewOneShift.Rows[indexRow].Cells[0].Value = (k + 1).ToString();
+                                    dataGridViewOneShift.Rows[indexRow].Cells[1].Value = "    " + machines[usersShiftList[j].Equip];
+
+                                    if (l == 0)
+                                    {
+                                        dataGridViewOneShift.Rows[indexRow].Cells[2].Value = order.OrderNumber;
+                                        dataGridViewOneShift.Rows[indexRow].Cells[3].Value = order.OrderName;
+                                    }
+
+                                    dataGridViewOneShift.Rows[indexRow].Cells[4].Value = view.IdletimeName;
+
+                                    if (order.Flags == 576 || order.IdletimeName != "")
+                                    {
+                                        dataGridViewOneShift.Rows[indexRow].Cells[5].Value = order.PlanOutQty.ToString("N0") + " | " + order.FactOutQty.ToString("N0");
+                                        dataGridViewOneShift.Rows[indexRow].Cells[6].Value = time.MinuteToTimeString(order.Normtime);
                                     }
                                     else
                                     {
-                                        dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, lastTimeEnd);
-                                        timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, (int)Math.Round(workingOut) + dinnerTime);
-                                        differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, lastTimeEnd);
-                                        timeEnd = lastTimeEnd + " ";
+                                        dataGridViewOneShift.Rows[indexRow].Cells[5].Value = lastAmount.ToString("N0") + " | " + view.Amount.ToString("N0");
+                                        dataGridViewOneShift.Rows[indexRow].Cells[6].Value = time.MinuteToTimeString(normTimeFull);
+                                    }
 
-                                        *//*dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, timeEndShift);
-                                        timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull + dinnerTime);
-                                        differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, timeEndShift);
-                                        duration = time.DateDifferenceToMinutes(timeEndShift, firstTimeBegin);
-                                        timeEnd = timeEndShift;*//*
+
+                                    
+
+                                    //тут еще ничего не работает
+                                    //dataGridViewOneShift.Rows[indexRow].Cells[4].Value = order.PlanOutQty.ToString("N0") + " | " + order.FactOutQty.ToString("N0");
+                                    
+                                    
+                                    dataGridViewOneShift.Rows[indexRow].Cells[7].Value = order.DateBegin;
+                                    //dataGridViewOneShift.Rows[indexRow].Cells[8].Value = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
+                                    dataGridViewOneShift.Rows[indexRow].Cells[8].Value = view.TimeEnd;
+                                    dataGridViewOneShift.Rows[indexRow].Cells[9].Value = time.MinuteToTimeString(view.Duration);
+                                    dataGridViewOneShift.Rows[indexRow].Cells[10].Value = view.TimePlanedEndOrder;
+                                    dataGridViewOneShift.Rows[indexRow].Cells[11].Value = time.MinuteToTimeString(view.DifferentTime);
+                                    dataGridViewOneShift.Rows[indexRow].Cells[12].Value = view.Done.ToString("N0");
+                                    dataGridViewOneShift.Rows[indexRow].Cells[13].Value = time.MinuteToTimeString((int)Math.Round(view.WorkingOut));
+
+                                    if (view.DifferentTime >= 0)
+                                    {
+                                        dataGridViewOneShift.Rows[indexRow].Cells[11].Style.ForeColor = Color.Green;
+                                    }
+                                    else
+                                    {
+                                        dataGridViewOneShift.Rows[indexRow].Cells[11].Style.ForeColor = Color.Red;
                                     }
                                 }
-                                else
+                            }
+
+                            for (int l = 0; l < userShiftOrders.Count; l++)
+                            {
+                                if (userShiftOrders[l].IdletimeName != "")
                                 {
-                                    dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, lastTimeEnd);
-                                    timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, (int)Math.Round(workingOut) + dinnerTime);
-                                    differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, lastTimeEnd);
-                                    timeEnd = lastTimeEnd + " ";
+                                    if (!idManOrderJobItemListUsed.Contains(userShiftOrders[l].IdManOrderJobItem))
+                                    {
+                                        idManOrderJobItemListUsed.Add(userShiftOrders[l].IdManOrderJobItem);
+                                    }
                                 }
                             }
-                            
-                            indexRow = dataGridViewOneShift.Rows.Add();
-
-                            dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
-
-                            dataGridViewOneShift.Rows[indexRow].Cells[0].Value = (k + 1).ToString();
-                            dataGridViewOneShift.Rows[indexRow].Cells[1].Value = "    " + machines[user.Equip];
-                            dataGridViewOneShift.Rows[indexRow].Cells[2].Value = order.OrderNumber;
-                            dataGridViewOneShift.Rows[indexRow].Cells[3].Value = order.OrderName;
-                            dataGridViewOneShift.Rows[indexRow].Cells[4].Value = lastAmount.ToString("N0") + " | " + amount.ToString("N0");
-                            dataGridViewOneShift.Rows[indexRow].Cells[5].Value = time.MinuteToTimeString(normTimeFull);
-                            dataGridViewOneShift.Rows[indexRow].Cells[6].Value = firstTimeBegin;
-                            //dataGridViewOneShift.Rows[indexRow].Cells[7].Value = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
-                            dataGridViewOneShift.Rows[indexRow].Cells[7].Value = timeEnd;
-                            dataGridViewOneShift.Rows[indexRow].Cells[8].Value = time.MinuteToTimeString(duration);
-                            dataGridViewOneShift.Rows[indexRow].Cells[9].Value = timePlanedEndOrder;
-                            dataGridViewOneShift.Rows[indexRow].Cells[10].Value = time.MinuteToTimeString(differentTime);
-                            dataGridViewOneShift.Rows[indexRow].Cells[11].Value = done.ToString("N0");
-                            dataGridViewOneShift.Rows[indexRow].Cells[12].Value = time.MinuteToTimeString((int)Math.Round(workingOut));
-
-                            if (differentTime >= 0)
-                            {
-                                dataGridViewOneShift.Rows[indexRow].Cells[10].Style.ForeColor = Color.Green;
-                            }
-                            else
-                            {
-                                dataGridViewOneShift.Rows[indexRow].Cells[10].Style.ForeColor = Color.Red;
-                            }
-                        }*/
+                        }
                     }
                 }
 
@@ -1888,8 +1946,8 @@ namespace Productivity
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.BackColor = Color.Silver;
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
 
-                dataGridViewOneShift.Rows[indexRow].Cells[11].Value = userDone.ToString("N0");
-                dataGridViewOneShift.Rows[indexRow].Cells[12].Value = time.MinuteToTimeString((int)Math.Round(userWorkingOut));
+                dataGridViewOneShift.Rows[indexRow].Cells[12].Value = userDone.ToString("N0");
+                dataGridViewOneShift.Rows[indexRow].Cells[13].Value = time.MinuteToTimeString((int)Math.Round(userWorkingOut));
             }
         }
 
@@ -1992,6 +2050,8 @@ namespace Productivity
 
                             //dinnerTime += AddDinnerTimeToWorkingOut(firstTimeBegin, lastTimeEnd);
 
+                            string operation = "";
+
                             float workingOut = 0;
                             int done = 0;
                             int duration = 0;
@@ -2013,14 +2073,21 @@ namespace Productivity
                                     done += orderCur.FactOutQty;
                                     amount = orderCur.PlanOutQty;
                                     normTimeWork = orderCur.Normtime;
+                                    operation = "работа";
                                 }
 
                                 if (orderCur.Flags == 576)
                                 {
                                     normTimeMakeReady = orderCur.Normtime;
+                                    operation = "приладка";
                                 }
 
                                 duration += orderCur.Duration;
+                            }
+
+                            if (order.IdletimeName != "")
+                            {
+                                operation = order.IdletimeName;
                             }
 
                             string lastTimeEndPlanedOrder = time.DateTimeAmountMunutes(timeStartShift, (int)Math.Round(userWorkingOut));
@@ -2126,24 +2193,25 @@ namespace Productivity
                             dataGridViewOneShift.Rows[indexRow].Cells[1].Value = "    " + machines[user.Equip];
                             dataGridViewOneShift.Rows[indexRow].Cells[2].Value = order.OrderNumber;
                             dataGridViewOneShift.Rows[indexRow].Cells[3].Value = order.OrderName;
-                            dataGridViewOneShift.Rows[indexRow].Cells[4].Value = lastAmount.ToString("N0") + " | " + amount.ToString("N0");
-                            dataGridViewOneShift.Rows[indexRow].Cells[5].Value = time.MinuteToTimeString(normTimeFull);
-                            dataGridViewOneShift.Rows[indexRow].Cells[6].Value = firstTimeBegin;
-                            //dataGridViewOneShift.Rows[indexRow].Cells[7].Value = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
-                            dataGridViewOneShift.Rows[indexRow].Cells[7].Value = timeEnd;
-                            dataGridViewOneShift.Rows[indexRow].Cells[8].Value = time.MinuteToTimeString(duration);
-                            dataGridViewOneShift.Rows[indexRow].Cells[9].Value = timePlanedEndOrder;
-                            dataGridViewOneShift.Rows[indexRow].Cells[10].Value = time.MinuteToTimeString(differentTime);
-                            dataGridViewOneShift.Rows[indexRow].Cells[11].Value = done.ToString("N0");
-                            dataGridViewOneShift.Rows[indexRow].Cells[12].Value = time.MinuteToTimeString((int)Math.Round(workingOut));
+                            dataGridViewOneShift.Rows[indexRow].Cells[4].Value = operation;
+                            dataGridViewOneShift.Rows[indexRow].Cells[5].Value = lastAmount.ToString("N0") + " | " + amount.ToString("N0");
+                            dataGridViewOneShift.Rows[indexRow].Cells[6].Value = time.MinuteToTimeString(normTimeFull);
+                            dataGridViewOneShift.Rows[indexRow].Cells[7].Value = firstTimeBegin;
+                            //dataGridViewOneShift.Rows[indexRow].Cells[8].Value = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
+                            dataGridViewOneShift.Rows[indexRow].Cells[8].Value = timeEnd;
+                            dataGridViewOneShift.Rows[indexRow].Cells[9].Value = time.MinuteToTimeString(duration);
+                            dataGridViewOneShift.Rows[indexRow].Cells[10].Value = timePlanedEndOrder;
+                            dataGridViewOneShift.Rows[indexRow].Cells[11].Value = time.MinuteToTimeString(differentTime);
+                            dataGridViewOneShift.Rows[indexRow].Cells[12].Value = done.ToString("N0");
+                            dataGridViewOneShift.Rows[indexRow].Cells[13].Value = time.MinuteToTimeString((int)Math.Round(workingOut));
 
                             if (differentTime >= 0)
                             {
-                                dataGridViewOneShift.Rows[indexRow].Cells[10].Style.ForeColor = Color.Green;
+                                dataGridViewOneShift.Rows[indexRow].Cells[11].Style.ForeColor = Color.Green;
                             }
                             else
                             {
-                                dataGridViewOneShift.Rows[indexRow].Cells[10].Style.ForeColor = Color.Red;
+                                dataGridViewOneShift.Rows[indexRow].Cells[11].Style.ForeColor = Color.Red;
                             }
                         }
                     }
@@ -2155,27 +2223,30 @@ namespace Productivity
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.BackColor = Color.Silver;
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
 
-                dataGridViewOneShift.Rows[indexRow].Cells[11].Value = userDone.ToString("N0");
-                dataGridViewOneShift.Rows[indexRow].Cells[12].Value = time.MinuteToTimeString((int)Math.Round(userWorkingOut));
+                dataGridViewOneShift.Rows[indexRow].Cells[12].Value = userDone.ToString("N0");
+                dataGridViewOneShift.Rows[indexRow].Cells[13].Value = time.MinuteToTimeString((int)Math.Round(userWorkingOut));
             }
         }
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
-            DateTime selectDate = dateTimePicker1.Value;
-            int selectShift = comboBox1.SelectedIndex + 1;
-
-            LoadOrdersSelectedDateAndShift(selectDate, selectShift);
+            ReloadOrdersSelectedDate();
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ReloadOrdersSelectedDate();
+        }
+
+        private void ReloadOrdersSelectedDate()
         {
             DateTime selectDate = dateTimePicker1.Value;
             int selectShift = comboBox1.SelectedIndex + 1;
 
-            LoadOrdersSelectedDateAndShift(selectDate, selectShift);
+            if (!loadParameter)
+            {
+                LoadOrdersSelectedDateAndShift(selectDate, selectShift);
+            }
         }
-
-
         private void FormMain_Load(object sender, EventArgs e)
         {
             StartTaskUpdateApplication();
@@ -2234,11 +2305,15 @@ namespace Productivity
 
             if (selectedIndex == 0)
             {
+                loadParameter = true;
                 comboBox1.SelectedIndex = 0;
 
                 metroSetSwitch1.Switched = settings.GetLoadCurrentShift();
                 metroSetSwitch2.Switched = settings.GetAutoUpdateStatistic();
                 formattedNumericUpDown4.Value = settings.GetPeriodAutoUpdateStatistic();
+                loadParameter = false;
+
+                ReloadOrdersSelectedDate();
             }
 
             if (selectedIndex == 1)

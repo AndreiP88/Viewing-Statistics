@@ -295,9 +295,15 @@ namespace libSql
                         idFBCBrigade = Convert.ToInt32(sqlReader["id_fbc_brigade"]);
                     }
 
-                    if (DBNull.Value.Equals(sqlReader["id_norm_operation"]))
+                    /*if (DBNull.Value.Equals(sqlReader["id_norm_operation"]))
                     {
                         ulName = sqlReader["idletime_name"].ToString();
+                    }*/
+
+                    string idletimeName = "";
+                    if (!DBNull.Value.Equals(sqlReader["idletime_name"]))
+                    {
+                        idletimeName = sqlReader["idletime_name"].ToString();
                     }
 
                     usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
@@ -313,13 +319,12 @@ namespace libSql
                         planOut,
                         normTime,
                         Convert.ToInt32(sqlReader["id_man_order_job_item"]),
-                        idFBCBrigade
+                        idFBCBrigade,
+                        idletimeName
                     ));
                 }
-
                 connection.Close();
             }
-
             return usersList;
         }
 
@@ -481,6 +486,12 @@ namespace libSql
                         idFBCBrigade = Convert.ToInt32(sqlReader["id_fbc_brigade"]);
                     }
 
+                    string idletimeName = "";
+                    if (!DBNull.Value.Equals(sqlReader["idletime_name"]))
+                    {
+                        idletimeName = sqlReader["idletime_name"].ToString();
+                    }
+
                     usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
                         sqlReader["order_num"].ToString(),
                         sqlReader["ul_name"].ToString(),
@@ -494,7 +505,8 @@ namespace libSql
                         Convert.ToInt32(sqlReader["plan_out_qty"]),
                         Convert.ToInt32(sqlReader["normtime"]),
                         Convert.ToInt32(sqlReader["id_man_order_job_item"]),
-                        idFBCBrigade
+                        idFBCBrigade,
+                        idletimeName
                     ));
                 }
 
@@ -829,6 +841,12 @@ namespace libSql
                             idFBCBrigade = Convert.ToInt32(sqlReader["id_fbc_brigade"]);
                         }
 
+                        string idletimeName = "";
+                        if (!DBNull.Value.Equals(sqlReader["idletime_name"]))
+                        {
+                            idletimeName = sqlReader["idletime_name"].ToString();
+                        }
+
                         usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
                             sqlReader["order_num"].ToString(),
                             sqlReader["ul_name"].ToString(),
@@ -842,7 +860,8 @@ namespace libSql
                             Convert.ToInt32(sqlReader["plan_out_qty"]),
                             Convert.ToInt32(sqlReader["normtime"]),
                             Convert.ToInt32(sqlReader["id_man_order_job_item"]),
-                            idFBCBrigade
+                            idFBCBrigade,
+                            idletimeName
                         ));
                     }
 
@@ -1015,6 +1034,12 @@ namespace libSql
                         idFBCBrigade = Convert.ToInt32(sqlReader["id_fbc_brigade"]);
                     }
 
+                    string idletimeName = "";
+                    if (!DBNull.Value.Equals(sqlReader["idletime_name"]))
+                    {
+                        idletimeName = sqlReader["idletime_name"].ToString();
+                    }
+
                     usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
                         sqlReader["order_num"].ToString(),
                         sqlReader["ul_name"].ToString(),
@@ -1028,7 +1053,8 @@ namespace libSql
                         Convert.ToInt32(sqlReader["plan_out_qty"]),
                         Convert.ToInt32(sqlReader["normtime"]),
                         Convert.ToInt32(sqlReader["id_man_order_job_item"]),
-                        idFBCBrigade
+                        idFBCBrigade,
+                        idletimeName
                     ));
                 }
 
