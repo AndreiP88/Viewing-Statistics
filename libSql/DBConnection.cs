@@ -25,9 +25,9 @@ namespace libSql
             return DBSQLUtils.GetDBConnection(host, database, username, password);
         }
 
-        public bool IsServerConnected(string host, string database, string username, string password)
+        public bool IsServerConnected()
         {
-            using (SqlConnection Connect = GetDBConnection(host, database, username, password))
+            using (SqlConnection Connect = GetDBConnection())
             {
                 try
                 {

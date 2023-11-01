@@ -14,11 +14,11 @@ namespace libTime
 
             if (shiftNumber == 1)
             {
-                result = date.ToString("yyyy-MM-dd") + "T03:00:00.000";
+                result = date.ToString("yyyy-MM-dd") + "T00:00:00.000";
             }
             else
             {
-                result = date.ToString("yyyy-MM-dd") + "T15:00:00.000";
+                result = date.ToString("yyyy-MM-dd") + "T08:00:00.000";
             }
 
             return result;
@@ -30,11 +30,11 @@ namespace libTime
 
             if (shiftNumber == 1)
             {
-                result = date.ToString("yyyy-MM-dd") + "T13:00:00.000";
+                result = date.ToString("yyyy-MM-dd") + "T20:00:00.000";
             }
             else
             {
-                result = date.AddDays(1).ToString("yyyy-MM-dd") + "T01:00:00.000";
+                result = date.AddDays(1).ToString("yyyy-MM-dd") + "T08:00:00.000";
             }
 
             return result;
