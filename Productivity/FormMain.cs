@@ -1563,7 +1563,7 @@ namespace Productivity
             dataGridViewOneShift.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
 
             string[] colNames = { "№", "Имя", "Заказ", "Заказчик", "Операция", "Остаток | Тираж", "Дано времени", "Начало", "Завершение", "Продолжительность", "Планируемое время завершения", "Отклонение", "Сделано", "Выработка" };
-            int[] colWidth = { 35, 300, 100, 260, 200, 140, 70, 150, 150, 80, 150, 80, 80, 80 };
+            int[] colWidth = { 30, 300, 100, 250, 200, 140, 70, 150, 150, 80, 150, 80, 80, 80 };
             DataGridViewContentAlignment[] colAligment = { DataGridViewContentAlignment.MiddleRight, DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleLeft,
                 DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleCenter,
                 DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleCenter, DataGridViewContentAlignment.MiddleLeft,
@@ -1677,101 +1677,41 @@ namespace Productivity
         {
             bool result = false;
 
-            //string idletimeName = userShiftOrders[startIndex].IdletimeName;
-            Console.WriteLine(startIndex + ": " + idManOrderJobItem);
             for (int i = startIndex; i < userShiftOrders.Count; i++)
             {
-                Console.WriteLine(idManOrderJobItem + " = " + userShiftOrders[i].IdManOrderJobItem + "; " + userShiftOrders[i].IdletimeName +
-                    " - " + userShiftOrders[i].OrderNumber);
                 if (idManOrderJobItem != userShiftOrders[i].IdManOrderJobItem)
                 {
                     if (userShiftOrders[i].IdletimeName == "")
                     {
-                        Console.WriteLine("false");
                         result = false;
                         break;
-                    }
-                    //else
-                    {
-                        //result = true;
                     }
                 }
 
                 if (idManOrderJobItem == userShiftOrders[i].IdManOrderJobItem)
                 {
-                    Console.WriteLine("true");
                     result = true;
                     break;
                 }
-
-
-                //Частично работет
-                /*if (idManOrderJobItem != userShiftOrders[i].IdManOrderJobItem)
-                {
-                    if (userShiftOrders[i].IdletimeName == "")
-                    {
-                        result = false;
-                        break;
-                    }
-                    else
-                    {
-                        //result = true;
-                    }
-                }
-                else
-                {
-                    result = true;
-                    break;
-                }*/
-
-                /*if (idManOrderJobItem == userShiftOrders[i].IdManOrderJobItem)
-                {
-                    result = true;
-                    break;
-                }
-                else
-                {
-                    if (userShiftOrders[i].IdletimeName == "")
-                    {
-                        result = false;
-                        break;
-                    }
-                    else
-                    {
-                        //result = true;
-                    }
-                }*/
             }
-            Console.WriteLine(result);
             
             return result;
         }
 
-        //Сделать, чтобы игнорировались 
         private List<UserShiftOrder> SelectedFullStepsForCurrentOrder(List<UserShiftOrder> userShiftOrders, int startIndex, int idManOrderJobItem)
         {
-            //UserShift userShift = user.Shifts[0];
-
             List<UserShiftOrder> userShiftOrder = new List<UserShiftOrder>();
-            Console.WriteLine(startIndex + ": " + idManOrderJobItem);
             for (int i = startIndex; i < userShiftOrders.Count; i++)
             {
-                //userShiftOrder.Add(userShift.Orders[i]);
-
                 if (userShiftOrders[i].IdManOrderJobItem == idManOrderJobItem)
                 {
                     userShiftOrder.Add(userShiftOrders[i]);
-
-                    /*lastIndex = i;
-                    currentStep = i;*/
-                    Console.WriteLine("==" + idManOrderJobItem);
                 }
                 else
                 {
                     if (AreThereAnyMoreOrders(userShiftOrders, i, idManOrderJobItem) && i != startIndex)
                     {
                         userShiftOrder.Add(userShiftOrders[i]);
-                        Console.WriteLine("!=" + idManOrderJobItem);
                     }
                     else
                     {
@@ -1780,7 +1720,6 @@ namespace Productivity
                 }
             }
 
-            Console.WriteLine("-------------------");
             return userShiftOrder;
         }
 
