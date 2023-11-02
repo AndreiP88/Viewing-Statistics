@@ -837,11 +837,13 @@ namespace Viewing_Statistics
                             break;
                         }
 
-                        if (usersList[i].Shifts[j].Orders != null)
-                        {
-                            int shiftNumber = usersList[i].Shifts[j].ShiftNumber;
+                        UserShift shift = usersList[i].Shifts[j];
 
-                            float timeWorkigOut = CalculateWorkTime(usersList[i].Shifts[j].Orders);
+                        if (shift.Orders != null)
+                        {
+                            int shiftNumber = shift.ShiftNumber;
+
+                            float timeWorkigOut = CalculateWorkTime(shift.Orders);
                             float timeBacklog = fullOutput - timeWorkigOut;
 
                             usersList[i].WorkingOutUser += timeWorkigOut;
@@ -857,7 +859,7 @@ namespace Viewing_Statistics
                             if (indexEquipsList != -1)
                             {
                                 int indexEquipsListWOut = equipsListWorkingOut[indexEquipsList].WorkingOutList.FindIndex(
-                                                    (v) => v.ShiftDate == usersList[i].Shifts[j].ShiftDate &&
+                                                    (v) => v.ShiftDate == shift.ShiftDate &&
                                                            v.ShiftNumber == shiftNumber
                                                            );
 
@@ -868,7 +870,7 @@ namespace Viewing_Statistics
                                 else
                                 {
                                     equipsListWorkingOut[indexEquipsList].WorkingOutList.Add(new WorkingOutValue(
-                                    usersList[i].Shifts[j].ShiftDate,
+                                    shift.ShiftDate,
                                     shiftNumber,
                                     timeWorkigOut
                                     ));
@@ -889,7 +891,7 @@ namespace Viewing_Statistics
                                 equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutList = new List<WorkingOutValue>
                                 {
                                     new WorkingOutValue(
-                                        usersList[i].Shifts[j].ShiftDate,
+                                        shift.ShiftDate,
                                         shiftNumber,
                                         timeWorkigOut
                                     )
@@ -907,7 +909,7 @@ namespace Viewing_Statistics
                             if (indexUserList != -1)
                             {
                                 int indexUserListWOut = usersListWorkingOut[indexUserList].WorkingOutList.FindIndex(
-                                                    (v) => v.ShiftDate == usersList[i].Shifts[j].ShiftDate &&
+                                                    (v) => v.ShiftDate == shift.ShiftDate &&
                                                            v.ShiftNumber == shiftNumber
                                                            );
 
@@ -918,7 +920,7 @@ namespace Viewing_Statistics
                                 else
                                 {
                                     usersListWorkingOut[indexUserList].WorkingOutList.Add(new WorkingOutValue(
-                                    usersList[i].Shifts[j].ShiftDate,
+                                    shift.ShiftDate,
                                     shiftNumber,
                                     timeWorkigOut
                                     ));
@@ -939,7 +941,7 @@ namespace Viewing_Statistics
                                 usersListWorkingOut[usersListWorkingOut.Count - 1].WorkingOutList = new List<WorkingOutValue>
                                 {
                                     new WorkingOutValue(
-                                        usersList[i].Shifts[j].ShiftDate,
+                                        shift.ShiftDate,
                                         shiftNumber,
                                         timeWorkigOut
                                     )
@@ -959,7 +961,7 @@ namespace Viewing_Statistics
 
                                 int indexRow = row.Index;*/
                                 int indexRow = GetDataGridRowIndexFromKey(dataGrid, key);
-                                int indexCol = GetDataGridColumnIndexFromKey(dataGrid, usersList[i].Shifts[j].ShiftDate);
+                                int indexCol = GetDataGridColumnIndexFromKey(dataGrid, shift.ShiftDate);
 
                                 if (indexRow != -1 && indexCol != -1)
                                 {
@@ -1143,6 +1145,22 @@ namespace Viewing_Statistics
             if (pColumn != null)
             {
                 result = pColumn.Index;
+            }
+
+            return result;
+        }
+
+        private bool IsThereOrdersInWorking(List<UserShiftOrder> orders)
+        {
+            bool result = false;
+
+            for (int i = 0; i < orders.Count; i++)
+            {
+                if (orders[i].IdletimeName == "")
+                {
+                    result = true;
+                    break;
+                }
             }
 
             return result;

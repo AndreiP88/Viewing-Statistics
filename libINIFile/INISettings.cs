@@ -117,6 +117,19 @@ namespace libINIFile
             return result;
         }
 
+        /// <summary>
+        /// Учитавыть при рассчетах смены без выработки
+        /// </summary>
+        /// <returns></returns>
+        public bool GetCalculateShiftsInIdletime()
+        {
+            bool result = false;
+
+            result = GetParameterBoolean("main", "calculateShiftsInIdletime");
+
+            return result;
+        }
+
         public void SetNormTime(int value)
         {
             SetParameter("main", "normTime", value.ToString());
@@ -135,6 +148,11 @@ namespace libINIFile
         public void SetGivenShiftNumber(bool value)
         {
             SetParameter("main", "givenShiftNumber", value.ToString());
+        }
+
+        public void SetCalculateShiftsInIdletime(bool value)
+        {
+            SetParameter("main", "calculateShiftsInIdletime", value.ToString());
         }
 
         public bool GetLoadCurrentShift()
