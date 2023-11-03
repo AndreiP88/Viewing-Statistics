@@ -1013,7 +1013,7 @@ namespace Productivity
                                     {
                                         equipsListWorkingOut[indexEquipsList].NumberOfShiftsWorked++;
 
-                                        if (!isThereOrdersInWorking && !calculateShiftsInIdletime)
+                                        if (!isThereOrdersInWorking)
                                         {
                                             equipsListWorkingOut[indexEquipsList].NumberOfIdleShifts++;
                                         }
@@ -1049,7 +1049,7 @@ namespace Productivity
                                     equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutBacklog += timeBacklog;
                                     equipsListWorkingOut[equipsListWorkingOut.Count - 1].NumberOfShiftsWorked++;
 
-                                    if (!isThereOrdersInWorking && !calculateShiftsInIdletime)
+                                    if (!isThereOrdersInWorking)
                                     {
                                         equipsListWorkingOut[equipsListWorkingOut.Count - 1].NumberOfIdleShifts++;
                                     }
@@ -1087,7 +1087,7 @@ namespace Productivity
                                     {
                                         usersListWorkingOut[indexUserList].NumberOfShiftsWorked++;
 
-                                        if (!isThereOrdersInWorking && !calculateShiftsInIdletime)
+                                        if (!isThereOrdersInWorking)
                                         {
                                             usersListWorkingOut[indexUserList].NumberOfIdleShifts++;
                                         }
@@ -1125,7 +1125,7 @@ namespace Productivity
                                     //usersListWorkingOut[usersListWorkingOut.Count - 1].WorkingOutBacklog += fullOutput - timeWorkigOut;
                                     usersListWorkingOut[usersListWorkingOut.Count - 1].NumberOfShiftsWorked++;
 
-                                    if (!isThereOrdersInWorking && !calculateShiftsInIdletime)
+                                    if (!isThereOrdersInWorking)
                                     {
                                         usersListWorkingOut[usersListWorkingOut.Count - 1].NumberOfIdleShifts++;
                                     }
@@ -1165,13 +1165,23 @@ namespace Productivity
 
             int fullOutput = settings.GetNormTime();
             int countShifts = settings.GetCountShifts();
+            bool calculateShiftsInIdletime = settings.GetCalculateShiftsInIdletime();
 
             for (int i = 0; i < equipsListWorkingOut.Count; i++)
             {
                 int countDaysFromMonth = 0;
 
                 int numberOfShiftsWorkedEquips = equipsListWorkingOut[i].NumberOfShiftsWorked;
-                int numberOfIdleShiftsEquips = equipsListWorkingOut[i].NumberOfIdleShifts;
+                int numberOfIdleShiftsEquips;
+
+                if (calculateShiftsInIdletime)
+                {
+                    numberOfIdleShiftsEquips = equipsListWorkingOut[i].NumberOfIdleShifts;
+                }
+                else
+                {
+                    numberOfIdleShiftsEquips = 0;
+                }
 
                 for (int j = 0; j < equipsListWorkingOut[i].WorkingOutList.Count; j++)
                 {
@@ -1227,13 +1237,23 @@ namespace Productivity
 
             int fullOutput = settings.GetNormTime();
             int countShifts = settings.GetCountShifts();
+            bool calculateShiftsInIdletime = settings.GetCalculateShiftsInIdletime();
 
             for (int i = 0; i < usersListWorkingOut.Count; i++)
             {
                 int countDaysFromMonth = 0;
 
                 int numberOfShiftsWorkedUsers = usersListWorkingOut[i].NumberOfShiftsWorked;
-                int numberOfIdleShiftsUsers = usersListWorkingOut[i].NumberOfIdleShifts;
+                int numberOfIdleShiftsUsers;
+
+                if (calculateShiftsInIdletime)
+                {
+                    numberOfIdleShiftsUsers = usersListWorkingOut[i].NumberOfIdleShifts;
+                }
+                else
+                {
+                    numberOfIdleShiftsUsers = 0;
+                }
 
                 for (int j = 0; j < usersListWorkingOut[i].WorkingOutList.Count; j++)
                 {
