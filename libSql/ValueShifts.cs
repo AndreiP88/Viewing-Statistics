@@ -206,6 +206,7 @@ namespace libSql
 	                        ON 
 		                        order_head.id_customer = common_ul_directory.id_common_ul_directory
                         WHERE
+                            man_factjob.id_equip IS NOT NULL AND
                             man_factjob.date_begin IS NOT NULL " +
                             cLine +
                         @"ORDER BY

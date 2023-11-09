@@ -2562,14 +2562,20 @@ namespace Productivity
 
                 for (int l = 0; l < idManOrderItem.Count; l++)
                 {
+                    List<int> _planOutQTY = new List<int>();
+
                     for (int j = 0; j < orderSearch.Count; j++)
                     {
                         if (idManOrderItem[l] == orderSearch[j].IDManOrderJobItem)
                         {
                             if (orderSearch[j].Flags != 576)
                             {
-                                fullPlanOutQTY += orderSearch[j].PlanOutQTY;
-                                break;
+                                if (!_planOutQTY.Contains(orderSearch[j].PlanOutQTY))
+                                {
+                                    fullPlanOutQTY += orderSearch[j].PlanOutQTY;
+                                    _planOutQTY.Add(orderSearch[j].PlanOutQTY);
+                                }
+                                //break;
                                 //Console.WriteLine(fullPlanOutQTY + " + " + orderSearch[j].PlanOutQTY);
                             }
                         }
