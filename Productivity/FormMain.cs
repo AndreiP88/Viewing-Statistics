@@ -1511,11 +1511,13 @@ namespace Productivity
 
             if (dateTime.Hour >= 20 && dateTime.Hour <= 23 || dateTime.Hour >= 0 && dateTime.Hour < 8)
             {
-                comboBox1.SelectedIndex = 1;
+                if (comboBox1.Items.Count > 1)
+                    comboBox1.SelectedIndex = 1;
             }
             else
             {
-                comboBox1.SelectedIndex = 0;
+                if (comboBox1.Items.Count > 0)
+                    comboBox1.SelectedIndex = 0;
             }
 
             if (dateTime.Hour >= 0 && dateTime.Hour < 8)
