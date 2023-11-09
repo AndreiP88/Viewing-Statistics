@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="Category.cs" />
     <Compile Include="Equip.cs" />
+    <Compile Include="OrderSearchValue.cs" />
+    <Compile Include="OrderHeadSearch.cs" />
     <Compile Include="Page.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewOrder.cs" />

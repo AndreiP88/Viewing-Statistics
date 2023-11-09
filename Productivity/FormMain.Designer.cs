@@ -84,6 +84,13 @@ namespace Productivity
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.metroSetSetTabPage5 = new MetroSet_UI.Child.MetroSetSetTabPage();
+            this.tableLayoutPanel17 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel18 = new System.Windows.Forms.TableLayoutPanel();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button3 = new System.Windows.Forms.Button();
+            this.comboBox6 = new System.Windows.Forms.ComboBox();
+            this.dataGridViewOrderDetails = new Productivity.FormMain.DoubleBufferedDataGridView();
             this.metroSetSetTabPage3 = new MetroSet_UI.Child.MetroSetSetTabPage();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
@@ -168,6 +175,10 @@ namespace Productivity
             this.tableLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tableLayoutPanel4.SuspendLayout();
+            this.metroSetSetTabPage5.SuspendLayout();
+            this.tableLayoutPanel17.SuspendLayout();
+            this.tableLayoutPanel18.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrderDetails)).BeginInit();
             this.metroSetSetTabPage3.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel7.SuspendLayout();
@@ -207,6 +218,7 @@ namespace Productivity
             this.metroSetTabControl1.BackgroundColor = System.Drawing.Color.White;
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage1);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage2);
+            this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage5);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage3);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage4);
             this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Default;
@@ -606,6 +618,108 @@ namespace Productivity
             this.button1.Text = "Обновить";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // metroSetSetTabPage5
+            // 
+            this.metroSetSetTabPage5.BaseColor = System.Drawing.Color.White;
+            this.metroSetSetTabPage5.Controls.Add(this.tableLayoutPanel17);
+            this.metroSetSetTabPage5.Font = null;
+            this.metroSetSetTabPage5.ImageIndex = 0;
+            this.metroSetSetTabPage5.ImageKey = null;
+            this.metroSetSetTabPage5.IsDerivedStyle = true;
+            this.metroSetSetTabPage5.Location = new System.Drawing.Point(4, 42);
+            this.metroSetSetTabPage5.Name = "metroSetSetTabPage5";
+            this.metroSetSetTabPage5.Size = new System.Drawing.Size(1268, 472);
+            this.metroSetSetTabPage5.Style = MetroSet_UI.Enums.Style.Light;
+            this.metroSetSetTabPage5.StyleManager = null;
+            this.metroSetSetTabPage5.TabIndex = 4;
+            this.metroSetSetTabPage5.Text = "Информация о заказе";
+            this.metroSetSetTabPage5.ThemeAuthor = "Narwin";
+            this.metroSetSetTabPage5.ThemeName = "MetroLite";
+            this.metroSetSetTabPage5.ToolTipText = null;
+            // 
+            // tableLayoutPanel17
+            // 
+            this.tableLayoutPanel17.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.tableLayoutPanel17.ColumnCount = 1;
+            this.tableLayoutPanel17.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel17.Controls.Add(this.tableLayoutPanel18, 0, 0);
+            this.tableLayoutPanel17.Controls.Add(this.dataGridViewOrderDetails, 0, 1);
+            this.tableLayoutPanel17.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel17.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel17.Name = "tableLayoutPanel17";
+            this.tableLayoutPanel17.RowCount = 2;
+            this.tableLayoutPanel17.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
+            this.tableLayoutPanel17.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel17.Size = new System.Drawing.Size(1268, 472);
+            this.tableLayoutPanel17.TabIndex = 0;
+            // 
+            // tableLayoutPanel18
+            // 
+            this.tableLayoutPanel18.ColumnCount = 4;
+            this.tableLayoutPanel18.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 140F));
+            this.tableLayoutPanel18.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel18.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel18.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanel18.Controls.Add(this.textBox1, 0, 0);
+            this.tableLayoutPanel18.Controls.Add(this.button3, 1, 0);
+            this.tableLayoutPanel18.Controls.Add(this.comboBox6, 2, 0);
+            this.tableLayoutPanel18.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel18.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel18.Name = "tableLayoutPanel18";
+            this.tableLayoutPanel18.RowCount = 1;
+            this.tableLayoutPanel18.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel18.Size = new System.Drawing.Size(1262, 30);
+            this.tableLayoutPanel18.TabIndex = 0;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox1.Location = new System.Drawing.Point(3, 3);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(134, 23);
+            this.textBox1.TabIndex = 0;
+            this.textBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox1_KeyPress);
+            // 
+            // button3
+            // 
+            this.button3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button3.Location = new System.Drawing.Point(143, 3);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(94, 24);
+            this.button3.TabIndex = 1;
+            this.button3.Text = "Поиск";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // comboBox6
+            // 
+            this.comboBox6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBox6.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox6.FormattingEnabled = true;
+            this.comboBox6.Location = new System.Drawing.Point(243, 3);
+            this.comboBox6.Name = "comboBox6";
+            this.comboBox6.Size = new System.Drawing.Size(402, 24);
+            this.comboBox6.TabIndex = 2;
+            this.comboBox6.SelectedIndexChanged += new System.EventHandler(this.comboBox6_SelectedIndexChanged);
+            // 
+            // dataGridViewOrderDetails
+            // 
+            this.dataGridViewOrderDetails.AllowUserToAddRows = false;
+            this.dataGridViewOrderDetails.AllowUserToDeleteRows = false;
+            this.dataGridViewOrderDetails.BackgroundColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.dataGridViewOrderDetails.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this.dataGridViewOrderDetails.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewOrderDetails.ColumnHeadersVisible = false;
+            this.dataGridViewOrderDetails.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridViewOrderDetails.Location = new System.Drawing.Point(3, 39);
+            this.dataGridViewOrderDetails.MultiSelect = false;
+            this.dataGridViewOrderDetails.Name = "dataGridViewOrderDetails";
+            this.dataGridViewOrderDetails.ReadOnly = true;
+            this.dataGridViewOrderDetails.RowHeadersVisible = false;
+            this.dataGridViewOrderDetails.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridViewOrderDetails.Size = new System.Drawing.Size(1262, 430);
+            this.dataGridViewOrderDetails.TabIndex = 1;
             // 
             // metroSetSetTabPage3
             // 
@@ -1624,7 +1738,7 @@ namespace Productivity
             this.metroSetControlBox1.CloseNormalForeColor = System.Drawing.Color.Gray;
             this.metroSetControlBox1.DisabledForeColor = System.Drawing.Color.DimGray;
             this.metroSetControlBox1.IsDerivedStyle = true;
-            this.metroSetControlBox1.Location = new System.Drawing.Point(1206, -4);
+            this.metroSetControlBox1.Location = new System.Drawing.Point(1202, -2);
             this.metroSetControlBox1.MaximizeBox = true;
             this.metroSetControlBox1.MaximizeHoverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(238)))));
             this.metroSetControlBox1.MaximizeHoverForeColor = System.Drawing.Color.Gray;
@@ -1649,10 +1763,11 @@ namespace Productivity
             // 
             // FormMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.Control;
+            this.BorderThickness = 0F;
             this.ClientSize = new System.Drawing.Size(1300, 620);
+            this.ControlBox = false;
             this.Controls.Add(this.metroSetControlBox1);
             this.Controls.Add(this.metroSetTabControl1);
             this.Name = "FormMain";
@@ -1660,7 +1775,6 @@ namespace Productivity
             this.ShowBorder = true;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Статистика";
-            this.TextColor = System.Drawing.SystemColors.GrayText;
             this.UseSlideAnimation = true;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
@@ -1675,6 +1789,11 @@ namespace Productivity
             this.tableLayoutPanel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.tableLayoutPanel4.ResumeLayout(false);
+            this.metroSetSetTabPage5.ResumeLayout(false);
+            this.tableLayoutPanel17.ResumeLayout(false);
+            this.tableLayoutPanel18.ResumeLayout(false);
+            this.tableLayoutPanel18.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrderDetails)).EndInit();
             this.metroSetSetTabPage3.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel7.ResumeLayout(false);
@@ -1811,6 +1930,13 @@ namespace Productivity
         private Button buttonSettingsReload;
         private GroupBox groupBox7;
         private MetroSet_UI.Controls.MetroSetCheckBox metroSetCheckBox6;
+        private MetroSet_UI.Child.MetroSetSetTabPage metroSetSetTabPage5;
+        private TableLayoutPanel tableLayoutPanel17;
+        private TableLayoutPanel tableLayoutPanel18;
+        private TextBox textBox1;
+        private Button button3;
+        private ComboBox comboBox6;
+        private DoubleBufferedDataGridView dataGridViewOrderDetails;
     }
 }
 

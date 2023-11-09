@@ -7,14 +7,12 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using libData;
 using libINIFile;
 using libSql;
 using libTime;
-using System.Runtime.InteropServices.ComTypes;
-using Productivity.Properties;
 using System.Security.Policy;
+
 
 namespace Productivity
 {
@@ -40,6 +38,7 @@ namespace Productivity
         List<User> usersList;
         List<ViewPath> viewsList;
         List<Page> pages;
+        List<OrderHeadSearch> ordersHead;
 
         DateTime lastTimeUpdateShiftStatistic = DateTime.Now;
 
@@ -710,7 +709,7 @@ namespace Productivity
             }
         }
 
-        private void LoadShifts()
+        private void LoadShiftsList()
         {
             ValueShifts valueShifts = new ValueShifts();
 
@@ -725,6 +724,11 @@ namespace Productivity
             DateTime selectDate = ReturnDateFromInputParameter(year, month);
 
             usersList = valueShifts.LoadShiftsForSelectedMonth(usersList, selectDate, countShifts, givenShiftNumber);
+        }
+
+        private void LoadShifts()
+        {
+            //LoadShiftsList();
 
             StartAddingWorkingTimeToListView();
         }
@@ -914,6 +918,11 @@ namespace Productivity
 
         private void AddWorkingTimeUsersToListView(CancellationToken token)
         {
+            Invoke(new Action(() =>
+            {
+                LoadShiftsList();
+            }));
+
             List<WorkingOut> equipsListWorkingOut = new List<WorkingOut>();
             List<WorkingOut> usersListWorkingOut = new List<WorkingOut>();
             //List<int> usersCurrent = new List<int>();
@@ -2341,7 +2350,7 @@ namespace Productivity
 
         private void SaveParameterBeforeClosing()
         {
-            if (metroSetTabControlPreviousIndex == 2)
+            if (metroSetTabControlPreviousIndex == 3)
             {
                 SaveCategoryToIniFile();
                 SaveParameterToIniFile();
@@ -2349,12 +2358,244 @@ namespace Productivity
                 listViewEquips.Items.Clear();
             }
 
-            if (metroSetTabControlPreviousIndex == 3)
+            if (metroSetTabControlPreviousIndex == 4)
             {
                 SaveViewParameter();
             }
         }
 
+        private void LoadSelectedOrderSearched(int index)
+        {
+            CreateColomnsToDataGridForSearchedOrder();
+
+            LoadSearchedOrderToDataGridView(index);
+        }
+
+        private void ClearColomnsFromDataGridForSearchedOrder()
+        {
+            dataGridViewOrderDetails.Rows.Clear();
+            dataGridViewOrderDetails.Columns.Clear();
+        }
+
+        private void CreateColomnsToDataGridForSearchedOrder()
+        {
+            INISettings settings = new INISettings();
+
+            ClearColomnsFromDataGridForSearchedOrder();
+
+            dataGridViewOrderDetails.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            //dataGridViewOneShift.AllowUserToResizeColumns = false;
+            dataGridViewOrderDetails.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dataGridViewOrderDetails.AllowUserToResizeRows = false;
+            dataGridViewOrderDetails.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+
+            string[] colNames = { "№", "Имя", "Операция", "Тираж", "Начало", "Завершение", "Продолжительность", "Сделано" };
+            int[] colWidth = { 30, 300, 160, 100, 180, 180, 100, 100 };
+            DataGridViewContentAlignment[] colAligment = { DataGridViewContentAlignment.MiddleRight, DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleLeft,
+                DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleCenter,
+                DataGridViewContentAlignment.MiddleLeft };
+
+            for (int i = 0; i < colNames.Length; i++)
+            {
+                int indexCol = dataGridViewOrderDetails.Columns.Add(colNames[i], colNames[i]);
+                dataGridViewOrderDetails.Columns[indexCol].Width = colWidth[i];
+                dataGridViewOrderDetails.Columns[indexCol].SortMode = DataGridViewColumnSortMode.NotSortable;
+                dataGridViewOrderDetails.Columns[indexCol].DefaultCellStyle.Alignment = colAligment[i];
+            }
+
+            dataGridViewOrderDetails.Columns[0].Frozen = true;
+            dataGridViewOrderDetails.Columns[1].Frozen = true;
+
+            dataGridViewOrderDetails.Rows.Add();
+            dataGridViewOrderDetails.Rows[0].Height = 60;
+            dataGridViewOrderDetails.Rows[0].Frozen = true;
+
+            for (int i = 0; i < colNames.Length; i++)
+            {
+                AddCellToGrid(dataGridViewOrderDetails, 0, i);
+                dataGridViewOrderDetails.Rows[0].Cells[i].Value = colNames[i];
+            }
+        }
+
+        private void LoadSearchedOrderToDataGridView(int index)
+        {
+            ValueOrderSearch valueOrderSearch = new ValueOrderSearch();
+            ValueDateTime time = new ValueDateTime();
+
+            List<OrderSearchValue> orderSearch = valueOrderSearch.OrdersListFromIDHead(ordersHead[index].IDOrderHead);
+
+            List<int> equips = new List<int>();
+
+            int indexRow;
+
+            for (int i = 0; i < orderSearch.Count; i++)
+            {
+                if (!equips.Contains(orderSearch[i].IDEquip))
+                {
+                    equips.Add(orderSearch[i].IDEquip);
+                }
+            }
+
+            for (int i = 0; i < equips.Count; i++)
+            {
+                indexRow = dataGridViewOrderDetails.Rows.Add();
+
+                dataGridViewOrderDetails.Rows[indexRow].Cells[0].Value = (i + 1).ToString();
+                dataGridViewOrderDetails.Rows[indexRow].Cells[1].Value = machines[equips[i]];
+                dataGridViewOrderDetails.Rows[indexRow].DefaultCellStyle.Font = new Font(dataGridViewOrderDetails.Font, FontStyle.Bold);
+                dataGridViewOrderDetails.Rows[indexRow].DefaultCellStyle.BackColor = Color.Gray;
+                dataGridViewOrderDetails.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
+
+                List<int> idManOrderItem = new List<int>();
+
+                int countOperationForCurrentEquip = 0;
+                int idManOrderJobItem = -1;
+
+                int fullPlanOutQTY = 0;
+                int fullFactOutQTY = 0;
+
+                string operationNumber = "";
+                string userName = "";
+                string planOutQTY = "";
+
+                int _idUser = -1;
+                int _planQTY = -1;
+
+                for (int j = 0; j < orderSearch.Count; j++)
+                {
+                    if (orderSearch[j].IDEquip == equips[i] && orderSearch[j].Idletime == "")
+                    {
+                        if (!idManOrderItem.Contains(orderSearch[j].IDManOrderJobItem))
+                        {
+                            idManOrderItem.Add(orderSearch[j].IDManOrderJobItem);
+                        }
+
+                        if (_idUser == orderSearch[j].IDEmployee)
+                        {
+                            userName = "";
+                            operationNumber = "";
+                        }
+                        else
+                        {
+                            countOperationForCurrentEquip++;
+
+                            _idUser = orderSearch[j].IDEmployee;
+                            userName = "    " + users[orderSearch[j].IDEmployee];
+
+                            operationNumber = countOperationForCurrentEquip.ToString();
+                        }
+
+                        if (idManOrderJobItem == orderSearch[j].IDManOrderJobItem)
+                        {
+                            if (_planQTY == orderSearch[j].PlanOutQTY)
+                            {
+                                planOutQTY = "";
+                            }
+                            else
+                            {
+                                planOutQTY = orderSearch[j].PlanOutQTY.ToString("N0");
+                                _planQTY = orderSearch[j].PlanOutQTY;
+                            }
+                        }
+                        else
+                        {
+                            planOutQTY = orderSearch[j].PlanOutQTY.ToString("N0");
+                            _planQTY = orderSearch[j].PlanOutQTY;
+                            idManOrderJobItem = orderSearch[j].IDManOrderJobItem;
+                        }
+
+                        /*if (idManOrderJobItem == orderSearch[j].IDManOrderJobItem && orderSearch[j].PlanOutQTY == _planQTY)
+                        {
+                            planOutQTY = "";
+                        }
+                        else
+                        {
+                            idManOrderJobItem = orderSearch[j].IDManOrderJobItem;
+                            planOutQTY = orderSearch[j].PlanOutQTY.ToString("N0");
+                        }*/
+
+                        //_planQTY = orderSearch[j].PlanOutQTY;
+
+                        string operation = "";
+
+                        if (orderSearch[j].Idletime == "")
+                        {
+                            if (orderSearch[j].Flags != 576)
+                            {
+                                operation = "работа";
+
+                                fullFactOutQTY += orderSearch[j].FactOutQTY;
+                            }
+
+                            if (orderSearch[j].Flags == 576)
+                            {
+                                operation = "приладка";
+                            }
+
+                            /*if (orderSearch[j].Idletime != "")
+                            {
+                                operation = orderSearch[j].Idletime;
+                            }*/
+
+                            indexRow = dataGridViewOrderDetails.Rows.Add();
+
+                            dataGridViewOrderDetails.Rows[indexRow].Cells[0].Value = operationNumber;
+                            dataGridViewOrderDetails.Rows[indexRow].Cells[1].Value = userName;
+                            dataGridViewOrderDetails.Rows[indexRow].Cells[2].Value = operation;
+                            dataGridViewOrderDetails.Rows[indexRow].Cells[3].Value = planOutQTY;
+                            dataGridViewOrderDetails.Rows[indexRow].Cells[4].Value = orderSearch[j].DateBegin;
+                            dataGridViewOrderDetails.Rows[indexRow].Cells[5].Value = orderSearch[j].DateEnd;
+                            dataGridViewOrderDetails.Rows[indexRow].Cells[6].Value = time.MinuteToTimeString(orderSearch[j].Duration);
+                            dataGridViewOrderDetails.Rows[indexRow].Cells[7].Value = orderSearch[j].FactOutQTY.ToString("N0");
+
+                            Color color = Color.White;
+
+                            if (countOperationForCurrentEquip % 2 == 0)
+                            {
+                                color = Color.Gainsboro;
+                            }
+
+                            dataGridViewOrderDetails.Rows[indexRow].DefaultCellStyle.BackColor = color;
+                        }
+                    }
+                }
+
+                for (int l = 0; l < idManOrderItem.Count; l++)
+                {
+                    for (int j = 0; j < orderSearch.Count; j++)
+                    {
+                        if (idManOrderItem[l] == orderSearch[j].IDManOrderJobItem)
+                        {
+                            if (orderSearch[j].Flags != 576)
+                            {
+                                fullPlanOutQTY += orderSearch[j].PlanOutQTY;
+                                break;
+                                //Console.WriteLine(fullPlanOutQTY + " + " + orderSearch[j].PlanOutQTY);
+                            }
+                        }
+                    }
+                }
+                
+
+                indexRow = dataGridViewOrderDetails.Rows.Add();
+
+                dataGridViewOrderDetails.Rows[indexRow].Cells[3].Value = fullPlanOutQTY.ToString("N0");
+                dataGridViewOrderDetails.Rows[indexRow].Cells[7].Value = fullFactOutQTY.ToString("N0");
+
+                dataGridViewOrderDetails.Rows[indexRow].DefaultCellStyle.Font = new Font(dataGridViewOrderDetails.Font, FontStyle.Bold);
+                dataGridViewOrderDetails.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
+                dataGridViewOrderDetails.Rows[indexRow].DefaultCellStyle.BackColor = Color.Silver;
+            }
+        }
+
+        private int GetAmountOrder()
+        {
+            int result = 0;
+
+
+
+            return result;
+        }
         private void TabControlSelectedIndexChanged(int selectedIndex)
         {
             INISettings settings = new INISettings();
@@ -2377,13 +2618,13 @@ namespace Productivity
                 UpdateStatistics();
             }
 
-            if (selectedIndex == 2)
+            if (selectedIndex == 3)
             {
                 LoadCategoryToListView();
                 LoadParameterFromIniFile();
             }
 
-            if (selectedIndex == 3)
+            if (selectedIndex == 4)
             {
                 LoadViewList();
             }
@@ -3114,6 +3355,76 @@ namespace Productivity
                 {
                     comboBox5.SelectedIndex = 0;
                 }
+            }
+        }
+
+        private void StartSearch()
+        {
+            ValueOrderSearch valueOrder = new ValueOrderSearch();
+
+            ordersHead?.Clear();
+            comboBox6.Items.Clear();
+            ClearColomnsFromDataGridForSearchedOrder();
+
+            if (textBox1.Text != "")
+            {
+                ordersHead = valueOrder.SearchOrderHeadIndexes(textBox1.Text);
+
+                if (ordersHead.Count == 0)
+                {
+                    comboBox6.Items.Add("<ничего не найдено>");
+                }
+
+                if (ordersHead.Count > 1)
+                {
+                    comboBox6.Items.Add("<найдено заказов: " + ordersHead.Count + ">");
+                }
+
+                for (int i = 0; i < ordersHead.Count; i++)
+                {
+                    comboBox6.Items.Add(ordersHead[i].OrderNumber + ": " + ordersHead[i].OrderCustomer);
+                }
+
+                comboBox6.SelectedIndex = 0;
+            }
+        }
+        private void button3_Click(object sender, EventArgs e)
+        {
+            StartSearch();
+        }
+
+        private void comboBox6_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int selectedOrderIndex = -1;
+
+            if (ordersHead.Count > 0)
+            {
+                if (ordersHead.Count == 1)
+                {
+                    selectedOrderIndex = comboBox6.SelectedIndex;
+                }
+
+                if (ordersHead.Count > 1 && comboBox6.SelectedIndex > 0)
+                {
+                    selectedOrderIndex = comboBox6.SelectedIndex - 1;
+                }
+
+                if (selectedOrderIndex >= 0)
+                {
+                    LoadSelectedOrderSearched(selectedOrderIndex);
+                }
+                else
+                {
+                    ClearColomnsFromDataGridForSearchedOrder();
+                }
+            }
+        }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                StartSearch(); ;
             }
         }
     }
