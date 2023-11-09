@@ -227,7 +227,7 @@ namespace Productivity
             this.metroSetTabControl1.ItemSize = new System.Drawing.Size(130, 38);
             this.metroSetTabControl1.Location = new System.Drawing.Point(12, 90);
             this.metroSetTabControl1.Name = "metroSetTabControl1";
-            this.metroSetTabControl1.SelectedIndex = 2;
+            this.metroSetTabControl1.SelectedIndex = 0;
             this.metroSetTabControl1.SelectedTextColor = System.Drawing.Color.White;
             this.metroSetTabControl1.Size = new System.Drawing.Size(1276, 518);
             this.metroSetTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
@@ -344,9 +344,6 @@ namespace Productivity
             this.comboBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "1 смена",
-            "2 смена"});
             this.comboBox1.Location = new System.Drawing.Point(183, 3);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(154, 24);

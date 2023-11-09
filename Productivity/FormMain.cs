@@ -626,6 +626,8 @@ namespace Productivity
 
             SelectCurrentMonth();
 
+            LoadCountShiftsToComboBox();
+
             //Update Later
             comboBox4.SelectedIndex = 0;
 
@@ -2355,6 +2357,8 @@ namespace Productivity
                 SaveCategoryToIniFile();
                 SaveParameterToIniFile();
 
+                LoadCountShiftsToComboBox();
+
                 listViewEquips.Items.Clear();
             }
 
@@ -2602,6 +2606,21 @@ namespace Productivity
 
             return result;
         }
+
+        private void LoadCountShiftsToComboBox()
+        {
+            INISettings settings = new INISettings();
+
+            int countShifts = settings.GetCountShifts();
+
+            comboBox1.Items.Clear();
+
+            for (int i = 1; i <= countShifts; i++)
+            {
+                comboBox1.Items.Add(i + " смена");
+            }
+        }
+
         private void TabControlSelectedIndexChanged(int selectedIndex)
         {
             INISettings settings = new INISettings();
