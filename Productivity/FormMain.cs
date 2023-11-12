@@ -1637,6 +1637,36 @@ namespace Productivity
             return result;
         }
 
+        private int AddDinnerTimeToWorkingOut(string firstTime, string secondTime)
+        {
+            int result = 0;
+
+            DateTime firstDateTime = Convert.ToDateTime(firstTime);
+            DateTime secondDateTime = Convert.ToDateTime(secondTime);
+
+            string[] breakeTimes = { "11:30", "30", "15:30", "30", "18:00", "10", "23:30", "30", "03:30", "30", "06:00", "10" };
+
+            int dayDifference = secondDateTime.Subtract(firstDateTime).Days;
+
+            for (int day = 0; day <= dayDifference; day++)
+            {
+                DateTime selectDate = firstDateTime.AddDays(day);
+
+                for (int i = 0; i < breakeTimes.Length; i += 2)
+                {
+                    DateTime breakeDateTime = Convert.ToDateTime(selectDate.ToString("dd.MM.yyyy") + " " + breakeTimes[i] + ":00");
+                    int breakTime = Convert.ToInt32(breakeTimes[i + 1]);
+
+                    if (firstDateTime < breakeDateTime && breakeDateTime < secondDateTime)
+                    {
+                        result += breakTime;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         private void CreateColomnsToDataGridForOneShift()
         {
             INISettings settings = new INISettings();
@@ -1791,6 +1821,8 @@ namespace Productivity
                 float userWorkingOut = 0;
                 int userDone = 0;
                 int dinnerTime = 0;
+
+                int idletime = 0;
                 //int indexRowForUser = listView1.Items.Count - 1;
 
                 //Сделать детальное отображение выполняемых заказов
@@ -1814,6 +1846,9 @@ namespace Productivity
                                 UserShiftOrder order = userShiftOrders[l];
                                 ViewOrder view = new ViewOrder();
 
+                                string orderStartTime = userShiftOrders[0].DateBegin;
+                                string orderEndTime = userShiftOrders[l].DateEnd;
+
                                 view.WorkingOut += CalculateWorkTimeForOneOrder(order);
 
                                 if (order.Flags != 576)
@@ -1823,7 +1858,7 @@ namespace Productivity
                                     view.NormTimeWork = order.Normtime;
                                     view.IdletimeName = "работа";
                                 }
-
+                                
                                 if (order.Flags == 576)
                                 {
                                     view.NormTimeMakeReady = order.Normtime;
@@ -1833,7 +1868,13 @@ namespace Productivity
                                 if (order.IdletimeName != "")
                                 {
                                     view.IdletimeName = order.IdletimeName;
+
+                                    if (order.FactOutQty > 0)
+                                    {
+                                        idletime += order.Normtime;
+                                    }
                                 }
+
                                 string lastTimeEndPlanedOrder = time.DateTimeAmountMunutes(timeStartShift, (int)Math.Round(userWorkingOut));
                                 view.Duration += order.Duration;
 
@@ -1865,15 +1906,20 @@ namespace Productivity
                                 {
                                     if (orderPreviousAmount > 0)
                                     {
+                                        normTimeGeneral = (int)lastTime;
                                         normTimeFull = (int)lastTime;
                                     }
                                     else
                                     {
+                                        normTimeGeneral = normtime[0] + normtime[1];
                                         normTimeFull = view.NormTimeMakeReady + view.NormTimeWork;
                                     }
 
-                                    dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, order.DateEnd);
-                                    view.TimePlanedEndOrder = time.DateTimeAmountMunutes(timeStartShift, (int)Math.Round(userWorkingOut) + dinnerTime);
+                                    //dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, order.DateEnd);
+                                    //dinnerTime += AddDinnerTimeToWorkingOut(order.DateBegin, time.DateTimeAmountMunutes(order.DateBegin, (int)Math.Round(userWorkingOut)));
+                                    //dinnerTime += AddDinnerTimeToWorkingOut(order.DateBegin, order.DateEnd);
+                                    dinnerTime = AddDinnerTimeToWorkingOut(timeStartShift, order.DateEnd);
+                                    view.TimePlanedEndOrder = time.DateTimeAmountMunutes(timeStartShift, (int)Math.Round(userWorkingOut) + dinnerTime + idletime);
 
                                     view.DifferentTime = time.DateDifferenceToMinutes(view.TimePlanedEndOrder, order.DateEnd);
                                     view.TimeEnd = order.DateEnd + " ";
@@ -1899,16 +1945,29 @@ namespace Productivity
                                     {
                                         if (shifts.CheckShiftIsActive(order.IDFBCBrigade))
                                         {
-                                            dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, DateTime.Now.ToString());
-                                            view.TimePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeGeneral + dinnerTime);
+                                            string factTimeEndOrder = time.DateTimeAmountMunutes(orderStartTime, normTimeGeneral);
+
+                                            if (time.StringToDateTime(factTimeEndOrder) < DateTime.Now)
+                                            {
+                                                factTimeEndOrder = DateTime.Now.ToString();
+                                            }
+
+                                            //dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, DateTime.Now.ToString());
+                                            //dinnerTime += AddDinnerTimeToWorkingOut(orderStartTime, time.DateTimeAmountMunutes(orderStartTime, normTimeGeneral));
+                                            //dinnerTime = AddDinnerTimeToWorkingOut(timeStartShift, time.DateTimeAmountMunutes(orderStartTime, normTimeGeneral));
+                                            dinnerTime = AddDinnerTimeToWorkingOut(timeStartShift, factTimeEndOrder);
+                                            view.TimePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeGeneral + dinnerTime + idletime);
                                             view.DifferentTime = time.DateDifferenceToMinutes(view.TimePlanedEndOrder, DateTime.Now.ToString());
                                             view.Duration = time.DateDifferenceToMinutes(DateTime.Now.ToString(), order.DateBegin);
                                             view.TimeEnd = "выполняется ";
                                         }
                                         else
                                         {
-                                            dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, order.DateEnd);
-                                            view.TimePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, (int)Math.Round(view.WorkingOut) + dinnerTime);
+                                            //dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, order.DateEnd);
+                                            //dinnerTime += AddDinnerTimeToWorkingOut(order.DateBegin, time.DateTimeAmountMunutes(order.DateBegin, (int)Math.Round(view.WorkingOut)));
+                                            //dinnerTime += AddDinnerTimeToWorkingOut(orderStartTime, order.DateEnd);
+                                            dinnerTime = AddDinnerTimeToWorkingOut(timeStartShift, order.DateEnd);
+                                            view.TimePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, (int)Math.Round(view.WorkingOut) + dinnerTime + idletime);
                                             view.DifferentTime = time.DateDifferenceToMinutes(view.TimePlanedEndOrder, order.DateEnd);
                                             view.TimeEnd = order.DateEnd + " ";
 
@@ -1921,10 +1980,26 @@ namespace Productivity
                                     }
                                     else
                                     {
-                                        dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, order.DateEnd);
-                                        view.TimePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, (int)Math.Round(view.WorkingOut) + dinnerTime);
-                                        view.DifferentTime = time.DateDifferenceToMinutes(view.TimePlanedEndOrder, order.DateEnd);
-                                        view.TimeEnd = order.DateEnd + " ";
+                                        if (shifts.CheckShiftIsActive(order.IDFBCBrigade))
+                                        {
+                                            //dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, DateTime.Now.ToString());
+                                            //dinnerTime += AddDinnerTimeToWorkingOut(orderStartTime, time.DateTimeAmountMunutes(orderStartTime, normTimeGeneral));
+                                            dinnerTime = AddDinnerTimeToWorkingOut(timeStartShift, time.DateTimeAmountMunutes(orderStartTime, normTimeGeneral));
+                                            view.TimePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeGeneral + dinnerTime + idletime);
+                                            view.DifferentTime = time.DateDifferenceToMinutes(view.TimePlanedEndOrder, order.DateEnd);
+                                            //view.Duration = time.DateDifferenceToMinutes(view.TimePlanedEndOrder, order.DateBegin);
+                                            view.TimeEnd = order.DateEnd + " ";
+                                        }
+                                        else
+                                        {
+                                            //dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, order.DateEnd);
+                                            //dinnerTime += AddDinnerTimeToWorkingOut(orderStartTime, time.DateTimeAmountMunutes(orderStartTime, (int)Math.Round(view.WorkingOut)));
+                                            //dinnerTime += AddDinnerTimeToWorkingOut(orderStartTime, orderEndTime);
+                                            dinnerTime = AddDinnerTimeToWorkingOut(timeStartShift, orderEndTime);
+                                            view.TimePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, (int)Math.Round(view.WorkingOut) + dinnerTime + idletime);
+                                            view.DifferentTime = time.DateDifferenceToMinutes(view.TimePlanedEndOrder, order.DateEnd);
+                                            view.TimeEnd = order.DateEnd + " ";
+                                        }
                                     }
                                 }
 
@@ -1964,13 +2039,22 @@ namespace Productivity
                                     }
                                     else
                                     {
-                                        dataGridViewOneShift.Rows[indexRow].Cells[6].Value = time.MinuteToTimeString(normTimeFull);
+                                        dataGridViewOneShift.Rows[indexRow].Cells[6].Value = time.MinuteToTimeString(normTimeGeneral);
                                     }
                                 }
 
                                 if (order.IdletimeName == "")
                                 {
+                                    dataGridViewOneShift.Rows[indexRow].Cells[10].Value = view.TimePlanedEndOrder;
+
                                     dataGridViewOneShift.Rows[indexRow].Cells[11].Value = time.MinuteToTimeString(view.DifferentTime);
+                                }
+                                else
+                                {
+                                    if (currentStep == userShift.Orders.Count - 1)
+                                    {
+                                        dataGridViewOneShift.Rows[indexRow].Cells[11].Value = time.MinuteToTimeString(view.DifferentTime);
+                                    }
                                 }
 
                                 //тут еще ничего не работает
@@ -1980,7 +2064,7 @@ namespace Productivity
                                 //dataGridViewOneShift.Rows[indexRow].Cells[8].Value = user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd;
                                 dataGridViewOneShift.Rows[indexRow].Cells[8].Value = view.TimeEnd;
                                 dataGridViewOneShift.Rows[indexRow].Cells[9].Value = time.MinuteToTimeString(view.Duration);
-                                dataGridViewOneShift.Rows[indexRow].Cells[10].Value = view.TimePlanedEndOrder;
+                                
                                 //dataGridViewOneShift.Rows[indexRow].Cells[11].Value = time.MinuteToTimeString(view.DifferentTime);
                                 dataGridViewOneShift.Rows[indexRow].Cells[12].Value = view.Done.ToString("N0");
                                 dataGridViewOneShift.Rows[indexRow].Cells[13].Value = time.MinuteToTimeString((int)Math.Round(view.WorkingOut));
