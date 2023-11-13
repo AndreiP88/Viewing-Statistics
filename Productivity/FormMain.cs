@@ -1685,12 +1685,13 @@ namespace Productivity
             dataGridViewOneShift.AllowUserToResizeRows = false;
             dataGridViewOneShift.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
 
+            DataGridViewContentAlignment right = DataGridViewContentAlignment.MiddleRight;
+            DataGridViewContentAlignment left = DataGridViewContentAlignment.MiddleLeft;
+            DataGridViewContentAlignment center = DataGridViewContentAlignment.MiddleCenter;
+
             string[] colNames = { "№", "Имя", "Заказ", "Заказчик", "Операция", "Остаток | Тираж", "Дано времени", "Начало", "Завершение", "Продолжительность", "Планируемое время завершения", "Отклонение", "Сделано", "Выработка" };
             int[] colWidth = { 30, 300, 100, 250, 200, 140, 70, 150, 150, 80, 150, 80, 80, 80 };
-            DataGridViewContentAlignment[] colAligment = { DataGridViewContentAlignment.MiddleRight, DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleLeft,
-                DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleCenter,
-                DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleCenter, DataGridViewContentAlignment.MiddleLeft,
-                DataGridViewContentAlignment.MiddleCenter, DataGridViewContentAlignment.MiddleLeft, DataGridViewContentAlignment.MiddleCenter};
+            DataGridViewContentAlignment[] colAligment = { right, left, left, left, left, left, center, left, left, center, left, center, left, center};
 
             for (int i = 0; i < colNames.Length; i++)
             {
@@ -1842,6 +1843,8 @@ namespace Productivity
                         {
                             countOrder++;
 
+                            bool isMakeready = false;
+
                             List<UserShiftOrder> userShiftOrders = SelectedFullStepsForCurrentOrder(userShift.Orders.GetRange(currentStep, userShift.Orders.Count - currentStep), userShift.Orders[currentStep].IdManOrderJobItem);
 
                             for (int l = 0; l < userShiftOrders.Count; l++)
@@ -1905,19 +1908,27 @@ namespace Productivity
                                     }
                                 }
 
-                                if (order.Status == 2)
+                                if (orderPreviousAmount > 0)
                                 {
-                                    if (orderPreviousAmount > 0)
+                                    normTimeGeneral = (int)lastTime;
+                                    normTimeFull = (int)lastTime;
+                                }
+                                else
+                                {
+                                    if (isMakeready)
                                     {
-                                        normTimeGeneral = (int)lastTime;
-                                        normTimeFull = (int)lastTime;
+                                        normTimeGeneral = normtime[1];
                                     }
                                     else
                                     {
                                         normTimeGeneral = normtime[0] + normtime[1];
-                                        normTimeFull = view.NormTimeMakeReady + view.NormTimeWork;
                                     }
+                                    
+                                    normTimeFull = view.NormTimeMakeReady + view.NormTimeWork;
+                                }
 
+                                if (order.Status == 2)
+                                {
                                     //dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, order.DateEnd);
                                     //dinnerTime += AddDinnerTimeToWorkingOut(order.DateBegin, time.DateTimeAmountMunutes(order.DateBegin, (int)Math.Round(userWorkingOut)));
                                     //dinnerTime += AddDinnerTimeToWorkingOut(order.DateBegin, order.DateEnd);
@@ -1930,17 +1941,6 @@ namespace Productivity
 
                                 if (order.Status != 2)
                                 {
-                                    if (orderPreviousAmount > 0)
-                                    {
-                                        normTimeGeneral = (int)lastTime;
-                                        normTimeFull = (int)lastTime;
-                                    }
-                                    else
-                                    {
-                                        normTimeGeneral = normtime[0] + normtime[1];
-                                        normTimeFull = view.NormTimeMakeReady + view.NormTimeWork;
-                                    }
-
                                     //timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull);
 
                                     //if (user.Shifts[0].Orders[indexesUserShiftsOrders[0]].DateBegin == user.Shifts[0].Orders[indexesUserShiftsOrders[indexesUserShiftsOrders.Count - 1]].DateEnd)
@@ -2004,6 +2004,11 @@ namespace Productivity
                                             view.TimeEnd = order.DateEnd + " ";
                                         }
                                     }
+                                }
+
+                                if (order.Flags == 576)
+                                {
+                                    isMakeready = true;
                                 }
 
                                 indexRow = dataGridViewOneShift.Rows.Add();
