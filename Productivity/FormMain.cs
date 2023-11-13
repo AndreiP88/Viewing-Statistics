@@ -1641,13 +1641,16 @@ namespace Productivity
         {
             int result = 0;
 
-            DateTime firstDateTime = Convert.ToDateTime(firstTime);
-            DateTime secondDateTime = Convert.ToDateTime(secondTime);
+            DateTime inFirstDateTime = Convert.ToDateTime(firstTime);
+            DateTime inSecondDateTime = Convert.ToDateTime(secondTime);
+
+            DateTime firstDateTime = new DateTime(inFirstDateTime.Year, inFirstDateTime.Month, inFirstDateTime.Day);
+            DateTime secondDateTime = new DateTime(inSecondDateTime.Year, inSecondDateTime.Month, inSecondDateTime.Day);
 
             string[] breakeTimes = { "11:30", "30", "15:30", "30", "18:00", "10", "23:30", "30", "03:30", "30", "06:00", "10" };
 
-            int dayDifference = secondDateTime.Subtract(firstDateTime).Days;
-
+            int dayDifference = (int)(secondDateTime - firstDateTime).Days;
+            
             for (int day = 0; day <= dayDifference; day++)
             {
                 DateTime selectDate = firstDateTime.AddDays(day);
