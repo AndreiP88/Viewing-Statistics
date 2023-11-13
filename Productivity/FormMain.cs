@@ -1859,7 +1859,11 @@ namespace Productivity
 
                                 if (order.Flags != 576)
                                 {
-                                    view.Done += order.FactOutQty;
+                                    if (order.IdletimeName == "")
+                                    {
+                                        view.Done += order.FactOutQty;
+                                    }
+                                        
                                     view.Amount = order.PlanOutQty;
                                     view.NormTimeWork = order.Normtime;
                                     view.IdletimeName = "работа";
@@ -2055,11 +2059,14 @@ namespace Productivity
                                 {
                                     dataGridViewOneShift.Rows[indexRow].Cells[10].Value = view.TimePlanedEndOrder;
 
-                                    dataGridViewOneShift.Rows[indexRow].Cells[11].Value = time.MinuteToTimeString(view.DifferentTime);
+                                    if (l == userShiftOrders.Count - 1)
+                                    {
+                                        dataGridViewOneShift.Rows[indexRow].Cells[11].Value = time.MinuteToTimeString(view.DifferentTime);
+                                    }
                                 }
                                 else
                                 {
-                                    if (currentStep == userShift.Orders.Count - 1)
+                                    if ((currentStep == userShift.Orders.Count - 1) && !shifts.CheckShiftIsActive(order.IDFBCBrigade))
                                     {
                                         dataGridViewOneShift.Rows[indexRow].Cells[11].Value = time.MinuteToTimeString(view.DifferentTime);
                                     }
