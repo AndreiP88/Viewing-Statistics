@@ -1838,9 +1838,11 @@ namespace Productivity
 
                         int currentStep = 0;
                         int countOrder = 0;
+                        int countOperation = 0;
 
                         while (currentStep < userShift.Orders.Count)
                         {
+                            countOperation++;
                             countOrder++;
 
                             bool isMakeready = false;
@@ -1877,6 +1879,8 @@ namespace Productivity
 
                                 if (order.IdletimeName != "")
                                 {
+                                    countOrder--;
+
                                     view.IdletimeName = order.IdletimeName;
 
                                     if (order.FactOutQty > 0)
@@ -2021,7 +2025,11 @@ namespace Productivity
 
                                 if (l == 0)
                                 {
-                                    dataGridViewOneShift.Rows[indexRow].Cells[0].Value = (countOrder).ToString();
+                                    if (order.IdletimeName == "")
+                                    {
+                                        dataGridViewOneShift.Rows[indexRow].Cells[0].Value = (countOrder).ToString();
+                                    }
+                                    
                                     dataGridViewOneShift.Rows[indexRow].Cells[1].Value = "    " + machines[usersShiftList[j].Equip];
                                     dataGridViewOneShift.Rows[indexRow].Cells[2].Value = order.OrderNumber;
                                     dataGridViewOneShift.Rows[indexRow].Cells[3].Value = order.OrderName;
@@ -2095,7 +2103,7 @@ namespace Productivity
 
                                 Color color = Color.White;
 
-                                if (countOrder % 2 == 0)
+                                if (countOperation % 2 == 0)
                                 {
                                     color = Color.Gainsboro;
                                 }

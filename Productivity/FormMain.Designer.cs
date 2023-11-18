@@ -334,7 +334,7 @@ namespace Productivity
             this.dateTimePicker1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dateTimePicker1.Location = new System.Drawing.Point(3, 3);
             this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(174, 26);
+            this.dateTimePicker1.Size = new System.Drawing.Size(174, 23);
             this.dateTimePicker1.TabIndex = 0;
             this.dateTimePicker1.ValueChanged += new System.EventHandler(this.dateTimePicker1_ValueChanged);
             // 
@@ -346,7 +346,7 @@ namespace Productivity
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(183, 3);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(154, 28);
+            this.comboBox1.Size = new System.Drawing.Size(154, 24);
             this.comboBox1.TabIndex = 2;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
@@ -467,7 +467,7 @@ namespace Productivity
             0,
             0});
             this.formattedNumericUpDown4.Name = "formattedNumericUpDown4";
-            this.formattedNumericUpDown4.Size = new System.Drawing.Size(54, 26);
+            this.formattedNumericUpDown4.Size = new System.Drawing.Size(54, 23);
             this.formattedNumericUpDown4.TabIndex = 10;
             this.formattedNumericUpDown4.Value = new decimal(new int[] {
             1,
@@ -576,7 +576,7 @@ namespace Productivity
             "Группировка по сотруднику"});
             this.comboBox4.Location = new System.Drawing.Point(243, 3);
             this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(234, 28);
+            this.comboBox4.Size = new System.Drawing.Size(234, 24);
             this.comboBox4.TabIndex = 5;
             this.comboBox4.SelectedIndexChanged += new System.EventHandler(this.comboBox4_SelectedIndexChanged);
             // 
@@ -588,7 +588,7 @@ namespace Productivity
             this.comboBox3.FormattingEnabled = true;
             this.comboBox3.Location = new System.Drawing.Point(123, 3);
             this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(114, 28);
+            this.comboBox3.Size = new System.Drawing.Size(114, 24);
             this.comboBox3.TabIndex = 4;
             this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
             // 
@@ -600,7 +600,7 @@ namespace Productivity
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Location = new System.Drawing.Point(3, 3);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(114, 28);
+            this.comboBox2.Size = new System.Drawing.Size(114, 24);
             this.comboBox2.TabIndex = 3;
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
@@ -674,7 +674,7 @@ namespace Productivity
             this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBox1.Location = new System.Drawing.Point(3, 3);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(134, 26);
+            this.textBox1.Size = new System.Drawing.Size(134, 23);
             this.textBox1.TabIndex = 0;
             this.textBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox1_KeyPress);
             // 
@@ -696,7 +696,7 @@ namespace Productivity
             this.comboBox6.FormattingEnabled = true;
             this.comboBox6.Location = new System.Drawing.Point(243, 3);
             this.comboBox6.Name = "comboBox6";
-            this.comboBox6.Size = new System.Drawing.Size(402, 28);
+            this.comboBox6.Size = new System.Drawing.Size(402, 24);
             this.comboBox6.TabIndex = 2;
             this.comboBox6.SelectedIndexChanged += new System.EventHandler(this.comboBox6_SelectedIndexChanged);
             // 
@@ -1029,7 +1029,7 @@ namespace Productivity
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(146, 35);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(81, 20);
+            this.label2.Size = new System.Drawing.Size(64, 17);
             this.label2.TabIndex = 4;
             this.label2.Text = "ЧЧЧ:ММ";
             // 
@@ -1039,7 +1039,7 @@ namespace Productivity
             this.label1.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(70, 31);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(15, 23);
+            this.label1.Size = new System.Drawing.Size(12, 17);
             this.label1.TabIndex = 3;
             this.label1.Text = ":";
             // 
@@ -1053,7 +1053,7 @@ namespace Productivity
             0,
             0});
             this.formattedNumericUpDown2.Name = "formattedNumericUpDown2";
-            this.formattedNumericUpDown2.Size = new System.Drawing.Size(57, 26);
+            this.formattedNumericUpDown2.Size = new System.Drawing.Size(57, 23);
             this.formattedNumericUpDown2.TabIndex = 2;
             // 
             // formattedNumericUpDown1
@@ -1066,7 +1066,7 @@ namespace Productivity
             0,
             0});
             this.formattedNumericUpDown1.Name = "formattedNumericUpDown1";
-            this.formattedNumericUpDown1.Size = new System.Drawing.Size(57, 26);
+            this.formattedNumericUpDown1.Size = new System.Drawing.Size(57, 23);
             this.formattedNumericUpDown1.TabIndex = 1;
             this.formattedNumericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.formattedNumericUpDown1.UpDownAlign = System.Windows.Forms.LeftRightAlignment.Left;
@@ -1097,7 +1097,7 @@ namespace Productivity
             0,
             0});
             this.formattedNumericUpDown3.Name = "formattedNumericUpDown3";
-            this.formattedNumericUpDown3.Size = new System.Drawing.Size(57, 26);
+            this.formattedNumericUpDown3.Size = new System.Drawing.Size(57, 23);
             this.formattedNumericUpDown3.TabIndex = 0;
             this.formattedNumericUpDown3.Value = new decimal(new int[] {
             1,
@@ -1270,7 +1270,7 @@ namespace Productivity
             this.comboBox5.FormattingEnabled = true;
             this.comboBox5.Location = new System.Drawing.Point(3, 3);
             this.comboBox5.Name = "comboBox5";
-            this.comboBox5.Size = new System.Drawing.Size(318, 28);
+            this.comboBox5.Size = new System.Drawing.Size(318, 24);
             this.comboBox5.TabIndex = 0;
             this.comboBox5.SelectedIndexChanged += new System.EventHandler(this.comboBox5_SelectedIndexChanged);
             // 
@@ -1385,7 +1385,7 @@ namespace Productivity
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(65, 24);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(254, 20);
+            this.label4.Size = new System.Drawing.Size(198, 17);
             this.label4.TabIndex = 1;
             this.label4.Text = "количество дней для показа";
             // 
@@ -1399,7 +1399,7 @@ namespace Productivity
             0,
             0});
             this.formattedNumericUpDown5.Name = "formattedNumericUpDown5";
-            this.formattedNumericUpDown5.Size = new System.Drawing.Size(53, 26);
+            this.formattedNumericUpDown5.Size = new System.Drawing.Size(53, 23);
             this.formattedNumericUpDown5.TabIndex = 0;
             // 
             // groupBox6
@@ -1425,7 +1425,7 @@ namespace Productivity
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(432, 25);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(68, 20);
+            this.label7.Size = new System.Drawing.Size(53, 17);
             this.label7.TabIndex = 5;
             this.label7.Text = "- итоги";
             // 
@@ -1434,7 +1434,7 @@ namespace Productivity
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(281, 25);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(111, 20);
+            this.label8.Size = new System.Drawing.Size(88, 17);
             this.label8.TabIndex = 4;
             this.label8.Text = "- выработка";
             // 
@@ -1448,7 +1448,7 @@ namespace Productivity
             0,
             0});
             this.formattedNumericUpDown9.Name = "formattedNumericUpDown9";
-            this.formattedNumericUpDown9.Size = new System.Drawing.Size(52, 26);
+            this.formattedNumericUpDown9.Size = new System.Drawing.Size(52, 23);
             this.formattedNumericUpDown9.TabIndex = 4;
             // 
             // formattedNumericUpDown8
@@ -1461,7 +1461,7 @@ namespace Productivity
             0,
             0});
             this.formattedNumericUpDown8.Name = "formattedNumericUpDown8";
-            this.formattedNumericUpDown8.Size = new System.Drawing.Size(53, 26);
+            this.formattedNumericUpDown8.Size = new System.Drawing.Size(53, 23);
             this.formattedNumericUpDown8.TabIndex = 3;
             // 
             // label6
@@ -1469,7 +1469,7 @@ namespace Productivity
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(176, 25);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(52, 20);
+            this.label6.Size = new System.Drawing.Size(42, 17);
             this.label6.TabIndex = 3;
             this.label6.Text = "- имя";
             // 
@@ -1483,7 +1483,7 @@ namespace Productivity
             0,
             0});
             this.formattedNumericUpDown7.Name = "formattedNumericUpDown7";
-            this.formattedNumericUpDown7.Size = new System.Drawing.Size(52, 26);
+            this.formattedNumericUpDown7.Size = new System.Drawing.Size(52, 23);
             this.formattedNumericUpDown7.TabIndex = 2;
             // 
             // label5
@@ -1491,7 +1491,7 @@ namespace Productivity
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(59, 25);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(72, 20);
+            this.label5.Size = new System.Drawing.Size(58, 17);
             this.label5.TabIndex = 1;
             this.label5.Text = "- номер";
             // 
@@ -1505,7 +1505,7 @@ namespace Productivity
             0,
             0});
             this.formattedNumericUpDown6.Name = "formattedNumericUpDown6";
-            this.formattedNumericUpDown6.Size = new System.Drawing.Size(52, 26);
+            this.formattedNumericUpDown6.Size = new System.Drawing.Size(52, 23);
             this.formattedNumericUpDown6.TabIndex = 0;
             // 
             // groupBox8
