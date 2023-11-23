@@ -1185,7 +1185,7 @@ namespace Productivity
                 int numberOfShiftsWorkedEquips = equipsListWorkingOut[i].NumberOfShiftsWorked;
                 int numberOfIdleShiftsEquips;
 
-                if (calculateShiftsInIdletime)
+                if (!calculateShiftsInIdletime)
                 {
                     numberOfIdleShiftsEquips = equipsListWorkingOut[i].NumberOfIdleShifts;
                 }
@@ -1257,7 +1257,7 @@ namespace Productivity
                 int numberOfShiftsWorkedUsers = usersListWorkingOut[i].NumberOfShiftsWorked;
                 int numberOfIdleShiftsUsers;
 
-                if (calculateShiftsInIdletime)
+                if (!calculateShiftsInIdletime)
                 {
                     numberOfIdleShiftsUsers = usersListWorkingOut[i].NumberOfIdleShifts;
                 }
