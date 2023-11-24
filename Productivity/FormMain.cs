@@ -918,8 +918,8 @@ namespace Productivity
             cancelTokenSource = new CancellationTokenSource();
 
             Task taskDetails = new Task(() => AddWorkingTimeUsersToListView(cancelTokenSource.Token), cancelTokenSource.Token);
-            //taskDetails.Start();
-            AddWorkingTimeUsersToListView(cancelTokenSource.Token);
+            taskDetails.Start();
+            //AddWorkingTimeUsersToListView(cancelTokenSource.Token);
 
             //Task taskEquips = new Task(() => AddWorkingTimeEquipsToListView(cancelTokenSource.Token), cancelTokenSource.Token);
             //taskEquips.Start();
@@ -970,7 +970,17 @@ namespace Productivity
                         int day = shiftDate.Day;
                         int shiftNumber = shift.ShiftNumber;
 
-                        bool currentShift = CheckCurrentShift(shiftDate, shiftNumber);
+                        bool currentShift;// = CheckCurrentShift(shiftDate, shiftNumber);
+
+                        if(shift.ShiftDateEnd == "")
+                        {
+                            currentShift = true;
+                        }
+                        else
+                        {
+                            currentShift = false;
+                        }
+
                         //Выработка 
                         if (shift.Orders != null)// && !currentShift)
                         {

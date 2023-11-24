@@ -11,8 +11,8 @@ namespace libData
         //public int IdUser;
         public string ShiftDate;
         public int ShiftNumber;
-        string ShiftDateBegin;
-        string ShiftDateEnd;
+        public string ShiftDateBegin;
+        public string ShiftDateEnd;
         public List<UserShiftOrder> Orders;
         public int WorkingOut;
 
