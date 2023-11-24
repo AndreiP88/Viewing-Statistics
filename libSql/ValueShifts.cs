@@ -162,7 +162,9 @@ namespace libSql
 	                        man_planjob_list.id_man_order_job_item, 
 	                        man_planjob_list.id_man_planjob_list, 
                             man_factjob.id_fbc_brigade,
-	                        idletime_directory.idletime_name
+	                        idletime_directory.idletime_name,
+                            fbc_brigade.date_begin 'shif_date_begin',
+                            fbc_brigade.date_end 'shif_date_end'
                         FROM
 	                        dbo.fbc_brigade
 	                        FULL OUTER JOIN
@@ -223,6 +225,14 @@ namespace libSql
                     int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
                     int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
 
+                    string shiftDateBegin = sqlReader["shif_date_begin"].ToString();
+
+                    string shiftDateEnd = "";
+                    if (!DBNull.Value.Equals(sqlReader["shif_date_end"]))
+                    {
+                        shiftDateEnd = sqlReader["shif_date_end"].ToString();
+                    }
+
                     int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser &&
                                                                        v.Equip == loadEquip);
 
@@ -248,7 +258,9 @@ namespace libSql
                     {
                         usersList[indexFromUserList].Shifts.Add(new UserShift(
                         dateShift,
-                        currentShift
+                        currentShift,
+                        shiftDateBegin,
+                        shiftDateEnd
                         ));
 
                         indexShift = usersList[indexFromUserList].Shifts.Count - 1;
@@ -380,7 +392,9 @@ namespace libSql
 	                        man_planjob_list.id_norm_operation, 
 	                        man_planjob_list.id_man_order_job_item, 
 	                        man_planjob_list.id_man_planjob_list,
-                            man_factjob.id_fbc_brigade
+                            man_factjob.id_fbc_brigade,
+                            fbc_brigade.date_begin 'shif_date_begin',
+                            fbc_brigade.date_end 'shif_date_end'
                         FROM
 	                        dbo.man_factjob
                         INNER JOIN
@@ -436,6 +450,14 @@ namespace libSql
                     int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
                     int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
 
+                    string shiftDateBegin = sqlReader["shif_date_begin"].ToString();
+
+                    string shiftDateEnd = "";
+                    if (!DBNull.Value.Equals(sqlReader["shif_date_end"]))
+                    {
+                        shiftDateEnd = sqlReader["shif_date_end"].ToString();
+                    }
+
                     int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser &&
                                                                        v.Equip == loadEquip);
 
@@ -461,7 +483,9 @@ namespace libSql
                     {
                         usersList[indexFromUserList].Shifts.Add(new UserShift(
                         dateShift,
-                        currentShift
+                        currentShift,
+                        shiftDateBegin,
+                        shiftDateEnd
                         ));
 
                         indexShift = usersList[indexFromUserList].Shifts.Count - 1;
@@ -567,7 +591,9 @@ namespace libSql
 	                        man_factjob.id_man_factjob, 
 	                        man_planjob_list.id_norm_operation, 
 	                        man_planjob_list.id_man_order_job_item, 
-	                        man_planjob_list.id_man_planjob_list
+	                        man_planjob_list.id_man_planjob_list,
+                            fbc_brigade.date_begin 'shif_date_begin',
+                            fbc_brigade.date_end 'shif_date_end'
                         FROM
 	                        dbo.fbc_brigade
 	                        INNER JOIN
@@ -628,6 +654,14 @@ namespace libSql
                     int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
                     int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
 
+                    string shiftDateBegin = sqlReader["shif_date_begin"].ToString();
+
+                    string shiftDateEnd = "";
+                    if (!DBNull.Value.Equals(sqlReader["shif_date_end"]))
+                    {
+                        shiftDateEnd = sqlReader["shif_date_end"].ToString();
+                    }
+
                     int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser &&
                                                                        v.Equip == loadEquip);
 
@@ -653,7 +687,9 @@ namespace libSql
                     {
                         usersList[indexFromUserList].Shifts.Add(new UserShift(
                         dateShift,
-                        currentShift
+                        currentShift,
+                        shiftDateBegin,
+                        shiftDateEnd
                         ));
 
                         indexShift = usersList[indexFromUserList].Shifts.Count - 1;

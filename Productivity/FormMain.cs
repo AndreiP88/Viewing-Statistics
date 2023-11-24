@@ -918,8 +918,8 @@ namespace Productivity
             cancelTokenSource = new CancellationTokenSource();
 
             Task taskDetails = new Task(() => AddWorkingTimeUsersToListView(cancelTokenSource.Token), cancelTokenSource.Token);
-            taskDetails.Start();
-            //AddWorkingTimeUsersToListView(cancelTokenSource.Token);
+            //taskDetails.Start();
+            AddWorkingTimeUsersToListView(cancelTokenSource.Token);
 
             //Task taskEquips = new Task(() => AddWorkingTimeEquipsToListView(cancelTokenSource.Token), cancelTokenSource.Token);
             //taskEquips.Start();
@@ -989,8 +989,6 @@ namespace Productivity
                                     timeBacklog = fullOutput - timeWorkigOut;
                                 }
                             }
-
-                            
 
                             if (!currentShift)
                             {
