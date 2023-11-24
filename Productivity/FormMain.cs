@@ -1715,6 +1715,22 @@ namespace Productivity
             }
         }
 
+        private bool isLastRecordOfOrder(List<UserShiftOrder> userShiftOrders)
+        {
+            bool result = true;
+
+            for (int i = 1; i < userShiftOrders.Count; i++)
+            {
+                if (userShiftOrders[i].IdletimeName == "")
+                {
+                    result = false;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
         private bool AreThereAnyMoreOrders(List <UserShiftOrder> userShiftOrders, int idManOrderJobItem)
         {
             bool result = false;
@@ -1993,10 +2009,30 @@ namespace Productivity
                                     {
                                         if (shifts.CheckShiftIsActive(order.IDFBCBrigade))
                                         {
+                                            int normTimeCurrent;
+
+                                            if (order.IdletimeName == "")
+                                            {
+                                                if (isLastRecordOfOrder(userShiftOrders.GetRange(l, userShiftOrders.Count - l)))
+                                                {
+                                                    normTimeCurrent = (int)Math.Round(view.WorkingOut);
+                                                }
+                                                else
+                                                {
+                                                    normTimeCurrent = normTimeGeneral;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                normTimeCurrent = (int)Math.Round(view.WorkingOut);
+                                            }
+
+                                            
+
                                             //dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, DateTime.Now.ToString());
                                             //dinnerTime += AddDinnerTimeToWorkingOut(orderStartTime, time.DateTimeAmountMunutes(orderStartTime, normTimeGeneral));
-                                            dinnerTime = AddDinnerTimeToWorkingOut(timeStartShift, time.DateTimeAmountMunutes(orderStartTime, normTimeGeneral));
-                                            view.TimePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeGeneral + dinnerTime + idletime);
+                                            dinnerTime = AddDinnerTimeToWorkingOut(timeStartShift, time.DateTimeAmountMunutes(orderStartTime, normTimeCurrent));
+                                            view.TimePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeCurrent + dinnerTime + idletime);
                                             view.DifferentTime = time.DateDifferenceToMinutes(view.TimePlanedEndOrder, order.DateEnd);
                                             //view.Duration = time.DateDifferenceToMinutes(view.TimePlanedEndOrder, order.DateBegin);
                                             view.TimeEnd = order.DateEnd + " ";
