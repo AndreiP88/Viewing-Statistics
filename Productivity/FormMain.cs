@@ -30,6 +30,7 @@ namespace Productivity
         bool loadCategoryList = true;
         bool loadPageList = true;
         bool loadParameter = true;
+        bool loadShiftsParameter = true;
 
         Dictionary<int, string> users = new Dictionary<int, string>();
         Dictionary<int, string> machines = new Dictionary<int, string>();
@@ -601,9 +602,12 @@ namespace Productivity
 
         private void ChangeDate()
         {
-            if (comboBox2.SelectedIndex != -1 && comboBox3.SelectedIndex != -1 && comboBox4.SelectedIndex != -1)
+            if (!loadShiftsParameter)
             {
-                UpdateStatistics();
+                if (comboBox2.SelectedIndex != -1 && comboBox3.SelectedIndex != -1 && comboBox4.SelectedIndex != -1)
+                {
+                    UpdateStatistics();
+                }
             }
         }
 
@@ -621,6 +625,8 @@ namespace Productivity
             LoadAllUsers();
             LoadMachine();
 
+            loadShiftsParameter = true;
+
             AddYearsToComboBox(2015, 2050);
             AddMonthToComboBox();
 
@@ -632,6 +638,8 @@ namespace Productivity
             comboBox4.SelectedIndex = 0;
 
             metroSetTabControl1.SelectTab(settings.GetLastTabIndex());
+
+            loadShiftsParameter = false;
 
             TabControlSelectedIndexChanged(metroSetTabControl1.SelectedIndex);
         }
@@ -2785,7 +2793,8 @@ namespace Productivity
 
             if (selectedIndex == 1)
             {
-                UpdateStatistics();
+                //UpdateStatistics();
+                ChangeDate();
             }
 
             if (selectedIndex == 3)
