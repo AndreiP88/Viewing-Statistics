@@ -1706,7 +1706,7 @@ namespace Productivity
             DataGridViewContentAlignment center = DataGridViewContentAlignment.MiddleCenter;
 
             string[] colNames = { "№", "Имя", "Заказ", "Заказчик", "Операция", "Остаток | Тираж", "Дано времени", "Начало", "Завершение", "Продолжительность", "Планируемое время завершения", "Отклонение", "Сделано", "Выработка" };
-            int[] colWidth = { 30, 300, 100, 250, 200, 140, 70, 150, 150, 80, 150, 80, 80, 80 };
+            int[] colWidth = { 30, 300, 100, 250, 200, 140, 70, 170, 170, 80, 150, 80, 80, 80 };
             DataGridViewContentAlignment[] colAligment = { right, left, left, left, left, left, center, left, left, center, left, center, left, center};
 
             for (int i = 0; i < colNames.Length; i++)
@@ -1871,6 +1871,9 @@ namespace Productivity
                         int currentStep = 0;
                         int countOrder = 0;
                         int countOperation = 0;
+
+                        dataGridViewOneShift.Rows[indexRow].Cells[7].Value = userShift.ShiftDateBegin;
+                        dataGridViewOneShift.Rows[indexRow].Cells[8].Value = userShift.ShiftDateEnd;
 
                         while (currentStep < userShift.Orders.Count)
                         {
@@ -2042,8 +2045,6 @@ namespace Productivity
                                             {
                                                 normTimeCurrent = (int)Math.Round(view.WorkingOut);
                                             }
-
-                                            
 
                                             //dinnerTime += AddDinnerTimeToWorkingOut(selectDate, order.DateBegin, DateTime.Now.ToString());
                                             //dinnerTime += AddDinnerTimeToWorkingOut(orderStartTime, time.DateTimeAmountMunutes(orderStartTime, normTimeGeneral));
