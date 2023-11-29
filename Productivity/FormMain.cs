@@ -2113,6 +2113,17 @@ namespace Productivity
                                     {
                                         dataGridViewOneShift.Rows[indexRow].Cells[11].Value = time.MinuteToTimeString(view.DifferentTime);
                                     }
+
+                                    if (order.IdletimeName != "" && order.FactOutQty > 0)
+                                    {
+                                        dataGridViewOneShift.Rows[indexRow].Cells[10].Value = view.TimePlanedEndOrder;
+                                        dataGridViewOneShift.Rows[indexRow].Cells[11].Value = time.MinuteToTimeString(view.DifferentTime);
+                                    }
+                                }
+
+                                if (view.Done > 0)
+                                {
+                                    dataGridViewOneShift.Rows[indexRow].Cells[12].Value = view.Done.ToString("N0");
                                 }
 
                                 //тут еще ничего не работает
@@ -2124,7 +2135,7 @@ namespace Productivity
                                 dataGridViewOneShift.Rows[indexRow].Cells[9].Value = time.MinuteToTimeString(view.Duration);
                                 
                                 //dataGridViewOneShift.Rows[indexRow].Cells[11].Value = time.MinuteToTimeString(view.DifferentTime);
-                                dataGridViewOneShift.Rows[indexRow].Cells[12].Value = view.Done.ToString("N0");
+                                //dataGridViewOneShift.Rows[indexRow].Cells[12].Value = view.Done.ToString("N0");
                                 dataGridViewOneShift.Rows[indexRow].Cells[13].Value = time.MinuteToTimeString((int)Math.Round(view.WorkingOut));
 
                                 if (view.DifferentTime >= 0)
