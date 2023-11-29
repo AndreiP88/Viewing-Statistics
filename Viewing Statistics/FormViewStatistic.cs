@@ -298,7 +298,7 @@ namespace Viewing_Statistics
 
                 //Сделать
                 int fullWidthColForDay = wColVal * countOutValue * countShifts;
-                int widthForColsVal = width - (wColNum + wColName + wColResults * 3);
+                int widthForColsVal = width - (wColNum + wColName + wColResults * countOutValue * 2);
                 //MessageBox.Show(width + "");
                 period = widthForColsVal / fullWidthColForDay;
             }
@@ -464,7 +464,7 @@ namespace Viewing_Statistics
 
             if (autoWidthColVal)
             {
-                int wForValue = width - (wColNum + wColName + wColResults * 3) - 8;
+                int wForValue = width - (wColNum + wColName + wColResults * countOutValue * 2) - 8;
                 int wTemp = wForValue / (period * countOutValue * 2);
 
                 if (wTemp >= wColVal)
@@ -507,7 +507,29 @@ namespace Viewing_Statistics
                 gridView.Columns[indexCol].Frozen = false;
             }
 
-            indexCol = gridView.Columns.Add(@"totalWOut0", @"");
+            for (int i = 0; i < countOutValue * 2; i++)
+            {
+                if (i % (countOutValue) == 0 || i == 0)
+                {
+                    int n = i / countOutValue;
+
+                    //nameCol.Add(startPeriod.AddDays(n).ToString("dd.MM.yyyy"));
+
+                    indexCol = gridView.Columns.Add(startPeriod.AddMonths(n - 1).ToString("MM.yyyy"), @"");
+                }
+                else
+                {
+                    indexCol = gridView.Columns.Add(@"colRes" + i, @"");
+                }
+
+                //indexCol = gridView.Columns.Add(nameCol[nameCol.Count - 1], @"");
+                gridView.Columns[indexCol].Width = wColResults;
+                gridView.Columns[indexCol].SortMode = DataGridViewColumnSortMode.NotSortable;
+                gridView.Columns[indexCol].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                gridView.Columns[indexCol].Frozen = false;
+            }
+
+            /*indexCol = gridView.Columns.Add(@"totalWOut0", @"");
             gridView.Columns[indexCol].Width = wColResults;
             gridView.Columns[indexCol].SortMode = DataGridViewColumnSortMode.NotSortable;
             gridView.Columns[indexCol].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -523,10 +545,11 @@ namespace Viewing_Statistics
             gridView.Columns[indexCol].Width = wColResults;
             gridView.Columns[indexCol].SortMode = DataGridViewColumnSortMode.NotSortable;
             gridView.Columns[indexCol].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            gridView.Columns[indexCol].Frozen = false;
+            gridView.Columns[indexCol].Frozen = false;*/
 
             int indexRow;
 
+            //Строка с датой
             indexRow = gridView.Rows.Add();
             gridView.Rows[indexRow].Frozen = true;
 
@@ -541,9 +564,10 @@ namespace Viewing_Statistics
                 gridView.Rows[indexRow].Cells[i].Value = nameCol[((i - 2) + countShifts * countOutValue) / (countShifts * countOutValue) - 1];
             }
 
-            AddCellToGrid(gridView, indexRow, countShifts * period * countOutValue + 2, 3);
-            gridView.Rows[indexRow].Cells[countShifts * period * countOutValue + 2].Value = "";
+            AddCellToGrid(gridView, indexRow, countShifts * period * countOutValue + 2, countOutValue * 2);
+            gridView.Rows[indexRow].Cells[countShifts * period * countOutValue + 2].Value = "Итоги за период";
 
+            //Строка с номерами смен
             indexRow = gridView.Rows.Add();
             gridView.Rows[indexRow].Frozen = true;
 
@@ -562,9 +586,13 @@ namespace Viewing_Statistics
                 }
             }
 
-            AddCellToGrid(gridView, indexRow, countShifts * period * countOutValue + 2, 3);
-            gridView.Rows[indexRow].Cells[countShifts * period * countOutValue + 2].Value = "";
+            AddCellToGrid(gridView, indexRow, countShifts * period * countOutValue + 2, countOutValue);
+            gridView.Rows[indexRow].Cells[countShifts * period * countOutValue + 2].Value = startPeriod.AddMonths(-1).ToString("MM.yyyy");
 
+            AddCellToGrid(gridView, indexRow, countShifts * period * countOutValue + countOutValue + 2, countOutValue);
+            gridView.Rows[indexRow].Cells[countShifts * period * countOutValue + countOutValue + 2].Value = startPeriod.ToString("MM.yyyy");
+
+            //Строка с названиями столбцов "Т, %, П"
             indexRow = gridView.Rows.Add();
             gridView.Rows[indexRow].Frozen = true;
 
@@ -595,8 +623,29 @@ namespace Viewing_Statistics
                 }
             }
 
-            AddCellToGrid(gridView, indexRow, countShifts * period * countOutValue + 2, 3);
-            gridView.Rows[indexRow].Cells[countShifts * period * countOutValue + 2].Value = "";
+            for (int j = 0; j < 2; j++)
+            {
+                for (int k = 0; k < countOutValue; k++)
+                {
+                    int n = j * countOutValue + countShifts * period * countOutValue + 2 + k;
+
+                    AddCellToGrid(gridView, indexRow, n);
+
+                    gridView.Rows[indexRow].Cells[n].Value = colCaption[k];
+
+                    for (int v = k; v < outValues.Count; v++)
+                    {
+                        if (outValues[v] != "0")
+                        {
+                            gridView.Rows[indexRow].Cells[n].Value = colCaption[v];
+                            break;
+                        }
+                    }
+                }
+            }
+
+            //AddCellToGrid(gridView, indexRow, countShifts * period * countOutValue + 2, 3);
+            //gridView.Rows[indexRow].Cells[countShifts * period * countOutValue + 2].Value = "";
 
             return gridView;
         }
@@ -1170,34 +1219,29 @@ namespace Viewing_Statistics
         {
             float workingOut = 0;
 
-            /*for (int i = 0; i < order.Count; i++)
+            for (int i = 0; i < order.Count; i++)
             {
-                if (order[i].Flags == 576)
+                workingOut += CalculateWorkTimeForOneOrder(order[i]);
+            }
+
+            return workingOut;
+        }
+
+        private float CalculateWorkTimeForOneOrder(UserShiftOrder order)
+        {
+            float workingOut = 0;
+
+            if (order.Normtime > 0)
+            {
+                if (order.PlanOutQty > 0)
                 {
-                    workingOut += order[i].Normtime;
+                    workingOut += ((float)order.FactOutQty * (float)order.Normtime) / (float)order.PlanOutQty;
                 }
                 else
                 {
-                    if (order[i].Normtime > 0)
+                    if (order.FactOutQty > 0)
                     {
-                        float norm = (float)order[i].PlanOutQty / (float)order[i].Normtime;
-
-                        if (norm > 0)
-                        {
-                            workingOut += order[i].FactOutQty / norm;
-                        }
-                    }
-                }
-            }*/
-
-
-            for (int i = 0; i < order.Count; i++)
-            {
-                if (order[i].Normtime > 0)
-                {
-                    if (order[i].PlanOutQty > 0)
-                    {
-                        workingOut += ((float)order[i].FactOutQty * (float)order[i].Normtime) / (float)order[i].PlanOutQty;
+                        workingOut += (float)order.Normtime;
                     }
                 }
             }

@@ -1346,35 +1346,9 @@ namespace Productivity
         {
             float workingOut = 0;
 
-            /*for (int i = 0; i < order.Count; i++)
-            {
-                if (order[i].Flags == 576)
-                {
-                    workingOut += order[i].Normtime;
-                }
-                else
-                {
-                    if (order[i].Normtime > 0)
-                    {
-                        float norm = (float)order[i].PlanOutQty / (float)order[i].Normtime;
-
-                        if (norm > 0)
-                        {
-                            workingOut += order[i].FactOutQty / norm;
-                        }
-                    }
-                }
-            }*/
-
             for (int i = 0; i < order.Count; i++)
             {
-                if (order[i].Normtime > 0)
-                {
-                    if (order[i].PlanOutQty > 0)
-                    {
-                        workingOut += ((float)order[i].FactOutQty * (float)order[i].Normtime) / (float)order[i].PlanOutQty;
-                    }
-                }
+                workingOut += CalculateWorkTimeForOneOrder(order[i]);
             }
 
             return workingOut;
@@ -1406,6 +1380,13 @@ namespace Productivity
                 if (order.PlanOutQty > 0)
                 {
                     workingOut += ((float)order.FactOutQty * (float)order.Normtime) / (float)order.PlanOutQty;
+                }
+                else
+                {
+                    if (order.FactOutQty > 0)
+                    {
+                        workingOut += (float)order.Normtime;
+                    }
                 }
             }
 
@@ -1920,7 +1901,8 @@ namespace Productivity
 
                                     if (order.FactOutQty > 0)
                                     {
-                                        idletime += order.Normtime;
+                                        //idletime += order.Normtime
+                                        //Поскольку время планового простоя учитывается в выработке, то не смысла в этой записи
                                     }
                                 }
 
