@@ -1712,7 +1712,7 @@ namespace Productivity
             }
         }
 
-        private bool isLastRecordOfOrder(List<UserShiftOrder> userShiftOrders)
+        private bool IsLastRecordOfOrder(List<UserShiftOrder> userShiftOrders)
         {
             bool result = true;
 
@@ -2014,7 +2014,7 @@ namespace Productivity
 
                                             if (order.IdletimeName == "")
                                             {
-                                                if (isLastRecordOfOrder(userShiftOrders.GetRange(l, userShiftOrders.Count - l)))
+                                                if (IsLastRecordOfOrder(userShiftOrders.GetRange(l, userShiftOrders.Count - l)))
                                                 {
                                                     normTimeCurrent = (int)Math.Round(view.WorkingOut);
                                                 }
