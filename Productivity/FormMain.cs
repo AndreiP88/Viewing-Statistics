@@ -1659,6 +1659,7 @@ namespace Productivity
 
                     if (firstDateTime < breakeDateTime && breakeDateTime < secondDateTime)
                     {
+                        secondDateTime.AddMinutes(breakTime);
                         result += breakTime;
                     }
                 }
