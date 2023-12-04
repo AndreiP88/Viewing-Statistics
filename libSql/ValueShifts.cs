@@ -22,11 +22,13 @@ namespace libSql
 
             int countDaysFromSellectedDate = DateTime.DaysInMonth(selectDate.Year, selectDate.Month);
 
+            DateTime startMonth = DateTime.MinValue.AddYears(selectDate.Year - 1).AddMonths(selectDate.Month - 1);
+
             for (int currentDay = 0; currentDay < countDaysFromSellectedDate; currentDay++)
             {
                 for (int currentShift = 1; currentShift <= countShifts; currentShift++)
                 {
-                    DateTime currentDate = selectDate.AddDays(currentDay);
+                    DateTime currentDate = startMonth.AddDays(currentDay);
 
                     List<User> loadedList = LoadOrders(currentDate, currentShift, givenShiftNumber);
 

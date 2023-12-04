@@ -1327,6 +1327,7 @@ namespace Productivity
                 }));
             }
         }
+
         private bool IsThereOrdersInWorking(List<UserShiftOrder> orders)
         {
             bool result = false;

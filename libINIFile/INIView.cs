@@ -66,6 +66,19 @@ namespace libINIFile
         }
 
         /// <summary>
+        /// Учитавыть при рассчетах смены без выработки
+        /// </summary>
+        /// <returns></returns>
+        public bool GetCalculateShiftsInIdletime()
+        {
+            bool result = false;
+
+            result = GetParameterBoolean("main", "calculateShiftsInIdletime");
+
+            return result;
+        }
+
+        /// <summary>
         /// Получит норму выработки за смену
         /// </summary>
         /// <returns></returns>
