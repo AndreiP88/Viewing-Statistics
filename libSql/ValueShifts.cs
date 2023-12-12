@@ -34,8 +34,7 @@ namespace libSql
 
                     for (int i = 0; i < loadedList.Count; i++)
                     {
-                        int indexFromUserList = usersList.FindIndex((v) => v.Id == loadedList[i].Id &&
-                                                                           v.Equip == loadedList[i].Equip);
+                        int indexFromUserList = usersList.FindIndex((v) => v.Id == loadedList[i].Id);
 
                         if (indexFromUserList != -1)
                         {
@@ -82,8 +81,7 @@ namespace libSql
 
                     for (int i = 0; i < loadedList.Count; i++)
                     {
-                        int indexFromUserList = usersList.FindIndex((v) => v.Id == loadedList[i].Id &&
-                                                                           v.Equip == loadedList[i].Equip);
+                        int indexFromUserList = usersList.FindIndex((v) => v.Id == loadedList[i].Id);
 
                         if (indexFromUserList != -1)
                         {
@@ -235,14 +233,15 @@ namespace libSql
                         shiftDateEnd = sqlReader["shif_date_end"].ToString();
                     }
 
-                    int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser &&
-                                                                       v.Equip == loadEquip);
+                    /*int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser &&
+                                                                       v.Equip == loadEquip);*/
+
+                    int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser);
 
                     if (indexFromUserList == -1)
                     {
                         usersList.Add(new User(
-                            loadUser,
-                            loadEquip
+                            loadUser
                         ));
 
                         indexFromUserList = usersList.Count - 1;
@@ -268,6 +267,11 @@ namespace libSql
                         indexShift = usersList[indexFromUserList].Shifts.Count - 1;
 
                         usersList[indexFromUserList].Shifts[indexShift].Orders = new List<UserShiftOrder>();
+
+                        if (!usersList[indexFromUserList].Shifts[indexShift].Equips.Contains(loadEquip))
+                        {
+                            usersList[indexFromUserList].Shifts[indexShift].Equips.Add(loadEquip);
+                        }
                     }
 
                     string orderNum = "";
@@ -318,6 +322,7 @@ namespace libSql
                     }
 
                     usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
+                        loadEquip,
                         orderNum,
                         ulName,
                         Convert.ToInt32(sqlReader["status"]),
@@ -460,14 +465,12 @@ namespace libSql
                         shiftDateEnd = sqlReader["shif_date_end"].ToString();
                     }
 
-                    int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser &&
-                                                                       v.Equip == loadEquip);
+                    int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser);
 
                     if (indexFromUserList == -1)
                     {
                         usersList.Add(new User(
-                            loadUser,
-                            loadEquip
+                            loadUser
                         ));
 
                         indexFromUserList = usersList.Count - 1;
@@ -516,6 +519,7 @@ namespace libSql
                     }
 
                     usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
+                        loadEquip,
                         sqlReader["order_num"].ToString(),
                         sqlReader["ul_name"].ToString(),
                         Convert.ToInt32(sqlReader["status"]),
@@ -664,14 +668,12 @@ namespace libSql
                         shiftDateEnd = sqlReader["shif_date_end"].ToString();
                     }
 
-                    int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser &&
-                                                                       v.Equip == loadEquip);
+                    int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser);
 
                     if (indexFromUserList == -1)
                     {
                         usersList.Add(new User(
-                            loadUser,
-                            loadEquip
+                            loadUser
                         ));
 
                         indexFromUserList = usersList.Count - 1;
@@ -720,6 +722,7 @@ namespace libSql
                     }
 
                     usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
+                        loadEquip,
                         sqlReader["order_num"].ToString(),
                         sqlReader["ul_name"].ToString(),
                         Convert.ToInt32(sqlReader["status"]),

@@ -9,15 +9,15 @@ namespace libData
     public class User
     {
         public int Id;
-        public int Equip;
+        //public int Equip;
         public List<UserShift> Shifts;
         public float WorkingOutUser;
         public float WorkingOutBacklog;
 
-        public User(int id, int equip)
+        public User(int id)
         {
             this.Id = id;
-            this.Equip = equip;
+            //this.Equip = equip;
         }
     }
 }

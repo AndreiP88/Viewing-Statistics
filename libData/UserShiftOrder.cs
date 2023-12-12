@@ -8,6 +8,7 @@ namespace libData
 {
     public class UserShiftOrder
     {
+        public int IdEquip;
         public string OrderNumber;
         public string OrderName;
         public int Status;
@@ -22,8 +23,9 @@ namespace libData
         public int IDFBCBrigade;
         public string IdletimeName;
 
-        public UserShiftOrder(string orderNumber, string orderName, int status, int flags, string dateBegin, string dateEnd, int duration, int factOutQty, int planOutQty, int normtime, int idManOrderJobItem, int idFBCBrigade, string idletimeName)
+        public UserShiftOrder(int idEquip, string orderNumber, string orderName, int status, int flags, string dateBegin, string dateEnd, int duration, int factOutQty, int planOutQty, int normtime, int idManOrderJobItem, int idFBCBrigade, string idletimeName)
         {
+            this.IdEquip = idEquip;
             this.OrderNumber = orderNumber;
             this.OrderName = orderName;
             this.Status = status;

@@ -147,10 +147,9 @@ namespace libSql
 
                     if (users.Contains(loadUser))
                     {
-                        if (usersList.FindIndex((v) => v.Id == loadUser &&
-                                                       v.Equip == loadEquip) == -1)
+                        if (usersList.FindIndex((v) => v.Id == loadUser) == -1)
                         {
-                            usersList.Add(new User(loadUser, loadEquip));
+                            usersList.Add(new User(loadUser));
                             usersList[usersList.Count - 1].Shifts = new List<UserShift>();
                         }
                     }

@@ -14,6 +14,7 @@ namespace libData
         public string ShiftDateBegin;
         public string ShiftDateEnd;
         public List<UserShiftOrder> Orders;
+        public List<int> Equips = new List<int>();
         public int WorkingOut;
 
         public UserShift(string shiftDate, int shiftNumber, string shiftDateBegin, string shiftDateEnd) 

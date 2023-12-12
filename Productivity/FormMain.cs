@@ -502,6 +502,14 @@ namespace Productivity
             dataGridView1.Columns[indexColumn].Width = 100;
             dataGridView1.Columns[indexColumn].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
+            indexColumn = dataGridView1.Columns.Add(@"colGroup", @"Простои, смен");
+            dataGridView1.Columns[indexColumn].Width = 100;
+            dataGridView1.Columns[indexColumn].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            indexColumn = dataGridView1.Columns.Add(@"colGroup", @"Простои, часов");
+            dataGridView1.Columns[indexColumn].Width = 100;
+            dataGridView1.Columns[indexColumn].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
             indexColumn = dataGridView1.Columns.Add(@"colGroup", @"Выработка");
             dataGridView1.Columns[indexColumn].Width = 100;
             dataGridView1.Columns[indexColumn].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
@@ -524,8 +532,11 @@ namespace Productivity
             AddCellToGrid(0, days * countShifts + 2, 2);
             dataGridView1.Rows[0].Cells[days * countShifts + 2].Value = "Отработано";
 
-            AddCellToGrid(0, days * countShifts + 4, 3);
-            dataGridView1.Rows[0].Cells[days * countShifts + 4].Value = "Производительность";
+            AddCellToGrid(0, days * countShifts + 4, 2);
+            dataGridView1.Rows[0].Cells[days * countShifts + 4].Value = "Простои";
+
+            AddCellToGrid(0, days * countShifts + 6, 3);
+            dataGridView1.Rows[0].Cells[days * countShifts + 6].Value = "Производительность";
 
             for (int i = 2; i <= days * countShifts; i+=countShifts)
             {
@@ -547,13 +558,19 @@ namespace Productivity
             dataGridView1.Rows[1].Cells[days * countShifts + 3].Value = "Часов";
 
             AddCellToGrid(1, days * countShifts + 4);
-            dataGridView1.Rows[1].Cells[days * countShifts + 4].Value = "Выработка";
+            dataGridView1.Rows[1].Cells[days * countShifts + 4].Value = "Смен";
 
             AddCellToGrid(1, days * countShifts + 5);
-            dataGridView1.Rows[1].Cells[days * countShifts + 5].Value = "Отставание";
+            dataGridView1.Rows[1].Cells[days * countShifts + 5].Value = "Часов";
 
             AddCellToGrid(1, days * countShifts + 6);
-            dataGridView1.Rows[1].Cells[days * countShifts + 6].Value = "%";
+            dataGridView1.Rows[1].Cells[days * countShifts + 6].Value = "Выработка";
+
+            AddCellToGrid(1, days * countShifts + 7);
+            dataGridView1.Rows[1].Cells[days * countShifts + 7].Value = "Отставание";
+
+            AddCellToGrid(1, days * countShifts + 8);
+            dataGridView1.Rows[1].Cells[days * countShifts + 8].Value = "%";
 
             for (int i = 2; i <= days * countShifts + 1; i += countShifts)
             {
@@ -743,6 +760,22 @@ namespace Productivity
             StartAddingWorkingTimeToListView();
         }
 
+        private bool IsThereEquipForUser(List<UserShift> shifts, int equip)
+        {
+            for (int i = 0; i < shifts.Count; i++)
+            {
+                for (int j = 0; j < shifts[i].Orders.Count; j++)
+                {
+                    if (shifts[i].Orders[j].IdEquip == equip)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         private void AddUsersToListView()
         {
             ValueCategoryes valueCategoryes = new ValueCategoryes();
@@ -776,7 +809,7 @@ namespace Productivity
 
                     for (int j = 0; j < usersList.Count; j++)
                     {
-                        if (usersList[j].Equip == equips[i])
+                        if (IsThereEquipForUser(usersList[j].Shifts, equips[i]))
                         {
                             countUserForCurrentEquip++;
                             string user = "    ";
@@ -811,7 +844,23 @@ namespace Productivity
                 {
                     for (int j = 0; j < usersList.Count; j++)
                     {
-                        if (!usersCurrent.Contains(usersList[j].Id) && usersList[j].Equip == equips[i])
+                        for (int k = 0; k < usersList[j].Shifts.Count; k++)
+                        {
+                            for (int l = 0; l < usersList[j].Shifts[k].Orders.Count; l++)
+                            {
+                                if (!usersCurrent.Contains(usersList[j].Id) && IsThereEquipForUser(usersList[j].Shifts, equips[i]))
+                                {
+                                    usersCurrent.Add(usersList[j].Id);
+                                }
+
+                                if (viewAllEquipsForUser && !equipsCurrent.Contains(usersList[j].Shifts[k].Orders[l].IdEquip))
+                                {
+                                    equipsCurrent.Add(usersList[j].Shifts[k].Orders[l].IdEquip);
+                                }
+                            }
+                        }
+
+                        /*if (!usersCurrent.Contains(usersList[j].Id) && IsThereEquipForUser(usersList[j].Shifts, equips[i]))
                         {
                             usersCurrent.Add(usersList[j].Id);
                         }
@@ -819,7 +868,7 @@ namespace Productivity
                         if (viewAllEquipsForUser && !equipsCurrent.Contains(usersList[j].Equip))
                         {
                             equipsCurrent.Add(usersList[j].Equip);
-                        }
+                        }*/
                     }
                 }
 
@@ -847,32 +896,34 @@ namespace Productivity
 
                     for (int j = 0; j < equipsCurrent.Count; j++)
                     {
-                        int index = usersList.FindIndex((v) => v.Id == usersCurrent[i] &&
-                                                               v.Equip == equipsCurrent[j]);
+                        int index = usersList.FindIndex((v) => v.Id == usersCurrent[i]);
 
                         if(index >= 0)
                         {
-                            countEquipForCurrentUser++;
-
-                            string machine = "    ";
-
-                            if (machines.ContainsKey(equipsCurrent[j]))
+                            if (IsThereEquipForUser(usersList[index].Shifts, equipsCurrent[j]))
                             {
-                                machine += machines[equipsCurrent[j]];
-                            }
-                            else
-                            {
-                                machine += "Оборудование " + machines[j];
-                            }
+                                countEquipForCurrentUser++;
 
-                            Color color = Color.White;
+                                string machine = "    ";
 
-                            if (countEquipForCurrentUser % 2 == 0)
-                            {
-                                color = Color.LightGray;
+                                if (machines.ContainsKey(equipsCurrent[j]))
+                                {
+                                    machine += machines[equipsCurrent[j]];
+                                }
+                                else
+                                {
+                                    machine += "Оборудование " + equipsCurrent[j];
+                                }
+
+                                Color color = Color.White;
+
+                                if (countEquipForCurrentUser % 2 == 0)
+                                {
+                                    color = Color.LightGray;
+                                }
+
+                                AddItemToGrid(CreateNameListViewItem(equipsCurrent[j], usersList[index].Id), countEquipForCurrentUser.ToString(), machine, color);
                             }
-
-                            AddItemToGrid(CreateNameListViewItem(equipsCurrent[j], usersList[index].Id), countEquipForCurrentUser.ToString(), machine, color);
                         }
                     }
                 }
@@ -930,11 +981,14 @@ namespace Productivity
         {
             Invoke(new Action(() =>
             {
-                LoadShiftsList();
+                //LoadShiftsList();
             }));
 
             List<WorkingOut> equipsListWorkingOut = new List<WorkingOut>();
             List<WorkingOut> usersListWorkingOut = new List<WorkingOut>();
+
+            List<WorkingOut> listWorkingOut = new List<WorkingOut>();
+
             //List<int> usersCurrent = new List<int>();
             INISettings settings = new INISettings();
             ValueDateTime timeValues = new ValueDateTime();
@@ -950,8 +1004,6 @@ namespace Productivity
                 {
                     break;
                 }
-
-                int numberOfShiftsWorked = 0;
 
                 if (usersList[i].Shifts != null)
                 {
@@ -984,84 +1036,123 @@ namespace Productivity
                         //Выработка 
                         if (shift.Orders != null)// && !currentShift)
                         {
-                            float timeWorkigOut = CalculateWorkTime(shift.Orders);
-                            float timeBacklog = 0;
-                            bool isThereOrdersInWorking = IsThereOrdersInWorking(shift.Orders);
+                            List<int> currentEquipsList = new List<int>();
 
-                            if (calculateShiftsInIdletime)
+                            for (int k = 0; k < shift.Orders.Count; k++)
                             {
-                                timeBacklog = fullOutput - timeWorkigOut;
+                                if (!currentEquipsList.Contains(shift.Orders[k].IdEquip))
+                                {
+                                    currentEquipsList.Add(shift.Orders[k].IdEquip);
+                                }
                             }
-                            else
+
+                            for (int k = 0; k < currentEquipsList.Count; k++)
                             {
-                                if (isThereOrdersInWorking)
+                                float timeWorkigOut = CalculateWorkTime(shift.Orders, currentEquipsList[k]);
+                                float timeBacklog = 0;
+                                bool isThereOrdersInWorking = IsThereOrdersInWorking(shift.Orders, currentEquipsList[k]);
+
+                                if (calculateShiftsInIdletime)
                                 {
                                     timeBacklog = fullOutput - timeWorkigOut;
                                 }
-                            }
-
-                            if (!currentShift)
-                            {
-                                usersList[i].WorkingOutUser += timeWorkigOut;
-                                usersList[i].WorkingOutBacklog += timeBacklog;
-                                numberOfShiftsWorked++;
-                            }
-
-                            float percentWorkingOut = GetPercentWorkingOut(fullOutput, timeWorkigOut);
-
-                            //Выработка для оборудования
-                            int indexEquipsList = equipsListWorkingOut.FindIndex(
-                                                (v) => v.Id == usersList[i].Equip
-                                                       );
-
-                            if (indexEquipsList != -1)
-                            {
-                                int indexEquipsListWOut = equipsListWorkingOut[indexEquipsList].WorkingOutList.FindIndex(
-                                                    (v) => v.ShiftDate == shift.ShiftDate &&
-                                                           v.ShiftNumber == shiftNumber
-                                                           );
-
-                                if (indexEquipsListWOut != -1)
-                                {
-                                    if (!currentShift)
-                                    {
-                                        equipsListWorkingOut[indexEquipsList].WorkingOutList[indexEquipsListWOut].WorkingOut += timeWorkigOut;
-                                    }
-                                }
                                 else
                                 {
-                                    equipsListWorkingOut[indexEquipsList].WorkingOutList.Add(new WorkingOutValue(
-                                    shift.ShiftDate,
-                                    shiftNumber,
-                                    timeWorkigOut
-                                    ));
-
-                                    if (!currentShift)
+                                    if (isThereOrdersInWorking)
                                     {
-                                        equipsListWorkingOut[indexEquipsList].NumberOfShiftsWorked++;
-
-                                        if (!isThereOrdersInWorking)
-                                        {
-                                            equipsListWorkingOut[indexEquipsList].NumberOfIdleShifts++;
-                                        }
+                                        timeBacklog = fullOutput - timeWorkigOut;
                                     }
-
-                                    //equipsList[indexEquipsList].EquipsWOut[equipsList[indexEquipsList].EquipsWOut.Count - 1].WorkingOut 
                                 }
 
                                 if (!currentShift)
                                 {
-                                    equipsListWorkingOut[indexEquipsList].WorkingOutSumm += timeWorkigOut;
-                                    equipsListWorkingOut[indexEquipsList].WorkingOutBacklog += timeBacklog;
-                                }
-                            }
-                            else
-                            {
-                                equipsListWorkingOut.Add(new WorkingOut(
-                                    usersList[i].Equip
-                                    ));
+                                    usersList[i].WorkingOutUser += timeWorkigOut;
+                                    usersList[i].WorkingOutBacklog += timeBacklog;
 
-                                equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutList = new List<WorkingOutValue>
+                                    int indexListWorkingOut = listWorkingOut.FindIndex(
+                                                    (v) => v.Id == usersList[i].Id &&
+                                                           v.Equip == currentEquipsList[k]
+                                                           );
+
+                                    if (indexListWorkingOut != -1)
+                                    {
+                                        listWorkingOut[indexListWorkingOut].WorkingOutSumm += timeWorkigOut;
+                                        listWorkingOut[indexListWorkingOut].WorkingOutBacklog+= timeBacklog;
+                                        listWorkingOut[indexListWorkingOut].NumberOfShiftsWorked++;
+
+                                        if (!isThereOrdersInWorking)
+                                        {
+                                            listWorkingOut[indexListWorkingOut].NumberOfIdleShifts++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        listWorkingOut.Add(new WorkingOut(usersList[i].Id, currentEquipsList[k]));
+
+                                        listWorkingOut[listWorkingOut.Count - 1].WorkingOutSumm = timeWorkigOut;
+                                        listWorkingOut[listWorkingOut.Count - 1].WorkingOutBacklog = timeBacklog;
+                                        listWorkingOut[listWorkingOut.Count - 1].NumberOfShiftsWorked = 1;
+
+                                        if (!isThereOrdersInWorking)
+                                        {
+                                            listWorkingOut[listWorkingOut.Count - 1].NumberOfIdleShifts = 1;
+                                        }
+                                    }
+                                }
+
+                                //Выработка для оборудования
+                                int indexEquipsList = equipsListWorkingOut.FindIndex(
+                                                    (v) => v.Id == currentEquipsList[k]
+                                                           );
+
+                                if (indexEquipsList != -1)
+                                {
+                                    int indexEquipsListWOut = equipsListWorkingOut[indexEquipsList].WorkingOutList.FindIndex(
+                                                        (v) => v.ShiftDate == shift.ShiftDate &&
+                                                               v.ShiftNumber == shiftNumber
+                                                               );
+
+                                    if (indexEquipsListWOut != -1)
+                                    {
+                                        if (!currentShift)
+                                        {
+                                            equipsListWorkingOut[indexEquipsList].WorkingOutList[indexEquipsListWOut].WorkingOut += timeWorkigOut;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        equipsListWorkingOut[indexEquipsList].WorkingOutList.Add(new WorkingOutValue(
+                                        shift.ShiftDate,
+                                        shiftNumber,
+                                        timeWorkigOut
+                                        ));
+
+                                        if (!currentShift)
+                                        {
+                                            equipsListWorkingOut[indexEquipsList].NumberOfShiftsWorked++;
+
+                                            if (!isThereOrdersInWorking)
+                                            {
+                                                equipsListWorkingOut[indexEquipsList].NumberOfIdleShifts++;
+                                            }
+                                        }
+
+                                        //equipsList[indexEquipsList].EquipsWOut[equipsList[indexEquipsList].EquipsWOut.Count - 1].WorkingOut 
+                                    }
+
+                                    if (!currentShift)
+                                    {
+                                        equipsListWorkingOut[indexEquipsList].WorkingOutSumm += timeWorkigOut;
+                                        equipsListWorkingOut[indexEquipsList].WorkingOutBacklog += timeBacklog;
+                                    }
+                                }
+                                else
+                                {
+                                    equipsListWorkingOut.Add(new WorkingOut(
+                                        currentEquipsList[k]
+                                        ));
+
+                                    equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutList = new List<WorkingOutValue>
                                 {
                                     new WorkingOutValue(
                                         shift.ShiftDate,
@@ -1070,73 +1161,73 @@ namespace Productivity
                                     )
                                 };
 
-                                if (!currentShift)
-                                {
-                                    equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutSumm += timeWorkigOut;
-                                    equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutBacklog += timeBacklog;
-                                    equipsListWorkingOut[equipsListWorkingOut.Count - 1].NumberOfShiftsWorked++;
-
-                                    if (!isThereOrdersInWorking)
-                                    {
-                                        equipsListWorkingOut[equipsListWorkingOut.Count - 1].NumberOfIdleShifts++;
-                                    }
-                                }
-                            }
-
-                            //Выработка для сотрудника
-                            int indexUserList = usersListWorkingOut.FindIndex(
-                                                    (v) => v.Id == usersList[i].Id
-                                                           );
-
-                            if (indexUserList != -1)
-                            {
-                                int indexUserListWOut = usersListWorkingOut[indexUserList].WorkingOutList.FindIndex(
-                                                    (v) => v.ShiftDate == shift.ShiftDate &&
-                                                           v.ShiftNumber == shiftNumber
-                                                           );
-
-                                if (indexUserListWOut != -1)
-                                {
                                     if (!currentShift)
                                     {
-                                        usersListWorkingOut[indexUserList].WorkingOutList[indexUserListWOut].WorkingOut += timeWorkigOut;
+                                        equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutSumm += timeWorkigOut;
+                                        equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutBacklog += timeBacklog;
+                                        equipsListWorkingOut[equipsListWorkingOut.Count - 1].NumberOfShiftsWorked++;
+
+                                        if (!isThereOrdersInWorking)
+                                        {
+                                            equipsListWorkingOut[equipsListWorkingOut.Count - 1].NumberOfIdleShifts++;
+                                        }
+                                    }
+                                }
+
+                                //Выработка для сотрудника
+                                int indexUserList = usersListWorkingOut.FindIndex(
+                                                        (v) => v.Id == usersList[i].Id
+                                                               );
+
+                                if (indexUserList != -1)
+                                {
+                                    int indexUserListWOut = usersListWorkingOut[indexUserList].WorkingOutList.FindIndex(
+                                                        (v) => v.ShiftDate == shift.ShiftDate &&
+                                                               v.ShiftNumber == shiftNumber
+                                                               );
+
+                                    if (indexUserListWOut != -1)
+                                    {
+                                        if (!currentShift)
+                                        {
+                                            usersListWorkingOut[indexUserList].WorkingOutList[indexUserListWOut].WorkingOut += timeWorkigOut;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        usersListWorkingOut[indexUserList].WorkingOutList.Add(new WorkingOutValue(
+                                        shift.ShiftDate,
+                                        shiftNumber,
+                                        timeWorkigOut
+                                        ));
+
+                                        if (!currentShift)
+                                        {
+                                            usersListWorkingOut[indexUserList].NumberOfShiftsWorked++;
+
+                                            if (!isThereOrdersInWorking)
+                                            {
+                                                usersListWorkingOut[indexUserList].NumberOfIdleShifts++;
+                                            }
+                                        }
+
+                                        //equipsList[indexEquipsList].EquipsWOut[equipsList[indexEquipsList].EquipsWOut.Count - 1].WorkingOut 
+                                    }
+
+                                    if (!currentShift)
+                                    {
+                                        usersListWorkingOut[indexUserList].WorkingOutSumm += timeWorkigOut;
+                                        usersListWorkingOut[indexUserList].WorkingOutBacklog += timeBacklog;
+                                        //usersListWorkingOut[indexUserList].WorkingOutBacklog += fullOutput - timeWorkigOut;
                                     }
                                 }
                                 else
                                 {
-                                    usersListWorkingOut[indexUserList].WorkingOutList.Add(new WorkingOutValue(
-                                    shift.ShiftDate,
-                                    shiftNumber,
-                                    timeWorkigOut
-                                    ));
+                                    usersListWorkingOut.Add(new WorkingOut(
+                                        usersList[i].Id
+                                        ));
 
-                                    if (!currentShift)
-                                    {
-                                        usersListWorkingOut[indexUserList].NumberOfShiftsWorked++;
-
-                                        if (!isThereOrdersInWorking)
-                                        {
-                                            usersListWorkingOut[indexUserList].NumberOfIdleShifts++;
-                                        }
-                                    }
-
-                                    //equipsList[indexEquipsList].EquipsWOut[equipsList[indexEquipsList].EquipsWOut.Count - 1].WorkingOut 
-                                }
-
-                                if (!currentShift)
-                                {
-                                    usersListWorkingOut[indexUserList].WorkingOutSumm += timeWorkigOut;
-                                    usersListWorkingOut[indexUserList].WorkingOutBacklog += timeBacklog;
-                                    //usersListWorkingOut[indexUserList].WorkingOutBacklog += fullOutput - timeWorkigOut;
-                                }
-                            }
-                            else
-                            {
-                                usersListWorkingOut.Add(new WorkingOut(
-                                    usersList[i].Id
-                                    ));
-
-                                usersListWorkingOut[usersListWorkingOut.Count - 1].WorkingOutList = new List<WorkingOutValue>
+                                    usersListWorkingOut[usersListWorkingOut.Count - 1].WorkingOutList = new List<WorkingOutValue>
                                     {
                                         new WorkingOutValue(
                                             shift.ShiftDate,
@@ -1145,37 +1236,65 @@ namespace Productivity
                                         )
                                     };
 
-                                if (!currentShift)
-                                {
-                                    usersListWorkingOut[usersListWorkingOut.Count - 1].WorkingOutSumm += timeWorkigOut;
-                                    usersListWorkingOut[usersListWorkingOut.Count - 1].WorkingOutBacklog += timeBacklog;
-                                    //usersListWorkingOut[usersListWorkingOut.Count - 1].WorkingOutBacklog += fullOutput - timeWorkigOut;
-                                    usersListWorkingOut[usersListWorkingOut.Count - 1].NumberOfShiftsWorked++;
-
-                                    if (!isThereOrdersInWorking)
+                                    if (!currentShift)
                                     {
-                                        usersListWorkingOut[usersListWorkingOut.Count - 1].NumberOfIdleShifts++;
+                                        usersListWorkingOut[usersListWorkingOut.Count - 1].WorkingOutSumm += timeWorkigOut;
+                                        usersListWorkingOut[usersListWorkingOut.Count - 1].WorkingOutBacklog += timeBacklog;
+                                        //usersListWorkingOut[usersListWorkingOut.Count - 1].WorkingOutBacklog += fullOutput - timeWorkigOut;
+                                        usersListWorkingOut[usersListWorkingOut.Count - 1].NumberOfShiftsWorked++;
+
+                                        if (!isThereOrdersInWorking)
+                                        {
+                                            usersListWorkingOut[usersListWorkingOut.Count - 1].NumberOfIdleShifts++;
+                                        }
                                     }
                                 }
-                            }
 
-                            Invoke(new Action(() =>
-                            {
-                                string key = CreateNameListViewItem(usersList[i].Equip, usersList[i].Id);
-
-                                if (rowIndexes.ContainsKey(key))
+                                Invoke(new Action(() =>
                                 {
-                                    int indexRow = rowIndexes[key];
+                                    string key = CreateNameListViewItem(currentEquipsList[k], usersList[i].Id);
 
-                                    dataGridView1.Rows[indexRow].Cells[(day - 1) * countShifts + shiftNumber + 1].Value = timeValues.MinuteToTimeString((int)Math.Round(timeWorkigOut));
-                                    dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 2].Value = numberOfShiftsWorked;// usersList[i].Shifts.Count;
-                                    //dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString((int)Math.Round(usersList[i].WorkingOutUser + usersList[i].WorkingOutBacklog));
-                                    dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString(fullOutput * numberOfShiftsWorked);
-                                    dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 4].Value = timeValues.MinuteToTimeString((int)Math.Round(usersList[i].WorkingOutUser));
-                                    dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 5].Value = timeValues.MinuteToTimeString((int)Math.Round(usersList[i].WorkingOutBacklog));
-                                    dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 6].Value = (usersList[i].WorkingOutUser / (usersList[i].WorkingOutUser + usersList[i].WorkingOutBacklog)).ToString("P1");
-                                }
-                            }));
+                                    int indexListWorkingOut = listWorkingOut.FindIndex(
+                                                    (v) => v.Id == usersList[i].Id &&
+                                                           v.Equip == currentEquipsList[k]
+                                                           );
+
+                                    float workingOutUser = 0;
+                                    float workingOutBacklog = 0;
+                                    int numberOfShifts = 0;
+                                    int numberOfIdleShifts = 0;
+
+                                    if (indexListWorkingOut != -1)
+                                    {
+                                        workingOutUser = listWorkingOut[indexListWorkingOut].WorkingOutSumm;
+                                        workingOutBacklog = listWorkingOut[indexListWorkingOut].WorkingOutBacklog;
+                                        numberOfShifts = listWorkingOut[indexListWorkingOut].NumberOfShiftsWorked;
+                                        numberOfIdleShifts = listWorkingOut[indexListWorkingOut].NumberOfIdleShifts;
+                                    }
+
+                                    if (rowIndexes.ContainsKey(key))
+                                    {
+                                        int indexRow = rowIndexes[key];
+
+                                        dataGridView1.Rows[indexRow].Cells[(day - 1) * countShifts + shiftNumber + 1].Value = timeValues.MinuteToTimeString((int)Math.Round(timeWorkigOut));
+
+                                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 2].Value = numberOfShifts;// usersList[i].Shifts.Count;
+                                                                                                                                              //dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString((int)Math.Round(usersList[i].WorkingOutUser + usersList[i].WorkingOutBacklog));
+                                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString(fullOutput * numberOfShifts);
+
+                                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 4].Value = numberOfIdleShifts;
+                                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 5].Value = timeValues.MinuteToTimeString(fullOutput * numberOfIdleShifts);
+
+                                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 6].Value = timeValues.MinuteToTimeString((int)Math.Round(workingOutUser));
+                                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 7].Value = timeValues.MinuteToTimeString((int)Math.Round(workingOutBacklog));
+                                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 8].Value = (workingOutUser / (workingOutUser + workingOutBacklog)).ToString("P1");
+
+                                        /*dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 4].Value = timeValues.MinuteToTimeString((int)Math.Round(usersList[i].WorkingOutUser));
+                                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 5].Value = timeValues.MinuteToTimeString((int)Math.Round(usersList[i].WorkingOutBacklog));
+                                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 6].Value = (usersList[i].WorkingOutUser / (usersList[i].WorkingOutUser + usersList[i].WorkingOutBacklog)).ToString("P1");*/
+                                    }
+                                }));
+                            }
                         }
                     }
                 }
@@ -1247,10 +1366,14 @@ namespace Productivity
 
                         dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 2].Value = numberOfShiftsWorkedEquips;
                         dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString(numberOfShiftsWorkedEquips * fullOutput);
-                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 4].Value = timeValues.MinuteToTimeString((int)Math.Round(equipsListWorkingOut[i].WorkingOutSumm));
-                        //dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 4].Value = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutBacklog);
-                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 5].Value = timeValues.MinuteToTimeString((numberOfShiftsWorkedEquips - numberOfIdleShiftsEquips) * fullOutput - (int)Math.Round(equipsListWorkingOut[i].WorkingOutSumm));
-                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 6].Value = (equipsListWorkingOut[i].WorkingOutSumm / ((numberOfShiftsWorkedEquips - numberOfIdleShiftsEquips) * fullOutput)).ToString("P1");
+
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 4].Value = numberOfIdleShiftsEquips;
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 5].Value = timeValues.MinuteToTimeString(numberOfIdleShiftsEquips * fullOutput);
+
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 6].Value = timeValues.MinuteToTimeString((int)Math.Round(equipsListWorkingOut[i].WorkingOutSumm));
+                        //dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 6].Value = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutBacklog);
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 7].Value = timeValues.MinuteToTimeString((numberOfShiftsWorkedEquips - numberOfIdleShiftsEquips) * fullOutput - (int)Math.Round(equipsListWorkingOut[i].WorkingOutSumm));
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 8].Value = (equipsListWorkingOut[i].WorkingOutSumm / ((numberOfShiftsWorkedEquips - numberOfIdleShiftsEquips) * fullOutput)).ToString("P1");
                     }
 
                 }));
@@ -1319,22 +1442,26 @@ namespace Productivity
 
                         dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 2].Value = numberOfShiftsWorkedUsers;
                         dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString((int)numberOfShiftsWorkedUsers * fullOutput);
-                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 4].Value = timeValues.MinuteToTimeString((int)Math.Round(usersListWorkingOut[i].WorkingOutSumm));
-                        //dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 3].Value = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutBacklog);
-                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 5].Value = timeValues.MinuteToTimeString((numberOfShiftsWorkedUsers - numberOfIdleShiftsUsers) * fullOutput - (int)Math.Round(usersListWorkingOut[i].WorkingOutSumm));
-                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 6].Value = (usersListWorkingOut[i].WorkingOutSumm / ((numberOfShiftsWorkedUsers - numberOfIdleShiftsUsers) * fullOutput)).ToString("P1");
+
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 4].Value = numberOfIdleShiftsUsers;
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 5].Value = timeValues.MinuteToTimeString((int)numberOfIdleShiftsUsers * fullOutput);
+
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 6].Value = timeValues.MinuteToTimeString((int)Math.Round(usersListWorkingOut[i].WorkingOutSumm));
+                        //dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 6].Value = timeValues.MinuteToTimeString(equipsListWorkingOut[i].WorkingOutBacklog);
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 7].Value = timeValues.MinuteToTimeString((numberOfShiftsWorkedUsers - numberOfIdleShiftsUsers) * fullOutput - (int)Math.Round(usersListWorkingOut[i].WorkingOutSumm));
+                        dataGridView1.Rows[indexRow].Cells[countDaysFromMonth * countShifts + 8].Value = (usersListWorkingOut[i].WorkingOutSumm / ((numberOfShiftsWorkedUsers - numberOfIdleShiftsUsers) * fullOutput)).ToString("P1");
                     }
                 }));
             }
         }
 
-        private bool IsThereOrdersInWorking(List<UserShiftOrder> orders)
+        private bool IsThereOrdersInWorking(List<UserShiftOrder> orders, int equip)
         {
             bool result = false;
 
             for (int i = 0; i < orders.Count; i++)
             {
-                if (orders[i].IdletimeName == "")
+                if (orders[i].IdletimeName == "" && orders[i].IdEquip == equip)
                 {
                     result = true;
                     break;
@@ -1343,13 +1470,16 @@ namespace Productivity
 
             return result;
         }
-        private float CalculateWorkTime(List<UserShiftOrder> order)
+        private float CalculateWorkTime(List<UserShiftOrder> order, int equip)
         {
             float workingOut = 0;
 
             for (int i = 0; i < order.Count; i++)
             {
-                workingOut += CalculateWorkTimeForOneOrder(order[i]);
+                if (order[i].IdEquip == equip)
+                {
+                    workingOut += CalculateWorkTimeForOneOrder(order[i]);
+                }
             }
 
             return workingOut;
@@ -1429,7 +1559,8 @@ namespace Productivity
             List<Category> categoryEquips = valueCategoryes.GetSelectedCategoriesAndEquipsList();
 
             LoadUsersList(categoryEquips, selectDate);
-
+            LoadShiftsList();
+            //LoadShifts();
             AddUsersToListView();
 
             LoadShifts();
@@ -1689,7 +1820,7 @@ namespace Productivity
             DataGridViewContentAlignment center = DataGridViewContentAlignment.MiddleCenter;
 
             string[] colNames = { "№", "Имя", "Заказ", "Заказчик", "Операция", "Остаток | Тираж", "Дано времени", "Начало", "Завершение", "Продолжительность", "Планируемое время завершения", "Отклонение", "Сделано", "Выработка" };
-            int[] colWidth = { 30, 300, 100, 250, 200, 140, 70, 170, 170, 80, 150, 80, 80, 80 };
+            int[] colWidth = { 30, 270, 100, 250, 200, 140, 70, 170, 170, 80, 140, 80, 80, 80 };
             DataGridViewContentAlignment[] colAligment = { right, left, left, left, left, left, center, left, left, center, left, center, left, center};
 
             for (int i = 0; i < colNames.Length; i++)
@@ -1817,11 +1948,17 @@ namespace Productivity
             {
                 for (int j = 0; j < usersShiftList.Count; j++)
                 {
-                    if (usersShiftList[j].Equip == equips[i])
+                    for(int k = 0; k < usersShiftList[j].Shifts.Count; k++)
                     {
-                        if (!usersCurrent.Contains(usersShiftList[j].Id))
+                        for(int l = 0; l < usersShiftList[j].Shifts[k].Orders.Count; l++)
                         {
-                            usersCurrent.Add(usersShiftList[j].Id);
+                            if (usersShiftList[j].Shifts[k].Orders[l].IdEquip == equips[i])
+                            {
+                                if (!usersCurrent.Contains(usersShiftList[j].Id))
+                                {
+                                    usersCurrent.Add(usersShiftList[j].Id);
+                                }
+                            }
                         }
                     }
                 }
@@ -1855,13 +1992,13 @@ namespace Productivity
                         int countOrder = 0;
                         int countOperation = 0;
 
-                        dataGridViewOneShift.Rows[indexRow].Cells[7].Value = userShift.ShiftDateBegin;
-                        dataGridViewOneShift.Rows[indexRow].Cells[8].Value = userShift.ShiftDateEnd;
+                        //dataGridViewOneShift.Rows[indexRow].Cells[7].Value = userShift.ShiftDateBegin;
+                        //dataGridViewOneShift.Rows[indexRow].Cells[8].Value = userShift.ShiftDateEnd;
 
                         while (currentStep < userShift.Orders.Count)
                         {
                             countOperation++;
-                            countOrder++;
+                            //countOrder++;
 
                             bool isMakeready = false;
 
@@ -1897,7 +2034,7 @@ namespace Productivity
 
                                 if (order.IdletimeName != "")
                                 {
-                                    countOrder--;
+                                    //countOrder -= 1;
 
                                     view.IdletimeName = order.IdletimeName;
 
@@ -2064,10 +2201,12 @@ namespace Productivity
                                 {
                                     if (order.IdletimeName == "")
                                     {
+                                        countOrder++;
+
                                         dataGridViewOneShift.Rows[indexRow].Cells[0].Value = (countOrder).ToString();
                                     }
                                     
-                                    dataGridViewOneShift.Rows[indexRow].Cells[1].Value = "    " + machines[usersShiftList[j].Equip];
+                                    dataGridViewOneShift.Rows[indexRow].Cells[1].Value = "    " + machines[order.IdEquip];
                                     dataGridViewOneShift.Rows[indexRow].Cells[2].Value = order.OrderNumber;
                                     dataGridViewOneShift.Rows[indexRow].Cells[3].Value = order.OrderName;
                                 }
@@ -2206,11 +2345,17 @@ namespace Productivity
             {
                 for (int j = 0; j < usersShiftList.Count; j++)
                 {
-                    if (usersShiftList[j].Equip == equips[i])
+                    for (int k = 0; k < usersShiftList[j].Shifts.Count; k++)
                     {
-                        if (!usersCurrent.Contains(usersShiftList[j].Id))
+                        for (int l = 0; l < usersShiftList[j].Shifts[k].Orders.Count; l++)
                         {
-                            usersCurrent.Add(usersShiftList[j].Id);
+                            if (usersShiftList[j].Shifts[k].Orders[l].IdEquip == equips[i])
+                            {
+                                if (!usersCurrent.Contains(usersShiftList[j].Id))
+                                {
+                                    usersCurrent.Add(usersShiftList[j].Id);
+                                }
+                            }
                         }
                     }
                 }
@@ -2414,7 +2559,7 @@ namespace Productivity
                             dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
 
                             dataGridViewOneShift.Rows[indexRow].Cells[0].Value = (k + 1).ToString();
-                            dataGridViewOneShift.Rows[indexRow].Cells[1].Value = "    " + machines[user.Equip];
+                            dataGridViewOneShift.Rows[indexRow].Cells[1].Value = "    " + machines[order.IdEquip];
                             dataGridViewOneShift.Rows[indexRow].Cells[2].Value = order.OrderNumber;
                             dataGridViewOneShift.Rows[indexRow].Cells[3].Value = order.OrderName;
                             dataGridViewOneShift.Rows[indexRow].Cells[4].Value = operation;
