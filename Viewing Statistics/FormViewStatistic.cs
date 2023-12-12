@@ -1592,6 +1592,8 @@ namespace Viewing_Statistics
                                         //dataGrid.Rows[indexRow].Cells[(day) * countShifts * countOutValue + shiftNumber * countOutValue - 1].Value = timeValues.MinuteToTimeString(timeWorkigOut);
                                         if (values[0] == "1")
                                         {
+                                            dataGrid.Rows[indexRow].Cells[indexCol + nextCol].Style.Font = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
+                                            dataGrid.Rows[indexRow].Cells[indexCol + nextCol].Style.ForeColor = Color.Gray;
                                             dataGrid.Rows[indexRow].Cells[indexCol + nextCol].Value = timeValues.MinuteToTimeString((int)Math.Round(workigOutSumm));
                                             nextCol++;
                                         }
@@ -1599,12 +1601,16 @@ namespace Viewing_Statistics
                                         if (values[1] == "1")
                                         {
                                             //dataGrid.Rows[indexRow].Cells[indexCol + nextCol].Value = (totalPercentWorkingOut / numberOfShiftsWorked).ToString("P1"); //(usersList[i].WorkingOutUser / (usersList[i].WorkingOutUser + usersList[i].WorkingOutBacklog))
+                                            dataGrid.Rows[indexRow].Cells[indexCol + nextCol].Style.Font = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
+                                            dataGrid.Rows[indexRow].Cells[indexCol + nextCol].Style.ForeColor = Color.Gray;
                                             dataGrid.Rows[indexRow].Cells[indexCol + nextCol].Value = percentWorkingOutAverage.ToString("P1");
                                             nextCol++;
                                         }
 
                                         if (values[2] == "1")
                                         {
+                                            dataGrid.Rows[indexRow].Cells[indexCol + nextCol].Style.Font = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
+                                            dataGrid.Rows[indexRow].Cells[indexCol + nextCol].Style.ForeColor = Color.Gray;
                                             dataGrid.Rows[indexRow].Cells[indexCol + nextCol].Value = bonusWorkingOutSumm.ToString("P0");
                                             nextCol++;
                                         }
