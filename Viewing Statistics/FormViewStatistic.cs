@@ -158,7 +158,7 @@ namespace Viewing_Statistics
                 //usersList = usersValue.LoadUsersList(equips, date);
                 //usersList = usersValue.LoadUsersListFromLastAnyDays(equips, countDays);
                 usersList = usersValue.LoadUsersListFromLastAnyDays(equips, startMonth.AddMonths(-1));
-
+                
                 //usersList = usersValue.LoadUsersListFromLastAnyDays(equips, startDate);
                 usersListPreviewMonth = usersValue.LoadUsersListFromSelectMonth(equips, startDate.AddMonths(-1));
                 usersListCurrentMonth = usersValue.LoadUsersListFromSelectMonth(equips, startDate);
@@ -186,7 +186,7 @@ namespace Viewing_Statistics
                 DateTime startMonth = DateTime.MinValue.AddYears(startDate.Year - 1).AddMonths(startDate.Month - 1);
 
                 usersList = valueShifts.LoadShifts(usersList, startMonth.AddMonths(-1), countShifts, givenShiftNumber);
-
+                
                 //usersList = valueShifts.LoadShifts(usersList, startDate, countShifts, givenShiftNumber);
                 usersListPreviewMonth = valueShifts.LoadShiftsForSelectedMonth(usersListPreviewMonth, startDate.AddMonths(-1), countShifts, givenShiftNumber);
                 usersListCurrentMonth = valueShifts.LoadShiftsForSelectedMonth(usersListCurrentMonth, startDate, countShifts, givenShiftNumber);
@@ -747,7 +747,7 @@ namespace Viewing_Statistics
                     {
                         if (IsThereEquipForUser(usersList[j].Shifts, equips[i]))
                         {
-                            if (CheckUserShiftsFromViewPeriod(dataGrid, usersList[j].Shifts))
+                            //if (CheckUserShiftsFromViewPeriod(dataGrid, usersList[j].Shifts))
                             {
                                 countUserForCurrentEquip++;
                                 string user = "    ";
@@ -788,7 +788,7 @@ namespace Viewing_Statistics
                         {
                             for (int l = 0; l < usersList[j].Shifts[k].Orders.Count; l++)
                             {
-                                if (CheckUserShiftsFromViewPeriod(dataGrid, usersList[j].Shifts))
+                                //if (CheckUserShiftsFromViewPeriod(dataGrid, usersList[j].Shifts))
                                 {
                                     if (!usersCurrent.Contains(usersList[j].Id) && IsThereEquipForUser(usersList[j].Shifts, equips[i]))
                                     {
