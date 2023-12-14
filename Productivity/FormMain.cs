@@ -522,7 +522,6 @@ namespace Productivity
             dataGridView1.Columns[indexColumn].Width = 100;
             dataGridView1.Columns[indexColumn].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-
             dataGridView1.Rows.Add();
             dataGridView1.Rows[0].Frozen = true;
 
