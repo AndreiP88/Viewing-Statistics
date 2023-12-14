@@ -212,7 +212,7 @@ namespace libSql
                             man_factjob.date_begin IS NOT NULL " +
                             cLine +
                         @"ORDER BY
-	                        man_factjob.date_begin ASC"
+	                        man_factjob.date_begin ASC, man_factjob.id_man_factjob ASC"
                 };
                 Command.Parameters.AddWithValue("@startDate", startDateTime);
                 Command.Parameters.AddWithValue("@endDate", endDateTime);
@@ -444,7 +444,7 @@ namespace libSql
                             --man_factjob.fact_out_qty IS NOT NULL AND
                             man_planjob_list.normtime IS NOT NULL AND
                             man_planjob_list.plan_out_qty IS NOT NULL
-                        ORDER BY man_factjob.date_begin"
+                        ORDER BY man_factjob.date_begin, man_factjob.id_man_factjob ASC"
                 };
                 Command.Parameters.AddWithValue("@startDate", startDateTime);
                 Command.Parameters.AddWithValue("@endDate", endDateTime);
@@ -647,7 +647,7 @@ namespace libSql
                             man_planjob_list.normtime IS NOT NULL AND
                             man_planjob_list.plan_out_qty IS NOT NULL
                         ORDER BY
-                            man_factjob.date_begin"
+                            man_factjob.date_begin ASC, man_factjob.id_man_factjob ASC"
                 };
                 Command.Parameters.AddWithValue("@startDate", startDateTime);
                 Command.Parameters.AddWithValue("@endDate", endDateTime);
