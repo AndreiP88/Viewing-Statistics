@@ -11,7 +11,6 @@ using libData;
 using libINIFile;
 using libSql;
 using libTime;
-using System.Security.Policy;
 
 
 namespace Productivity
@@ -991,6 +990,13 @@ namespace Productivity
             //List<int> usersCurrent = new List<int>();
             INISettings settings = new INISettings();
             ValueDateTime timeValues = new ValueDateTime();
+            ValueCategoryes valueCategoryes = new ValueCategoryes();
+
+            List<Category> categoryEquip = valueCategoryes.GetSelectedCategoriesAndEquipsList();
+
+            List<int> equips = CategoryEquipToListSelectedEquip(categoryEquip);
+
+            bool viewAllEquipsForUser = settings.GetLoadAllEquipForUser();
 
             int fullOutput = settings.GetNormTime();
             int countShifts = settings.GetCountShifts();
@@ -1037,11 +1043,22 @@ namespace Productivity
                         {
                             List<int> currentEquipsList = new List<int>();
 
+                            //Сделать выборку оборудования выбранного участка, если включена данная опция???
                             for (int k = 0; k < shift.Orders.Count; k++)
                             {
                                 if (!currentEquipsList.Contains(shift.Orders[k].IdEquip))
                                 {
-                                    currentEquipsList.Add(shift.Orders[k].IdEquip);
+                                    if (viewAllEquipsForUser)
+                                    {
+                                        currentEquipsList.Add(shift.Orders[k].IdEquip);
+                                    }
+                                    else
+                                    {
+                                        if (equips.Contains(shift.Orders[k].IdEquip))
+                                        {
+                                            currentEquipsList.Add(shift.Orders[k].IdEquip);
+                                        }
+                                    }
                                 }
                             }
 
@@ -1328,6 +1345,10 @@ namespace Productivity
                     numberOfIdleShiftsEquips = 0;
                 }
 
+                //
+                bool dayIgnoredIdleTime = false;
+                //
+
                 for (int j = 0; j < equipsListWorkingOut[i].WorkingOutList.Count; j++)
                 {
                     //MessageBox.Show(equipsList.Count + ", " + equipsList[i].Equip + ", " + equipsList[i].WorkingOut);
@@ -1339,6 +1360,13 @@ namespace Productivity
                     float timeWorkigOut = equipsListWorkingOut[i].WorkingOutList[j].WorkingOut;
 
                     float percentWorkingOut = GetPercentWorkingOut(fullOutput, timeWorkigOut);
+
+                    //
+                    if (numberOfIdleShiftsEquips > 0 && timeWorkigOut > 0)
+                    {
+                        dayIgnoredIdleTime = true;
+                    }
+                    //
 
                     Invoke(new Action(() =>
                     {
@@ -1354,6 +1382,13 @@ namespace Productivity
                 }
 
                 //float fullTimeWorkigOut = equipsListWorkingOut[i].WorkingOutSumm;
+
+                //
+                if (dayIgnoredIdleTime)
+                {
+                    numberOfIdleShiftsEquips--;
+                }
+                //
 
                 Invoke(new Action(() =>
                 {
@@ -1404,6 +1439,10 @@ namespace Productivity
                     numberOfIdleShiftsUsers = 0;
                 }
 
+                //
+                bool dayIgnoredIdleTime = false;
+                //
+
                 for (int j = 0; j < usersListWorkingOut[i].WorkingOutList.Count; j++)
                 {
                     //MessageBox.Show(equipsList.Count + ", " + equipsList[i].Equip + ", " + equipsList[i].WorkingOut);
@@ -1415,6 +1454,13 @@ namespace Productivity
                     float timeWorkigOut = usersListWorkingOut[i].WorkingOutList[j].WorkingOut;
 
                     float percentWorkingOut = GetPercentWorkingOut(fullOutput, timeWorkigOut);
+
+                    //
+                    if (numberOfIdleShiftsUsers > 0 && timeWorkigOut > 0)
+                    {
+                        dayIgnoredIdleTime = true;
+                    }
+                    //
 
                     Invoke(new Action(() =>
                     {
@@ -1428,6 +1474,13 @@ namespace Productivity
                         }
                     }));
                 }
+
+                //
+                if (dayIgnoredIdleTime)
+                {
+                    numberOfIdleShiftsUsers--;
+                }
+                //
 
                 //float fullTimeWorkigOut = usersListWorkingOut[i].WorkingOutSumm;
 
@@ -2150,6 +2203,9 @@ namespace Productivity
                                         {
                                             int normTimeCurrent;
 
+                                            //
+                                            //
+                                            // поправить это условие, для незавершенного заказа и незавершенной смены показывает планируемое время завершения заказа общее
                                             if (order.IdletimeName == "")
                                             {
                                                 if (IsLastRecordOfOrder(userShiftOrders.GetRange(l, userShiftOrders.Count - l)))

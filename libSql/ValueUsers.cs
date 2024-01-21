@@ -111,6 +111,28 @@ namespace libSql
             return usersList;
         }
 
+        /// <summary>
+        /// Получить индексы всех сотрудников указанного месяца
+        /// </summary>
+        /// <param name="equips"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public List<int> LoadUsersListOnlyIDFromSelectMonth(List<int> equips, DateTime date)
+        {
+            /*string startDate = date.ToString("yyyy-MM") + "-01T07:40:00.000";
+            string endDate = date.AddMonths(1).ToString("yyyy-MM") + "-01T07:10:00.000";*/
+
+            DateTime dateStart = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month - 1);
+            DateTime dateEnd = DateTime.MinValue.AddYears(date.Year - 1).AddMonths(date.Month);
+
+            string startDate = dateStart.ToString("yyyy-MM-dd") + "T07:40:00.000";
+            string endDate = dateEnd.ToString("yyyy-MM-dd") + "T07:10:00.000";
+
+            List<int> users = LoadUsersIncludedAllEquips(equips, startDate, endDate);
+
+            return users;
+        }
+
         private List<User> LoadUsersList(List<int> users, string startDate, string endDate)
         {
             List<User> usersList = new List<User>();
@@ -256,6 +278,49 @@ namespace libSql
             }
 
             return users;
+        }
+
+        public string GetUserNameFromID(int indexUserADFromASBase)
+        {
+            string name = "";
+
+            try
+            {
+                using (SqlConnection connection = DBConnection.GetDBConnection())
+                {
+                    connection.Open();
+                    SqlCommand Command = new SqlCommand
+                    {
+                        Connection = connection,
+
+                        CommandText =
+                            @"SELECT
+	                            * 
+                            FROM
+	                            dbo.common_employee
+                            WHERE
+                                id_common_employee = @userID"
+
+                    };
+                    Command.Parameters.AddWithValue("@userID", indexUserADFromASBase);
+
+                    DbDataReader sqlReader = Command.ExecuteReader();
+
+                    while (sqlReader.Read())
+                    {
+                        name = sqlReader["employee_firstname"].ToString() + " " +
+                            sqlReader["employee_lastname"].ToString();
+                    }
+
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return name;
         }
     }
 }
