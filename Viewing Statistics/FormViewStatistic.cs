@@ -1662,6 +1662,10 @@ namespace Viewing_Statistics
                     numberOfIdleShiftsEquips = 0;
                 }
 
+                //
+                bool dayIgnoredIdleTime = false;
+                //
+
                 for (int j = 0; j < equipsListWorkingOut[i].WorkingOutList.Count; j++)
                 {
                     float timeWorkigOut = equipsListWorkingOut[i].WorkingOutList[j].WorkingOut;
@@ -1669,7 +1673,21 @@ namespace Viewing_Statistics
                     totalTimeWorkigOut += timeWorkigOut;
                     totalPercentWorkingOut += GetPercentWorkingOut(fullOutput, timeWorkigOut);
                     totalBonusWorkingOut += CalculateBonusWorkingOut(timeWorkigOut);
+
+                    //
+                    if (numberOfIdleShiftsEquips > 0 && timeWorkigOut > 0)
+                    {
+                        dayIgnoredIdleTime = true;
+                    }
+                    //
                 }
+
+                //
+                if (dayIgnoredIdleTime)
+                {
+                    numberOfIdleShiftsEquips--;
+                }
+                //
 
                 Invoke(new Action(() =>
                 {
@@ -1743,6 +1761,10 @@ namespace Viewing_Statistics
                     numberOfIdleShiftsUsers = 0;
                 }
 
+                //
+                bool dayIgnoredIdleTime = false;
+                //
+
                 for (int j = 0; j < usersListWorkingOut[i].WorkingOutList.Count; j++)
                 {
                     float timeWorkigOut = usersListWorkingOut[i].WorkingOutList[j].WorkingOut;
@@ -1750,7 +1772,21 @@ namespace Viewing_Statistics
                     totalTimeWorkigOut += timeWorkigOut;
                     totalPercentWorkingOut += GetPercentWorkingOut(fullOutput, (int)timeWorkigOut);
                     totalBonusWorkingOut += CalculateBonusWorkingOut(timeWorkigOut);
+
+                    //
+                    if (numberOfIdleShiftsUsers > 0 && timeWorkigOut > 0)
+                    {
+                        dayIgnoredIdleTime = true;
+                    }
+                    //
                 }
+
+                //
+                if (dayIgnoredIdleTime)
+                {
+                    numberOfIdleShiftsUsers--;
+                }
+                //
 
                 Invoke(new Action(() =>
                 {
