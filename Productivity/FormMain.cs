@@ -1522,6 +1522,7 @@ namespace Productivity
 
             return result;
         }
+
         private float CalculateWorkTime(List<UserShiftOrder> order, int equip)
         {
             float workingOut = 0;

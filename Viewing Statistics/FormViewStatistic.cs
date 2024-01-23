@@ -1354,7 +1354,7 @@ namespace Viewing_Statistics
 
                                 float percentWorkingOut = GetPercentWorkingOut(fullOutput, timeWorkigOut);
 
-                                bool isThereOrdersInWorking = IsThereOrdersInWorking(shift.Orders);
+                                bool isThereOrdersInWorking = IsThereOrdersInWorking(shift.Orders, currentEquipsList[k]);
 
                                 if (!currentShift)
                                 {
@@ -1507,7 +1507,7 @@ namespace Viewing_Statistics
                                                 ));
                                             usersListWorkingOut[indexUserList].NumberOfShiftsWorked++;
 
-                                            if (!isThereOrdersInWorking && timeWorkigOut > 0)
+                                            if (!isThereOrdersInWorking)// && timeWorkigOut > 0)
                                             {
                                                 usersListWorkingOut[indexUserList].NumberOfIdleShifts++;
                                             }
@@ -1545,7 +1545,7 @@ namespace Viewing_Statistics
                                         //usersListWorkingOut[usersListWorkingOut.Count - 1].WorkingOutBacklog += fullOutput - timeWorkigOut;
                                         usersListWorkingOut[usersListWorkingOut.Count - 1].NumberOfShiftsWorked++;
 
-                                        if (!isThereOrdersInWorking && timeWorkigOut > 0)
+                                        if (!isThereOrdersInWorking)// && timeWorkigOut > 0)
                                         {
                                             usersListWorkingOut[usersListWorkingOut.Count - 1].NumberOfIdleShifts++;
                                         }
@@ -1708,7 +1708,7 @@ namespace Viewing_Statistics
 
                         if (values[1] == "1")
                         {
-                            dataGrid.Rows[indexRow].Cells[indexCol + nextCol].Value = (totalPercentWorkingOut / (numberOfShiftsWorkedEquips - numberOfIdleShiftsEquips)).ToString("P1");
+                             dataGrid.Rows[indexRow].Cells[indexCol + nextCol].Value = (totalPercentWorkingOut / (numberOfShiftsWorkedEquips - numberOfIdleShiftsEquips)).ToString("P1");
                             nextCol++;
                         }
 
@@ -1787,7 +1787,7 @@ namespace Viewing_Statistics
                     numberOfIdleShiftsUsers--;
                 }
                 //
-
+                
                 Invoke(new Action(() =>
                 {
                     string key = "u" + usersListWorkingOut[i].Id;
@@ -1807,7 +1807,8 @@ namespace Viewing_Statistics
 
                         if (values[1] == "1")
                         {
-                            dataGrid.Rows[indexRow].Cells[indexCol + nextCol].Value = (totalPercentWorkingOut / (numberOfShiftsWorkedUsers - numberOfIdleShiftsUsers)).ToString("P1");
+                            //
+                            dataGrid.Rows[indexRow].Cells[indexCol + nextCol].Value = (totalPercentWorkingOut / (numberOfShiftsWorkedUsers - numberOfIdleShiftsUsers)).ToString("P1") + ": " + numberOfShiftsWorkedUsers + " - " + numberOfIdleShiftsUsers;
                             nextCol++;
                         }
 
@@ -2194,6 +2195,22 @@ namespace Viewing_Statistics
             if (pColumn != null)
             {
                 result = pColumn.Index;
+            }
+
+            return result;
+        }
+
+        private bool IsThereOrdersInWorking(List<UserShiftOrder> orders, int equip)
+        {
+            bool result = false;
+
+            for (int i = 0; i < orders.Count; i++)
+            {
+                if (orders[i].IdletimeName == "" && orders[i].IdEquip == equip)
+                {
+                    result = true;
+                    break;
+                }
             }
 
             return result;
