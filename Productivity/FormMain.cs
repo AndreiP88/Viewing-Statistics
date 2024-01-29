@@ -1067,6 +1067,7 @@ namespace Productivity
                                 float timeWorkigOut = CalculateWorkTime(shift.Orders, currentEquipsList[k]);
                                 float timeBacklog = 0;
                                 bool isThereOrdersInWorking = IsThereOrdersInWorking(shift.Orders, currentEquipsList[k]);
+                                bool isThereOrdersInWorkingForAllEuips = IsThereOrdersInWorkingForAllEquips(shift.Orders);
 
                                 if (calculateShiftsInIdletime)
                                 {
@@ -1221,7 +1222,7 @@ namespace Productivity
                                         {
                                             usersListWorkingOut[indexUserList].NumberOfShiftsWorked++;
 
-                                            if (!isThereOrdersInWorking)
+                                            if (!isThereOrdersInWorkingForAllEuips)
                                             {
                                                 usersListWorkingOut[indexUserList].NumberOfIdleShifts++;
                                             }
@@ -1259,7 +1260,7 @@ namespace Productivity
                                         //usersListWorkingOut[usersListWorkingOut.Count - 1].WorkingOutBacklog += fullOutput - timeWorkigOut;
                                         usersListWorkingOut[usersListWorkingOut.Count - 1].NumberOfShiftsWorked++;
 
-                                        if (!isThereOrdersInWorking)
+                                        if (!isThereOrdersInWorkingForAllEuips)
                                         {
                                             usersListWorkingOut[usersListWorkingOut.Count - 1].NumberOfIdleShifts++;
                                         }
@@ -1345,10 +1346,6 @@ namespace Productivity
                     numberOfIdleShiftsEquips = 0;
                 }
 
-                //
-                bool dayIgnoredIdleTime = false;
-                //
-
                 for (int j = 0; j < equipsListWorkingOut[i].WorkingOutList.Count; j++)
                 {
                     //MessageBox.Show(equipsList.Count + ", " + equipsList[i].Equip + ", " + equipsList[i].WorkingOut);
@@ -1360,13 +1357,6 @@ namespace Productivity
                     float timeWorkigOut = equipsListWorkingOut[i].WorkingOutList[j].WorkingOut;
 
                     float percentWorkingOut = GetPercentWorkingOut(fullOutput, timeWorkigOut);
-
-                    //
-                    if (numberOfIdleShiftsEquips > 0 && timeWorkigOut > 0)
-                    {
-                        dayIgnoredIdleTime = true;
-                    }
-                    //
 
                     Invoke(new Action(() =>
                     {
@@ -1382,13 +1372,6 @@ namespace Productivity
                 }
 
                 //float fullTimeWorkigOut = equipsListWorkingOut[i].WorkingOutSumm;
-
-                //
-                if (dayIgnoredIdleTime)
-                {
-                    numberOfIdleShiftsEquips--;
-                }
-                //
 
                 Invoke(new Action(() =>
                 {
@@ -1439,10 +1422,6 @@ namespace Productivity
                     numberOfIdleShiftsUsers = 0;
                 }
 
-                //
-                bool dayIgnoredIdleTime = false;
-                //
-
                 for (int j = 0; j < usersListWorkingOut[i].WorkingOutList.Count; j++)
                 {
                     //MessageBox.Show(equipsList.Count + ", " + equipsList[i].Equip + ", " + equipsList[i].WorkingOut);
@@ -1454,13 +1433,6 @@ namespace Productivity
                     float timeWorkigOut = usersListWorkingOut[i].WorkingOutList[j].WorkingOut;
 
                     float percentWorkingOut = GetPercentWorkingOut(fullOutput, timeWorkigOut);
-
-                    //
-                    if (numberOfIdleShiftsUsers > 0 && timeWorkigOut > 0)
-                    {
-                        dayIgnoredIdleTime = true;
-                    }
-                    //
 
                     Invoke(new Action(() =>
                     {
@@ -1474,13 +1446,6 @@ namespace Productivity
                         }
                     }));
                 }
-
-                //
-                if (dayIgnoredIdleTime)
-                {
-                    numberOfIdleShiftsUsers--;
-                }
-                //
 
                 //float fullTimeWorkigOut = usersListWorkingOut[i].WorkingOutSumm;
 
@@ -1514,6 +1479,22 @@ namespace Productivity
             for (int i = 0; i < orders.Count; i++)
             {
                 if (orders[i].IdletimeName == "" && orders[i].IdEquip == equip)
+                {
+                    result = true;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+        private bool IsThereOrdersInWorkingForAllEquips(List<UserShiftOrder> orders)
+        {
+            bool result = false;
+
+            for (int i = 0; i < orders.Count; i++)
+            {
+                if (orders[i].IdletimeName == "")
                 {
                     result = true;
                     break;
