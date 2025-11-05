@@ -1861,7 +1861,7 @@ namespace Productivity
             cancelTokenSource?.Cancel();
             Thread.Sleep(300);
 
-            //может перенести в конец?
+            //может перенести в конец? 
             cancelTokenSource = new CancellationTokenSource();
 
             //List<int> equips = GetSelectegEquipsList();
