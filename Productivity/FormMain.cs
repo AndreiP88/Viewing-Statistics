@@ -2291,7 +2291,7 @@ namespace Productivity
 
             //Пока так, потом сделаю отдельную выборку оборудования с сортировкой, либо без сортирвки а в порядке загрузки
             //если бы БД адекватно хранила индексы смены, а не херила их после редактирования записи, то было бы проще привязываться к смене в fbc_brigade
-            for (int i = 0; i < equips.Count; i++)
+            /*for (int i = 0; i < equips.Count; i++)
             {
                 for (int j = 0; j < usersShiftList.Count; j++)
                 {
@@ -2300,6 +2300,26 @@ namespace Productivity
                         for(int l = 0; l < usersShiftList[j].Shifts[k].Orders.Count; l++)
                         {
                             if (usersShiftList[j].Shifts[k].Orders[l].IdEquip == equips[i])
+                            {
+                                if (!usersCurrent.Contains(usersShiftList[j].Id))
+                                {
+                                    usersCurrent.Add(usersShiftList[j].Id);
+                                }
+                            }
+                        }
+                    }
+                }
+            }*/
+
+            for (int i = 0; i < equips.Count; i++)
+            {
+                for (int j = 0; j < usersShiftList.Count; j++)
+                {
+                    for (int k = 0; k < usersShiftList[j].Shifts.Count; k++)
+                    {
+                        for (int l = 0; l < usersShiftList[j].Shifts[k].Equips.Count; l++)
+                        {
+                            if (usersShiftList[j].Shifts[k].Equips[l] == equips[i])
                             {
                                 if (!usersCurrent.Contains(usersShiftList[j].Id))
                                 {
