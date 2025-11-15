@@ -870,7 +870,7 @@ namespace libSql
                     int id_man_order_job_item = sqlReader["id_man_order_job_item"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["id_man_order_job_item"]);
 
 
-                    if (id_man_order_job_item != -1)
+                    if (loadEquip != -1)
                     {
                         usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
                         loadEquip,
