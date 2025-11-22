@@ -2355,6 +2355,9 @@ namespace Productivity
                     {
                         UserShift userShift = usersShiftList[j].Shifts[0];
 
+                        dataGridViewOneShift.Rows[indexRow].Cells[7].Value = userShift.ShiftDateBegin;
+                        dataGridViewOneShift.Rows[indexRow].Cells[8].Value = userShift.ShiftDateEnd;
+
                         int currentStep = 0;
                         int countOrder = 0;
                         int countOperation = 0;
@@ -2384,8 +2387,16 @@ namespace Productivity
                                 string orderStartTime = userShiftOrders[0].DateBegin;
                                 string orderEndTime = userShiftOrders[l].DateEnd;
 
-                                string timeBegin = Convert.ToDateTime(order.DateBegin).ToString("dd.MM.yyyy HH:mm");
-                                string timeEnd = Convert.ToDateTime(order.DateEnd).ToString("dd.MM.yyyy HH:mm");
+                                //string timeBegin = Convert.ToDateTime(order.DateBegin).ToString("dd.MM.yyyy HH:mm");
+                                //string timeEnd = Convert.ToDateTime(order.DateEnd).ToString("dd.MM.yyyy HH:mm");
+
+                                string timeBegin = order.DateBegin == "" ? string.Empty : Convert.ToDateTime(order.DateBegin).ToString("dd.MM.yyyy HH:mm");
+                                string timeEnd = order.DateEnd == "" ? string.Empty : Convert.ToDateTime(order.DateEnd).ToString("dd.MM.yyyy HH:mm");
+
+                                if (timeBegin == "")
+                                {
+                                    break;
+                                }
 
                                 view.TimeBegin = timeBegin + "";
 
