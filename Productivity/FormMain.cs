@@ -2341,6 +2341,9 @@ namespace Productivity
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.BackColor = Color.Gray;
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
 
+                dataGridViewOneShift.Rows[indexRow].Cells[7].Style.Font = new Font(dataGridViewOneShift.Font, FontStyle.Regular);
+                dataGridViewOneShift.Rows[indexRow].Cells[8].Style.Font = new Font(dataGridViewOneShift.Font, FontStyle.Regular);
+
                 float userWorkingOut = 0;
                 float userDone = 0;
                 int dinnerTime = 0;
@@ -2355,8 +2358,8 @@ namespace Productivity
                     {
                         UserShift userShift = usersShiftList[j].Shifts[0];
 
-                        dataGridViewOneShift.Rows[indexRow].Cells[7].Value = userShift.ShiftDateBegin;
-                        dataGridViewOneShift.Rows[indexRow].Cells[8].Value = userShift.ShiftDateEnd;
+                        dataGridViewOneShift.Rows[indexRow].Cells[7].Value = userShift.ShiftDateBegin == "" ? string.Empty : "|" + Convert.ToDateTime(userShift.ShiftDateBegin).ToString("dd.MM.yyyy HH:mm");
+                        dataGridViewOneShift.Rows[indexRow].Cells[8].Value = userShift.ShiftDateEnd == "" ? string.Empty : Convert.ToDateTime(userShift.ShiftDateEnd).ToString("dd.MM.yyyy HH:mm") + "|";
 
                         int currentStep = 0;
                         int countOrder = 0;
