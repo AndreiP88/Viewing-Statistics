@@ -4707,8 +4707,10 @@ namespace Productivity
             }
         }
 
-        private void NextShift()
+        private async Task NextShiftAsync()
         {
+            loadParameter = true;
+
             if (comboBox1.SelectedIndex == 0)
             {
                 comboBox1.SelectedIndex = 1;
@@ -4718,10 +4720,16 @@ namespace Productivity
                 dateTimePicker1.Value = dateTimePicker1.Value.AddDays(1);
                 comboBox1.SelectedIndex = 0;
             }
+
+            loadParameter = false;
+
+            await LoadOrdersForSelectedDateAsync();
         }
 
-        private void PreviewShift()
+        private async Task PreviewShiftAsync()
         {
+            loadParameter = true;
+
             if (comboBox1.SelectedIndex == 1)
             {
                 comboBox1.SelectedIndex = 0;
@@ -4731,6 +4739,9 @@ namespace Productivity
                 dateTimePicker1.Value = dateTimePicker1.Value.AddDays(-1);
                 comboBox1.SelectedIndex = 1;
             }
+            loadParameter = false;
+
+            await LoadOrdersForSelectedDateAsync();
         }
         private void button3_Click(object sender, EventArgs e)
         {
@@ -4774,12 +4785,12 @@ namespace Productivity
 
         private void buttonPreview_Click(object sender, EventArgs e)
         {
-            PreviewShift();
+            PreviewShiftAsync();
         }
 
         private void buttonNext_Click(object sender, EventArgs e)
         {
-            NextShift();
+            NextShiftAsync();
         }
 
         private string SelectValueFromDictionary(Dictionary<int, string> dictionary, int index)
