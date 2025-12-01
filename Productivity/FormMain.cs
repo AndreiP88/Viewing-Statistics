@@ -1238,6 +1238,8 @@ namespace Productivity
                                 bool isThereOrdersInWorking = IsThereOrdersInWorking(shift.Orders, currentEquipsList[k]);
                                 bool isThereOrdersInWorkingForAllEuips = IsThereOrdersInWorkingForAllEquips(shift.Orders);
 
+                                Console.WriteLine(usersList[i].Id + ": " + shiftDate + ", " + shiftNumber + "; " + currentEquipsList[k] + ": " + isThereOrdersInWorking);
+
                                 if (calculateShiftsInIdletime)
                                 {
                                     timeBacklog = fullOutput - timeWorkigOut;
@@ -1303,6 +1305,22 @@ namespace Productivity
                                         if (!currentShift)
                                         {
                                             equipsListWorkingOut[indexEquipsList].WorkingOutList[indexEquipsListWOut].WorkingOut += timeWorkigOut;
+
+                                            if (!isThereOrdersInWorking)
+                                            {
+                                                if (equipsListWorkingOut[indexEquipsList].WorkingOutList[indexEquipsListWOut].NumberOfIdleShifts != 0)
+                                                {
+                                                    equipsListWorkingOut[indexEquipsList].WorkingOutList[indexEquipsListWOut].NumberOfIdleShifts = 1;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                equipsListWorkingOut[indexEquipsList].WorkingOutList[indexEquipsListWOut].NumberOfIdleShifts = 0;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            equipsListWorkingOut[indexEquipsList].WorkingOutList[indexEquipsListWOut].NumberOfIdleShifts = 0;
                                         }
                                     }
                                     else
@@ -1319,8 +1337,21 @@ namespace Productivity
 
                                             if (!isThereOrdersInWorking)
                                             {
-                                                equipsListWorkingOut[indexEquipsList].NumberOfIdleShifts++;
+                                                equipsListWorkingOut[indexEquipsList].WorkingOutList[equipsListWorkingOut[indexEquipsList].WorkingOutList.Count - 1].NumberOfIdleShifts = 1;
                                             }
+                                            else
+                                            {
+                                                equipsListWorkingOut[indexEquipsList].WorkingOutList[equipsListWorkingOut[indexEquipsList].WorkingOutList.Count - 1].NumberOfIdleShifts = 0;
+                                            }
+
+                                            /*if (!isThereOrdersInWorking)
+                                            {
+                                                equipsListWorkingOut[indexEquipsList].NumberOfIdleShifts++;
+                                            }*/
+                                        }
+                                        else
+                                        {
+                                            equipsListWorkingOut[indexEquipsList].WorkingOutList[equipsListWorkingOut[indexEquipsList].WorkingOutList.Count - 1].NumberOfIdleShifts = 0;
                                         }
 
                                         //equipsList[indexEquipsList].EquipsWOut[equipsList[indexEquipsList].EquipsWOut.Count - 1].WorkingOut 
@@ -1339,13 +1370,13 @@ namespace Productivity
                                         ));
 
                                     equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutList = new List<WorkingOutValue>
-                                {
-                                    new WorkingOutValue(
-                                        shift.ShiftDate,
-                                        shiftNumber,
-                                        timeWorkigOut
-                                    )
-                                };
+                                    {
+                                        new WorkingOutValue(
+                                            shift.ShiftDate,
+                                            shiftNumber,
+                                            timeWorkigOut
+                                        )
+                                    };
 
                                     if (!currentShift)
                                     {
@@ -1355,8 +1386,21 @@ namespace Productivity
 
                                         if (!isThereOrdersInWorking)
                                         {
-                                            equipsListWorkingOut[equipsListWorkingOut.Count - 1].NumberOfIdleShifts++;
+                                            equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutList[equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutList.Count - 1].NumberOfIdleShifts = 1;
                                         }
+                                        else
+                                        {
+                                            equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutList[equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutList.Count - 1].NumberOfIdleShifts = 0;
+                                        }
+
+                                        /*if (!isThereOrdersInWorking)
+                                        {
+                                            equipsListWorkingOut[equipsListWorkingOut.Count - 1].NumberOfIdleShifts++;
+                                        }*/
+                                    }
+                                    else
+                                    {
+                                        equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutList[equipsListWorkingOut[equipsListWorkingOut.Count - 1].WorkingOutList.Count - 1].NumberOfIdleShifts = 0;
                                     }
                                 }
 
@@ -1494,6 +1538,15 @@ namespace Productivity
                             }
                         }
                     }
+                }
+            }
+
+            for (int i = 0; i < equipsListWorkingOut.Count; i++)
+            {
+                for (int j = 0; j < equipsListWorkingOut[i].WorkingOutList.Count; j++)
+                {
+                    equipsListWorkingOut[i].NumberOfIdleShifts += equipsListWorkingOut[i].WorkingOutList[j].NumberOfIdleShifts;
+                    Console.WriteLine(equipsListWorkingOut[i].WorkingOutList[j].ShiftDate + " - " + equipsListWorkingOut[i].WorkingOutList[j].ShiftNumber + ": " + i + ":" + j + " = " + equipsListWorkingOut[i].WorkingOutList[j].NumberOfIdleShifts);
                 }
             }
 
@@ -1720,6 +1773,14 @@ namespace Productivity
         {
             bool result = false;
 
+            if (orders.Count == 1 && orders[0].IdManOrderJobItem == -1)
+            {
+                //if (orders[0].IdEquip == equip)
+                {
+                    return false;
+                }
+            }
+
             for (int i = 0; i < orders.Count; i++)
             {
                 if (orders[i].IdEquip == equip)
@@ -1755,8 +1816,19 @@ namespace Productivity
         {
             bool result = false;
 
+            if (orders.Count == 1 && orders[0].IdManOrderJobItem == -1)
+            {
+                return false;
+            }
+
             for (int i = 0; i < orders.Count; i++)
             {
+                /*if (orders[i].IdManOrderJobItem == -1)
+                {
+                    result = false;
+                    break;
+                }*/
+
                 if (orders[i].IdletimeName == "" || orders[i].FactOutQty > 0)
                 {
                     result = true;
@@ -2341,8 +2413,9 @@ namespace Productivity
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.BackColor = Color.Gray;
                 dataGridViewOneShift.Rows[indexRow].DefaultCellStyle.ForeColor = Color.Black;
 
-                dataGridViewOneShift.Rows[indexRow].Cells[7].Style.Font = new Font(dataGridViewOneShift.Font, FontStyle.Regular);
-                dataGridViewOneShift.Rows[indexRow].Cells[8].Style.Font = new Font(dataGridViewOneShift.Font, FontStyle.Regular);
+                dataGridViewOneShift.Rows[indexRow].Cells[7].Style.Font = new Font(dataGridViewOneShift.Font, FontStyle.Underline);
+                dataGridViewOneShift.Rows[indexRow].Cells[8].Style.Font = new Font(dataGridViewOneShift.Font, FontStyle.Underline);
+                dataGridViewOneShift.Rows[indexRow].Cells[9].Style.Font = new Font(dataGridViewOneShift.Font, FontStyle.Underline);
 
                 float userWorkingOut = 0;
                 float userDone = 0;
@@ -2358,8 +2431,23 @@ namespace Productivity
                     {
                         UserShift userShift = usersShiftList[j].Shifts[0];
 
-                        dataGridViewOneShift.Rows[indexRow].Cells[7].Value = userShift.ShiftDateBegin == "" ? string.Empty : "|" + Convert.ToDateTime(userShift.ShiftDateBegin).ToString("dd.MM.yyyy HH:mm");
-                        dataGridViewOneShift.Rows[indexRow].Cells[8].Value = userShift.ShiftDateEnd == "" ? string.Empty : Convert.ToDateTime(userShift.ShiftDateEnd).ToString("dd.MM.yyyy HH:mm") + "|";
+                        string startShift = userShift.ShiftDateBegin == "" ? string.Empty : Convert.ToDateTime(userShift.ShiftDateBegin).ToString("dd.MM.yyyy HH:mm");
+                        string endShift = userShift.ShiftDateEnd == "" ? string.Empty : Convert.ToDateTime(userShift.ShiftDateEnd).ToString("dd.MM.yyyy HH:mm");
+
+                        int durationShift = 0;
+
+                        if (endShift != "")
+                        {
+                            durationShift = time.DateDifferenceToMinutes(endShift, startShift);
+                        }
+                        else
+                        {
+                            durationShift = time.DateDifferenceToMinutes(DateTime.Now.ToString("dd.MM.yyyy HH:mm"), startShift);
+                        }
+
+                        dataGridViewOneShift.Rows[indexRow].Cells[7].Value = startShift;
+                        dataGridViewOneShift.Rows[indexRow].Cells[8].Value = endShift;
+                        dataGridViewOneShift.Rows[indexRow].Cells[9].Value = time.MinuteToTimeString(durationShift);
 
                         int currentStep = 0;
                         int countOrder = 0;

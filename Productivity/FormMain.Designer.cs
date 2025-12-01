@@ -364,13 +364,13 @@ namespace Productivity
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage5);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage3);
             this.metroSetTabControl1.Controls.Add(this.metroSetSetTabPage4);
-            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.metroSetTabControl1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.metroSetTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroSetTabControl1.IsDerivedStyle = true;
             this.metroSetTabControl1.ItemSize = new System.Drawing.Size(130, 38);
             this.metroSetTabControl1.Location = new System.Drawing.Point(12, 90);
             this.metroSetTabControl1.Name = "metroSetTabControl1";
-            this.metroSetTabControl1.SelectedIndex = 0;
+            this.metroSetTabControl1.SelectedIndex = 1;
             this.metroSetTabControl1.SelectedTextColor = System.Drawing.Color.White;
             this.metroSetTabControl1.Size = new System.Drawing.Size(1260, 510);
             this.metroSetTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
