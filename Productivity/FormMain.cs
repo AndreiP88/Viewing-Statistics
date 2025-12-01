@@ -1238,8 +1238,6 @@ namespace Productivity
                                 bool isThereOrdersInWorking = IsThereOrdersInWorking(shift.Orders, currentEquipsList[k]);
                                 bool isThereOrdersInWorkingForAllEuips = IsThereOrdersInWorkingForAllEquips(shift.Orders);
 
-                                Console.WriteLine(usersList[i].Id + ": " + shiftDate + ", " + shiftNumber + "; " + currentEquipsList[k] + ": " + isThereOrdersInWorking);
-
                                 if (calculateShiftsInIdletime)
                                 {
                                     timeBacklog = fullOutput - timeWorkigOut;
@@ -1546,7 +1544,6 @@ namespace Productivity
                 for (int j = 0; j < equipsListWorkingOut[i].WorkingOutList.Count; j++)
                 {
                     equipsListWorkingOut[i].NumberOfIdleShifts += equipsListWorkingOut[i].WorkingOutList[j].NumberOfIdleShifts;
-                    Console.WriteLine(equipsListWorkingOut[i].WorkingOutList[j].ShiftDate + " - " + equipsListWorkingOut[i].WorkingOutList[j].ShiftNumber + ": " + i + ":" + j + " = " + equipsListWorkingOut[i].WorkingOutList[j].NumberOfIdleShifts);
                 }
             }
 
