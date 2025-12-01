@@ -87,7 +87,7 @@ namespace libSql
 
             for (int i = 0; i < shiftsList.Count; i++)
             {
-                countShifts += shiftsList[i].countShifts;
+                //countShifts += shiftsList[i].countShifts;
                 totalAmount += shiftsList[i].amountAllOrdersShift;
                 totalTimeWorkigOut += shiftsList[i].allTimeWorkingOutShift;
                 totalCountMakeReady += shiftsList[i].countMakereadyShift;
@@ -100,6 +100,8 @@ namespace libSql
                     totalPercentWorkingOutList.Add(shiftsList[i].percentWorkingOutShift);
                 }
             }
+
+            countShifts += shiftsList.Count;
 
             float percentWorkingOutAverage = 0;
 
