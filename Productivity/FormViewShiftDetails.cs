@@ -32,7 +32,7 @@ namespace Productivity
         Dictionary<int, string> users = new Dictionary<int, string>();
         Dictionary<int, string> machines = new Dictionary<int, string>();
 
-        private void FormAddEquips_Load(object sender, EventArgs e)
+        private async void FormAddEquips_Load(object sender, EventArgs e)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace Productivity
                 metroSetLabel1.Text = Shift + " смена";
                 metroSetLabel2.Text = nameUserEquiup;
 
-                LoadOrdersSelectedDateAndShiftDetailsAsync(Date, Shift);
+                await LoadOrdersSelectedDateAndShiftDetailsAsync(Date, Shift);
             }
             catch (Exception ex)
             {

@@ -4868,14 +4868,14 @@ namespace Productivity
             }
         }
 
-        private void buttonPreview_Click(object sender, EventArgs e)
+        private async void buttonPreview_Click(object sender, EventArgs e)
         {
-            PreviewShiftAsync();
+            await PreviewShiftAsync();
         }
 
-        private void buttonNext_Click(object sender, EventArgs e)
+        private async void buttonNext_Click(object sender, EventArgs e)
         {
-            NextShiftAsync();
+            await NextShiftAsync();
         }
 
         private string SelectValueFromDictionary(Dictionary<int, string> dictionary, int index)

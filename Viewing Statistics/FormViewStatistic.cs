@@ -252,7 +252,7 @@ namespace Viewing_Statistics
             return result;
         }
 
-        private void SelectNextPage()
+        private async Task SelectNextPageAsync()
         {
             DateTime currentTime = DateTime.Now;
             int currentPage = metroSetTabControl1.SelectedIndex;
@@ -267,7 +267,7 @@ namespace Viewing_Statistics
                     }
                     else
                     {
-                        UpdatePagesListsFromFile();
+                        await UpdatePagesListsFromFileAsync();
                         metroSetTabControl1.SelectedIndex = 0;
                         //timeLastChengePage = currentTime;
                     }
@@ -322,7 +322,7 @@ namespace Viewing_Statistics
             return period;
         }
 
-        private void UpdatePagesListsFromFile()
+        private async Task UpdatePagesListsFromFileAsync()
         {
             INIView view = new INIView();
 
@@ -337,7 +337,7 @@ namespace Viewing_Statistics
 
             DateTime startDate = GetStartDate(period);
 
-            ReloadDataFromBaseAsync(pages, startDate);
+            await ReloadDataFromBaseAsync(pages, startDate);
 
             AddTabPageFromPageList(pages);
 
@@ -2303,20 +2303,20 @@ namespace Viewing_Statistics
             return "e" + equip + "u" + user;
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private async void Form1_Load(object sender, EventArgs e)
         {
             //StartCheckUpdate();
             StartTaskUpdateApplication();
-            UpdatePagesListsFromFile();
+            await UpdatePagesListsFromFileAsync();
             metroSetTabControl1.UseAnimation = false;
             metroSetTabControl1.AnimateEasingType = MetroSet_UI.Enums.EasingType.CubeOut;
             metroSetTabControl1.AnimateTime = 3000;
             timer1.Enabled = true;
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private async void timer1_Tick(object sender, EventArgs e)
         {
-            SelectNextPage();
+            await SelectNextPageAsync();
 
             DateTime currentDateTime = DateTime.Now;
 
