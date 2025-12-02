@@ -195,7 +195,7 @@ namespace Viewing_Statistics
             }
         }
 
-        private void ReloadDataFromBase(List<PageView> pagesList, DateTime startDate)
+        private async Task ReloadDataFromBaseAsync(List<PageView> pagesList, DateTime startDate)
         {
             List<int> equips = GetAllEquipsFromPagesList(pagesList);
 
@@ -203,8 +203,8 @@ namespace Viewing_Statistics
             
             LoadAllUsers();
             LoadMachine();
-            LoadUsersListAsync(equips, startDate);
-            LoadShiftsForUsersListAsync(startDate);
+            await LoadUsersListAsync(equips, startDate);
+            await LoadShiftsForUsersListAsync(startDate);
         }
 
         private void DisposingAllControlsFromTabPages()
@@ -337,7 +337,7 @@ namespace Viewing_Statistics
 
             DateTime startDate = GetStartDate(period);
 
-            ReloadDataFromBase(pages, startDate);
+            ReloadDataFromBaseAsync(pages, startDate);
 
             AddTabPageFromPageList(pages);
 

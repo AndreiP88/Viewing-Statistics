@@ -92,11 +92,11 @@ namespace libSql
         {
             List<ShiftsDetails> shiftsList = new List<ShiftsDetails>();
 
-            ValueDateTime timeValues = new ValueDateTime();
+            //ValueDateTime timeValues = new ValueDateTime();
 
             List<ShiftsList> shifts = LoadShiftsList(listUsers, selectDate);
 
-            int countDaysFromSellectedDate = DateTime.DaysInMonth(selectDate.Year, selectDate.Month);
+            //int countDaysFromSellectedDate = DateTime.DaysInMonth(selectDate.Year, selectDate.Month);
 
             foreach (ShiftsList shift in shifts)
             {
@@ -226,167 +226,6 @@ namespace libSql
             //List<User> usersList = LoadOrdersForFBC(currentDate, currentShift, givenShiftNumber);
             List<User> usersList = await LoadOrdersFromFBCBrigadeAsync(currentDate, currentShift, givenShiftNumber, onlyOneUserID, onlyOneEquipID);
             
-            return usersList;
-        }
-
-        public async Task<List<User>> LoadShiftsFromFBCBrigadeAsync(DateTime currentDate, int currentShift, bool givenShiftNumber = true, int onlyOneUserID = -1, int onlyOneEquipID = -1)
-        {
-            ValueDateTime timeValues = new ValueDateTime();
-
-            List<User> usersList = new List<User>();
-
-            string dateShift = currentDate.ToString("dd.MM.yyyy");
-
-            string startDateTime = timeValues.SelectStartDateTimeFromShiftNumberAndDateForFBC(currentDate, currentShift);
-            string endDateTime = timeValues.SelectEndDateTimeFromShiftNumberAndDateForFBC(currentDate, currentShift);
-
-            string cLine = @"AND fbc_brigade.date_begin >= CONVERT ( VARCHAR ( 24 ), @startDate, 21 ) 
-                             AND fbc_brigade.date_begin <= CONVERT ( VARCHAR ( 24 ), @endDate, 21 ) 
-                             AND fbc_brigade.shift_no = @shiftNum ";
-
-            if (!givenShiftNumber)
-            {
-                startDateTime = timeValues.SelectStartDateTimeFromShiftNumberAndDateOnlyTimeForFBC(currentDate, currentShift);
-                endDateTime = timeValues.SelectEndDateTimeFromShiftNumberAndDateOnlyTimeForFBC(currentDate, currentShift);
-
-                cLine = @"AND fbc_brigade.date_begin >= CONVERT ( VARCHAR ( 24 ), @startDate, 21 ) 
-                          AND fbc_brigade.date_begin <= CONVERT ( VARCHAR ( 24 ), @endDate, 21 ) ";
-            }
-
-            if (onlyOneUserID != -1)
-            {
-                cLine += @"AND man_factjob.id_common_employee = @user ";
-            }
-
-            if (onlyOneEquipID != -1)
-            {
-                cLine += @"AND man_factjob.id_equip = @equip ";
-            }
-
-            using (SqlConnection connection = DBConnection.GetDBConnection())
-            {
-                await connection.OpenAsync();
-                SqlCommand Command = new SqlCommand
-                {
-                    Connection = connection,
-
-                    CommandText =
-                        @"SELECT
-	                        fbc_brigade.date_begin AS shif_date_begin, 
-	                        fbc_brigade.date_end AS shif_date_end, 
-                        FROM
-	                        dbo.fbc_brigade
-                        WHERE " +
-                            cLine +
-                        @"ORDER BY
-	                        man_factjob.date_begin ASC, man_factjob.id_man_factjob ASC"
-                };
-                Command.Parameters.AddWithValue("@startDate", startDateTime);
-                Command.Parameters.AddWithValue("@endDate", endDateTime);
-                Command.Parameters.AddWithValue("@shiftNum", currentShift);
-                Command.Parameters.AddWithValue("@user", onlyOneUserID);
-                Command.Parameters.AddWithValue("@equip", onlyOneEquipID);
-
-                DbDataReader sqlReader = await Command.ExecuteReaderAsync();
-
-                while (await sqlReader.ReadAsync())
-                {
-                    int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
-                    int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
-
-                    string shiftDateBegin = sqlReader["shif_date_begin"].ToString();
-
-                    string shiftDateEnd = "";
-                    if (!DBNull.Value.Equals(sqlReader["shif_date_end"]))
-                    {
-                        shiftDateEnd = sqlReader["shif_date_end"].ToString();
-                    }
-
-                    /*int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser &&
-                                                                       v.Equip == loadEquip);*/
-
-                    int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser);
-
-                    if (indexFromUserList == -1)
-                    {
-                        usersList.Add(new User(
-                            loadUser
-                        ));
-
-                        indexFromUserList = usersList.Count - 1;
-
-                        usersList[indexFromUserList].Shifts = new List<UserShift>();
-                    }
-
-                    int indexFromUserListShifts = usersList[indexFromUserList].Shifts.FindIndex(
-                                                        (v) => v.ShiftDate == dateShift &&
-                                                               v.ShiftNumber == currentShift);
-
-                    int indexShift = indexFromUserListShifts;
-
-                    if (indexFromUserListShifts == -1)
-                    {
-                        usersList[indexFromUserList].Shifts.Add(new UserShift(
-                        dateShift,
-                        currentShift,
-                        shiftDateBegin,
-                        shiftDateEnd
-                        ));
-
-                        indexShift = usersList[indexFromUserList].Shifts.Count - 1;
-
-                        usersList[indexFromUserList].Shifts[indexShift].Orders = new List<UserShiftOrder>();
-
-                        if (!usersList[indexFromUserList].Shifts[indexShift].Equips.Contains(loadEquip))
-                        {
-                            usersList[indexFromUserList].Shifts[indexShift].Equips.Add(loadEquip);
-                        }
-                    }
-
-                    string orderNum = sqlReader["order_num"] == DBNull.Value ? string.Empty : sqlReader["order_num"].ToString();
-                    string ulName = sqlReader["ul_name"] == DBNull.Value ? string.Empty : sqlReader["ul_name"].ToString();
-                    float factOut = sqlReader["fact_out_qty"] == DBNull.Value ? 0 : (float)Convert.ToDecimal(sqlReader["fact_out_qty"]);
-                    float planOut = sqlReader["plan_out_qty"] == DBNull.Value ? 0 : (float)Convert.ToDecimal(sqlReader["plan_out_qty"]);
-                    int normTime = sqlReader["normtime"] == DBNull.Value ? 0 : Convert.ToInt32(sqlReader["normtime"]);
-                    int idFBCBrigade = sqlReader["id_fbc_brigade"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["id_fbc_brigade"]);
-                    string idletimeName = sqlReader["idletime_name"] == DBNull.Value ? string.Empty : sqlReader["idletime_name"].ToString();
-                    int operationType = sqlReader["operationType"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["operationType"]);
-
-                    string note = sqlReader["note"] == DBNull.Value ? string.Empty : sqlReader["note"].ToString();
-                    string idletimeNote = sqlReader["idletimeNote"] == DBNull.Value ? string.Empty : sqlReader["idletimeNote"].ToString();
-                    string problemName = sqlReader["problem_name"] == DBNull.Value ? string.Empty : sqlReader["problem_name"].ToString();
-                    string problemCause = sqlReader["cause"] == DBNull.Value ? string.Empty : sqlReader["cause"].ToString();
-                    string problemAction = sqlReader["actions"] == DBNull.Value ? string.Empty : sqlReader["actions"].ToString();
-                    int problemDelay = sqlReader["caused_delay"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["caused_delay"]);
-
-                    usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
-                        loadEquip,
-                        orderNum,
-                        ulName,
-                        Convert.ToInt32(sqlReader["status"]),
-                        Convert.ToInt32(sqlReader["flags"]),
-                        sqlReader["date_begin"].ToString(),
-                        sqlReader["date_end"].ToString(),
-                        Convert.ToInt32(sqlReader["duration"]),
-                        //Convert.ToInt32(sqlReader["fact_out_qty"]),
-                        factOut,
-                        planOut,
-                        normTime,
-                        Convert.ToInt32(sqlReader["id_man_order_job_item"]),
-                        idFBCBrigade,
-                        idletimeName,
-                        operationType,
-                        note,
-                        idletimeNote,
-                        problemName,
-                        problemCause,
-                        problemAction,
-                        problemDelay
-                    ));
-                }
-                connection.Close();
-            }
-
             return usersList;
         }
 
@@ -641,6 +480,7 @@ namespace libSql
             return usersList;
         }
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //Сделать загрузку отдельно списка смен
         public async Task<List<User>> LoadOrdersFromFBCBrigadeAsync(DateTime currentDate, int currentShift, bool givenShiftNumber = true, int onlyOneUserID = -1, int onlyOneEquipID = -1)
         {
             ValueDateTime timeValues = new ValueDateTime();
@@ -685,99 +525,99 @@ namespace libSql
                     CommandText =
                         @"SELECT
 	                        order_head.id_order_head, 
-	man_planjob.id_man_planjob, 
-	man_planjob.status, 
-	man_factjob.id_common_employee, 
-    CASE WHEN man_factjob.id_equip IS NOT NULL THEN man_factjob.id_equip ELSE fbc_brigade.equip_id END AS id_equip,
-	--man_factjob.id_equip, 
-	man_factjob.shift_num, 
-	order_head.order_num, 
-	common_ul_directory.ul_name, 
-	order_head.order_name, 
-	man_factjob.date_begin, 
-	man_factjob.date_end, 
-	man_factjob.duration, 
-	man_factjob.fact_out_qty, 
-	man_factjob.flags, 
-	man_planjob_list.plan_out_qty, 
-	man_planjob_list.normtime, 
-	man_factjob.norm_time, 
-	man_factjob.id_man_factjob, 
-	man_planjob_list.id_norm_operation, 
-	man_planjob_list.id_man_order_job_item, 
-	man_planjob_list.id_man_planjob_list, 
-	man_factjob.id_fbc_brigade, 
-	idletime_directory.idletime_name, 
-	fbc_brigade.id_common_employee AS shift_user_id, 
-	fbc_brigade.date_begin AS shif_date_begin, 
-	fbc_brigade.date_end AS shif_date_end, 
-	norm_operation_table.ord AS operationType, 
-	LTRIM(RTRIM(REPLACE(CAST(common_note.note AS NVARCHAR(MAX)), '  ', ' '))) AS note, 
-	man_idletime.idletime_name AS idletimeNote, 
-	tqm_problem.problem_name, 
-	man_factjob_problem.cause, 
-	man_factjob_problem.actions, 
-	man_factjob_problem.caused_delay, 
-	idletime_directory.ord
+	                        man_planjob.id_man_planjob, 
+	                        man_planjob.status, 
+	                        man_factjob.id_common_employee, 
+                            CASE WHEN man_factjob.id_equip IS NOT NULL THEN man_factjob.id_equip ELSE fbc_brigade.equip_id END AS id_equip,
+	                        --man_factjob.id_equip, 
+	                        man_factjob.shift_num, 
+	                        order_head.order_num, 
+	                        common_ul_directory.ul_name, 
+	                        order_head.order_name, 
+	                        man_factjob.date_begin, 
+	                        man_factjob.date_end, 
+	                        man_factjob.duration, 
+	                        man_factjob.fact_out_qty, 
+	                        man_factjob.flags, 
+	                        man_planjob_list.plan_out_qty, 
+	                        man_planjob_list.normtime, 
+	                        man_factjob.norm_time, 
+	                        man_factjob.id_man_factjob, 
+	                        man_planjob_list.id_norm_operation, 
+	                        man_planjob_list.id_man_order_job_item, 
+	                        man_planjob_list.id_man_planjob_list, 
+	                        man_factjob.id_fbc_brigade, 
+	                        idletime_directory.idletime_name, 
+	                        fbc_brigade.id_common_employee AS shift_user_id, 
+	                        fbc_brigade.date_begin AS shif_date_begin, 
+	                        fbc_brigade.date_end AS shif_date_end, 
+	                        norm_operation_table.ord AS operationType, 
+	                        LTRIM(RTRIM(REPLACE(CAST(common_note.note AS NVARCHAR(MAX)), '  ', ' '))) AS note, 
+	                        man_idletime.idletime_name AS idletimeNote, 
+	                        tqm_problem.problem_name, 
+	                        man_factjob_problem.cause, 
+	                        man_factjob_problem.actions, 
+	                        man_factjob_problem.caused_delay, 
+	                        idletime_directory.ord
                         FROM
 	                        dbo.fbc_brigade
-	LEFT JOIN
-	dbo.man_factjob
-	ON 
-		(
-			man_factjob.date_begin >= fbc_brigade.date_begin AND
-			man_factjob.date_begin <= ISNULL( fbc_brigade.date_end, GETDATE( ) ) AND
-			man_factjob.id_common_employee = fbc_brigade.id_common_employee
-		)
-	LEFT JOIN
-	dbo.man_planjob_list
-	ON 
-		man_factjob.id_man_planjob_list = man_planjob_list.id_man_planjob_list
-	LEFT JOIN
-	dbo.man_order_job_item
-	ON 
-		man_planjob_list.id_man_order_job_item = man_order_job_item.id_man_order_job_item
-	LEFT JOIN
-	dbo.common_note
-	ON 
-		man_factjob.id_man_factjob = common_note.objectid AND
-		common_note.objecttype = 64
-	LEFT JOIN
-	dbo.man_factjob_problem
-	ON 
-		man_factjob.id_man_factjob = man_factjob_problem.id_man_factjob
-	LEFT JOIN
-	dbo.man_planjob
-	ON 
-		man_order_job_item.id_man_order_job_item = man_planjob.id_man_order_job_item
-	LEFT JOIN
-	dbo.man_idletime
-	ON 
-		man_order_job_item.id_man_order_job = man_idletime.id_man_order_job
-	LEFT JOIN
-	dbo.man_order_job
-	ON 
-		man_order_job_item.id_man_order_job = man_order_job.id_man_order_job
-	LEFT JOIN
-	dbo.order_head
-	ON 
-		man_order_job.id_order_head = order_head.id_order_head
-	LEFT JOIN
-	dbo.idletime_directory
-	ON 
-		man_idletime.id_idletime = idletime_directory.id_idletime_directory
-	LEFT JOIN
-	dbo.common_ul_directory
-	ON 
-		order_head.id_customer = common_ul_directory.id_common_ul_directory
-	LEFT JOIN
-	dbo.norm_operation_table
-	ON 
-		man_planjob_list.id_norm_operation = norm_operation_table.id_norm_operation
-	LEFT JOIN
-	dbo.tqm_problem
-	ON 
-		man_factjob_problem.id_tqm_problem = tqm_problem.id_tqm_problem
+	                    LEFT JOIN
+	                    dbo.man_factjob
+	                    ON 
+		                    (
+			                    man_factjob.date_begin >= fbc_brigade.date_begin AND
+			                    man_factjob.date_begin <= ISNULL( fbc_brigade.date_end, GETDATE( ) ) AND
+			                    man_factjob.id_common_employee = fbc_brigade.id_common_employee
+		                    )
+	                    LEFT JOIN
+	                    dbo.man_planjob_list
+	                    ON 
+		                    man_factjob.id_man_planjob_list = man_planjob_list.id_man_planjob_list
+	                    LEFT JOIN
+	                    dbo.man_order_job_item
+	                    ON 
+		                    man_planjob_list.id_man_order_job_item = man_order_job_item.id_man_order_job_item
+	                    LEFT JOIN
+	                    dbo.common_note
+	                    ON 
+		                    man_factjob.id_man_factjob = common_note.objectid AND
+		                    common_note.objecttype = 64
+	                    LEFT JOIN
+	                    dbo.man_factjob_problem
+	                    ON 
+		                    man_factjob.id_man_factjob = man_factjob_problem.id_man_factjob
+	                    LEFT JOIN
+	                    dbo.man_planjob
+	                    ON 
+		                    man_order_job_item.id_man_order_job_item = man_planjob.id_man_order_job_item
+	                    LEFT JOIN
+	                    dbo.man_idletime
+	                    ON 
+		                    man_order_job_item.id_man_order_job = man_idletime.id_man_order_job
+	                    LEFT JOIN
+	                    dbo.man_order_job
+	                    ON 
+		                    man_order_job_item.id_man_order_job = man_order_job.id_man_order_job
+	                    LEFT JOIN
+	                    dbo.order_head
+	                    ON 
+		                    man_order_job.id_order_head = order_head.id_order_head
+	                    LEFT JOIN
+	                    dbo.idletime_directory
+	                    ON 
+		                    man_idletime.id_idletime = idletime_directory.id_idletime_directory
+	                    LEFT JOIN
+	                    dbo.common_ul_directory
+	                    ON 
+		                    order_head.id_customer = common_ul_directory.id_common_ul_directory
+	                    LEFT JOIN
+	                    dbo.norm_operation_table
+	                    ON 
+		                    man_planjob_list.id_norm_operation = norm_operation_table.id_norm_operation
+	                    LEFT JOIN
+	                    dbo.tqm_problem
+	                    ON 
+		                    man_factjob_problem.id_tqm_problem = tqm_problem.id_tqm_problem
                         WHERE " +
                             cLine +
                         @"ORDER BY
