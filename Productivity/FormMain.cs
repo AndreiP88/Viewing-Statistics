@@ -2650,7 +2650,7 @@ namespace Productivity
                                                 }
                                                 else
                                                 {
-                                                    currentOperation = "Приладка завершена. ";
+                                                    currentOperation = "Приладка завершена. Отставание: " + time.MinuteToTimeString((int)(currentTimeBegin - lastTimeMakeReady));
                                                 }
                                             }
 
