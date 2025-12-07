@@ -4331,6 +4331,8 @@ namespace Productivity
 
         private async Task LoadOrdersForSelectedDateAsync()
         {
+            loadParameter = true;
+
             if (metroSetSwitch1.Switched)
             {
                 SelectCurrentShift();
@@ -4338,6 +4340,8 @@ namespace Productivity
 
             DateTime selectDate = dateTimePicker1.Value;
             int selectShift = comboBox1.SelectedIndex + 1;
+
+            loadParameter = false;
 
             await LoadOrdersSelectedDateAndShiftAsync(selectDate, selectShift);
 
