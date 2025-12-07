@@ -105,6 +105,7 @@ namespace libSql
 
             float percentWorkingOutAverage = 0;
 
+            //Сделать подсчет активных смен, для расчёта выработки
             if (totalPercentWorkingOutList.Count > 0)
             {
                 percentWorkingOutAverage = totalPercentWorkingOutList.Sum() / totalPercentWorkingOutList.Count;

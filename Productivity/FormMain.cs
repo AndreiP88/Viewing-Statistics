@@ -2543,7 +2543,7 @@ namespace Productivity
                                 float lastAmount = (view.Amount - orderPreviousAmount) < 0 ? 0 : (view.Amount - orderPreviousAmount);
 
                                 float orderPreviousMakeReady = shifts.GetAmountDoneFromPreviousShifts(userShift.Orders[currentStep].IdManOrderJobItem, order.DateBegin, 0);
-                                float lastMakeReady = orderPreviousMakeReady == 0 ? 1 : (normtime.PlanOutQtyMakeReady - orderPreviousMakeReady);
+                                float lastMakeReady = orderPreviousMakeReady == 0 ? 1 : ((normtime.PlanOutQtyMakeReady < orderPreviousMakeReady) ? 0 : (normtime.PlanOutQtyMakeReady - orderPreviousMakeReady));
                                 Console.WriteLine("!!!!!!!!!!orderPreviousMakeReady " + orderPreviousMakeReady + ", lastMakeReady " + lastMakeReady + ", normtime.PlanOutQtyMakeReady " + normtime.PlanOutQtyMakeReady);
                                 int normTimeFull = 0;
                                 int normTimeGeneral = 0;
@@ -2927,7 +2927,7 @@ namespace Productivity
             }
         }
 
-        private async Task LoadOrdersSelectedDateAndShiftDetailsOLDAsync(DateTime selectDate, int selectShift)
+        /*private async Task LoadOrdersSelectedDateAndShiftDetailsOLDAsync(DateTime selectDate, int selectShift)
         {
             ChangeStateTimer();
 
@@ -3160,11 +3160,11 @@ namespace Productivity
                                             view.DifferentTime = time.DateDifferenceToMinutes(view.TimePlanedEndOrder, order.DateEnd);
                                             view.TimeEnd = order.DateEnd + " ";
 
-                                            /*dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, timeEndShift);
+                                            *//*dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, timeEndShift);
                                             timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull + dinnerTime);
                                             differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, timeEndShift);
                                             duration = time.DateDifferenceToMinutes(timeEndShift, firstTimeBegin);
-                                            timeEnd = timeEndShift; */
+                                            timeEnd = timeEndShift; *//*
                                         }
                                     }
                                     else
@@ -3353,9 +3353,9 @@ namespace Productivity
                 dataGridViewOneShift.Rows[indexRow].Cells[12].Value = userDone.ToString("N0");
                 dataGridViewOneShift.Rows[indexRow].Cells[13].Value = time.MinuteToTimeString((int)Math.Round(userWorkingOut));
             }
-        }
+        }*/
 
-        private async Task LoadOrdersSelectedDateAndShiftCompactAsync(DateTime selectDate, int selectShift)
+        /*private async Task LoadOrdersSelectedDateAndShiftCompactAsync(DateTime selectDate, int selectShift)
         {
             ChangeStateTimer();
 
@@ -3572,18 +3572,18 @@ namespace Productivity
                                         differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, lastTimeEnd);
                                         timeEnd = lastTimeEnd + " ";
 
-                                        /*dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, timeEndShift);
+                                        *//*dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, timeEndShift);
                                         timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull + dinnerTime);
                                         differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, timeEndShift);
                                         duration = time.DateDifferenceToMinutes(timeEndShift, firstTimeBegin);
-                                        timeEnd = timeEndShift;*/
+                                        timeEnd = timeEndShift;*//*
 
                                         //delete
-                                        /*dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, timeEndShift);
+                                        *//*dinnerTime += AddDinnerTimeToWorkingOut(selectDate, firstTimeBegin, timeEndShift);
                                         timePlanedEndOrder = time.DateTimeAmountMunutes(lastTimeEndPlanedOrder, normTimeFull + dinnerTime);
                                         differentTime = time.DateDifferenceToMinutes(timePlanedEndOrder, timeEndShift);
                                         duration = time.DateDifferenceToMinutes(timeEndShift, firstTimeBegin);
-                                        timeEnd = timeEndShift;*/
+                                        timeEnd = timeEndShift;*//*
                                     }
                                 }
                                 else
@@ -3636,7 +3636,7 @@ namespace Productivity
                 dataGridViewOneShift.Rows[indexRow].Cells[12].Value = userDone.ToString("N0");
                 dataGridViewOneShift.Rows[indexRow].Cells[13].Value = time.MinuteToTimeString((int)Math.Round(userWorkingOut));
             }
-        }
+        }*/
 
         private async void dateTimePicker1_ValueChangedAsync(object sender, EventArgs e)
         {

@@ -51,7 +51,7 @@ namespace libSql
             return usersList;
         }
 
-        public List<ShiftsDetails> LoadShiftsForSelectedMonthLight(List<int> listUsers, DateTime selectDate, int countShifts, int shiftNormTime = 650, bool givenShiftNumber = true, List<int> equipListAS = null)
+        /*public List<ShiftsDetails> LoadShiftsForSelectedMonthLight(List<int> listUsers, DateTime selectDate, int countShifts, int shiftNormTime = 650, bool givenShiftNumber = true, List<int> equipListAS = null)
         {
             List<ShiftsDetails> shiftsList = new List<ShiftsDetails>();
 
@@ -76,7 +76,7 @@ namespace libSql
             }
 
             return shiftsList;
-        }
+        }*/
 
         /// <summary>
         /// Получить выработку за выбранный месяц с выборкой только отработанных смен
@@ -155,7 +155,13 @@ namespace libSql
 
             return usersList;
         }
-
+        /// <summary>
+        /// Список смен для списка пользователей за указанный месяц
+        /// </summary>
+        /// <param name="listUsers"></param>
+        /// <param name="currentMonth"></param>
+        /// <returns></returns>
+        /// Сделать загрузку оборудования по умолчанию
         public List<ShiftsList> LoadShiftsList(List<int> listUsers, DateTime currentMonth)
         {
             List<ShiftsList> shiftsList = new List<ShiftsList>();
@@ -185,7 +191,8 @@ namespace libSql
 	                        id_common_employee, 
 	                        shift_no, 
 	                        date_begin, 
-	                        date_end
+	                        date_end,
+                            equip_id
                         FROM
 	                        dbo.fbc_brigade
                         WHERE 
@@ -225,10 +232,19 @@ namespace libSql
             //List<User> usersList = LoadOrdersFromFactjob(currentDate, currentShift, givenShiftNumber);
             //List<User> usersList = LoadOrdersForFBC(currentDate, currentShift, givenShiftNumber);
             List<User> usersList = await LoadOrdersFromFBCBrigadeAsync(currentDate, currentShift, givenShiftNumber, onlyOneUserID, onlyOneEquipID);
-            
+
             return usersList;
         }
 
+        /// <summary>
+        /// Загрузка списка заказов для списка смен, игнорируя смены без открытых заказо/простоев
+        /// </summary>
+        /// <param name="currentDate">Дата смены</param>
+        /// <param name="currentShift">Номер смены</param>
+        /// <param name="givenShiftNumber">Учитывать номер сены при выборке (не обязательно, по умолчанию = true)</param>
+        /// <param name="onlyOneUserID">Указать индекс пользователя (не обязательно, по умолчанию = -1)</param>
+        /// <param name="onlyOneEquipID">Указать индекс оборудования (не обязательно, по умолчанию = -1)</param>
+        /// <returns>List<User></returns>
         public async Task<List<User>> LoadOrdersFromShiftListAsync(DateTime currentDate, int currentShift, bool givenShiftNumber = true, int onlyOneUserID = -1, int onlyOneEquipID = -1)
         {
             ValueDateTime timeValues = new ValueDateTime();
@@ -480,7 +496,17 @@ namespace libSql
             return usersList;
         }
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //Сделать загрузку отдельно списка смен
+        //Сделать загрузку отдельно списка смен с добавлением оборудования
+        /// <summary>
+        /// Загрузка списка заказов для списка смен, загружая смены без открытых заказо/простоев
+        /// Очень долгая загрузка
+        /// </summary>
+        /// <param name="currentDate">Дата смены</param>
+        /// <param name="currentShift">Номер смены</param>
+        /// <param name="givenShiftNumber">Учитывать номер сены при выборке (не обязательно, по умолчанию = true)</param>
+        /// <param name="onlyOneUserID">Указать индекс пользователя (не обязательно, по умолчанию = -1)</param>
+        /// <param name="onlyOneEquipID">Указать индекс оборудования (не обязательно, по умолчанию = -1)</param>
+        /// <returns>List<User></returns>
         public async Task<List<User>> LoadOrdersFromFBCBrigadeAsync(DateTime currentDate, int currentShift, bool givenShiftNumber = true, int onlyOneUserID = -1, int onlyOneEquipID = -1)
         {
             ValueDateTime timeValues = new ValueDateTime();
@@ -744,7 +770,7 @@ namespace libSql
             return usersList;
         }
 
-        public ShiftsDetails LoadOrdersLight(List<int> listUsers, DateTime currentDate, int currentShift, int shiftNormTime = 650, bool givenShiftNumber = true, List<int> equipListAS = null)
+        /*public ShiftsDetails LoadOrdersLight(List<int> listUsers, DateTime currentDate, int currentShift, int shiftNormTime = 650, bool givenShiftNumber = true, List<int> equipListAS = null)
         {
             //List<User> usersList = LoadOrdersFromFactjob(currentDate, currentShift, givenShiftNumber);
             //List<User> usersList = LoadOrdersForFBC(currentDate, currentShift, givenShiftNumber);
@@ -752,7 +778,7 @@ namespace libSql
             ShiftsDetails shiftsList = LoadOrdersFromFBCBrigadeLight(listUsers, currentDate, currentShift, shiftNormTime, givenShiftNumber, equipListAS);
 
             return shiftsList;
-        }
+        }*/
 
         public ShiftsDetails LoadOrdersLight(List<int> listUsers, ShiftsList currentShift, int shiftNormTime, List<int> equipListAS = null)
         {
@@ -767,7 +793,7 @@ namespace libSql
             return shiftsList;
         }
 
-        public ShiftsDetails LoadOrdersFromFBCBrigadeLight(List<int> listUsers, ShiftsList currentShift, int shiftNormTime, List<int> equipListAS = null)
+        /*public ShiftsDetails LoadOrdersFromFBCBrigadeLight(List<int> listUsers, ShiftsList currentShift, int shiftNormTime, List<int> equipListAS = null)
         {
             ValueDateTime timeValues = new ValueDateTime();
             CalculateWorkingOutput calculateWorking = new CalculateWorkingOutput();
@@ -882,10 +908,10 @@ namespace libSql
 
             bonus = calculateWorking.GetBonusWorkingOutF((int)workingOutput);
 
-            /*if (listUsers[0] == 112)
+            *//*if (listUsers[0] == 112)
         {
             Console.WriteLine(dateShift + " workingOutput: " + timeValues.MinuteToTimeString((int)workingOutput) + " (" + workingOutput + ")" + ". workingPercent: " + workingPercent * 100);
-        }*/
+        }*//*
 
             ShiftsDetails shiftsDetails = new ShiftsDetails(
                     isShiftActive,
@@ -901,7 +927,7 @@ namespace libSql
                     );
 
             return shiftsDetails;
-        }
+        }*/
 
         public ShiftsDetails LoadOrdersFromShiftsListLight(List<int> listUsers, ShiftsList currentShift, int shiftNormTime, List<int> equipListAS = null)
         {
