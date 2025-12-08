@@ -2234,7 +2234,7 @@ namespace Productivity
             DataGridViewContentAlignment center = DataGridViewContentAlignment.MiddleCenter;
 
             string[] colNames = { "№", "Имя", "Заказ", "Заказчик", "Операция", "Тираж", "Дано времени", "Начало", "Завершение", "Продолжительность", "Планируемое время завершения", "Отклонение", "Сделано", "Выработка", "Примечания" };
-            int[] colWidth = { 30, 280, 100, 280, 240, 140, 70, 135, 135, 80, 135, 90, 80, 80, 900 };
+            int[] colWidth = { 30, 280, 100, 280, 240, 140, 70, 135, 135, 80, 135, 90, 80, 80, 1200 };
             DataGridViewContentAlignment[] colAligment = { right, left, left, left, left, left, center, left, left, center, left, center, left, center, left};
 
             for (int i = 0; i < colNames.Length; i++)
@@ -2650,7 +2650,7 @@ namespace Productivity
                                                 }
                                                 else
                                                 {
-                                                    currentOperation = "Приладка завершена. Отставание: " + time.MinuteToTimeString((int)(currentTimeBegin - lastTimeMakeReady));
+                                                    currentOperation = "Приладка завершена. Отставание: " + time.MinuteToTimeString((int)(currentTimeBegin - lastTimeMakeReady)) + ". По плану: ";
                                                 }
                                             }
 
