@@ -1266,12 +1266,12 @@ namespace libSql
                     CommandText =
                         @"SELECT
                             SUM(CASE WHEN norm_operation_table.ord = 1 THEN fact_out_qty ELSE 0 END) AS amount,
-	                        SUM(CASE WHEN plan_out_qty = 0 THEN CASE WHEN fact_out_qty = 1 THEN fact_out_qty * normtime END ELSE fact_out_qty * normtime / plan_out_qty END) AS workingOutput,
-	                        SUM(CASE WHEN plan_out_qty = 0 THEN CASE WHEN fact_out_qty = 1 THEN fact_out_qty * normtime END ELSE fact_out_qty * normtime / plan_out_qty END) / @shiftNormTime AS workingPercent,
+	                        SUM(CASE WHEN plan_out_qty = 0 THEN CASE WHEN fact_out_qty is not null THEN 1 * normtime END ELSE fact_out_qty * normtime / plan_out_qty END) AS workingOutput,
+	                        SUM(CASE WHEN plan_out_qty = 0 THEN CASE WHEN fact_out_qty is not null THEN 1 * normtime END ELSE fact_out_qty * normtime / plan_out_qty END) / @shiftNormTime AS workingPercent,
 	                        --SUM(fact_out_qty * normtime / plan_out_qty) / @shiftNormTime AS workingPercent,
                             SUM(CASE WHEN norm_operation_table.ord = 0 THEN 1 ELSE 0 END) AS makereadyCount,
                             SUM ( CASE WHEN norm_operation_table.ord = 0 THEN fact_out_qty * normtime / plan_out_qty ELSE 0 END ) AS makereadyWorkTime,
-                            CASE WHEN (COUNT (id_man_factjob)) > 0 THEN 1 ELSE 0 END AS isShiftActive
+                            CASE WHEN (COUNT (id_man_factjob) > 0 AND SUM(fact_out_qty + plan_out_qty) > 0) THEN 1 ELSE 0 END AS isShiftActive
                         FROM
 	                        dbo.man_factjob
 	                    INNER JOIN
