@@ -6592,9 +6592,9 @@ namespace Productivity
             cancelTokenSource = new CancellationTokenSource();
 
             Task task = new Task(() => LoadPlan(cancelTokenSource.Token, idMachine, loadAllOrders), cancelTokenSource.Token);
-            task.Start();
+            //task.Start();
 
-            //LoadPlan(cancelTokenSource.Token, idMachine, loadAllOrders);
+            LoadPlan(cancelTokenSource.Token, idMachine, loadAllOrders);
         }
 
         private void LoadPlan(CancellationToken token, int idMachine, bool loadAllOrders)
@@ -6742,12 +6742,12 @@ namespace Productivity
 
                             if ((int)sqlReader["ord"] == 0)
                             {
-                                orders[itemIndex].makereadyTime = Convert.ToInt32(sqlReader["normtime"]) / Convert.ToInt32(sqlReader["plan_out_qty"]);
+                                orders[itemIndex].makereadyTime = sqlReader["normtime"] == DBNull.Value ? 0 : Convert.ToInt32(sqlReader["normtime"]) / Convert.ToInt32(sqlReader["plan_out_qty"]);
                             }
 
                             if ((int)sqlReader["ord"] == 1)
                             {
-                                orders[itemIndex].workTime = Convert.ToInt32(sqlReader["normtime"]);
+                                orders[itemIndex].workTime = sqlReader["normtime"] == DBNull.Value ? 0 : Convert.ToInt32(sqlReader["normtime"]);
                                 orders[itemIndex].amountOfOrder = Convert.ToInt32(sqlReader["plan_out_qty"]);
                             }
 
@@ -6772,7 +6772,7 @@ namespace Productivity
                                         "",
                                         sqlReader["idletime_name"].ToString(),
                                         0,
-                                        Convert.ToInt32(sqlReader["normtime"]),
+                                        sqlReader["normtime"] == DBNull.Value ? 0 : Convert.ToInt32(sqlReader["normtime"]), //Convert.ToInt32(sqlReader["normtime"]),
                                         0,
                                         operationStatus,
                                         ""

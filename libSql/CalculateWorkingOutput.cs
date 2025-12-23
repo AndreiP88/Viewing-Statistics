@@ -84,10 +84,11 @@ namespace libSql
             float totalBonusWorkingOut = 0;
             List<float> totalPercentWorkingOutList = new List<float>();
             int countShifts = 0;
+            int countTotalShifts = 0;
 
             for (int i = 0; i < shiftsList.Count; i++)
             {
-                //countShifts += shiftsList[i].countShifts;
+                countShifts += shiftsList[i].countShifts;
                 totalAmount += shiftsList[i].amountAllOrdersShift;
                 totalTimeWorkigOut += shiftsList[i].allTimeWorkingOutShift;
                 totalCountMakeReady += shiftsList[i].countMakereadyShift;
@@ -101,18 +102,19 @@ namespace libSql
                 }
             }
 
-            countShifts += shiftsList.Count;
+            countTotalShifts += shiftsList.Count;
 
             float percentWorkingOutAverage = 0;
 
+            //
             //Сделать подсчет активных смен, для расчёта выработки
             if (totalPercentWorkingOutList.Count > 0)
             {
-                percentWorkingOutAverage = totalPercentWorkingOutList.Sum() / totalPercentWorkingOutList.Count;
+                percentWorkingOutAverage = totalPercentWorkingOutList.Sum() / countShifts; //totalPercentWorkingOutList.Count;
             }
 
             shiftsDetails = new ShiftsDetails(
-                countShifts,
+                countTotalShifts,
                 -1,
                 -1,
                 (int)totalTimeWorkigOut,
