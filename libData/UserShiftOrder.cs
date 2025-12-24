@@ -23,8 +23,9 @@
         public string ProblemCause;
         public string ProblemAction;
         public int ProblemDelay;
+        public int IsOrderActive;
 
-        public UserShiftOrder(int idEquip, string orderNumber, string orderName, int status, int flags, string dateBegin, string dateEnd, int duration, float factOutQty, float planOutQty, int normtime, int idManOrderJobItem, int idFBCBrigade, string idletimeName, int operationType, string note, string idletimeNote, string problemName, string problemCause, string problemAction, int problemDelay)
+        public UserShiftOrder(int idEquip, string orderNumber, string orderName, int status, int flags, string dateBegin, string dateEnd, int duration, float factOutQty, float planOutQty, int normtime, int idManOrderJobItem, int idFBCBrigade, string idletimeName, int operationType, string note, string idletimeNote, string problemName, string problemCause, string problemAction, int problemDelay, int isOrderActive)
         {
             this.IdEquip = idEquip;
             this.OrderNumber = orderNumber;
@@ -47,6 +48,7 @@
             this.ProblemCause = problemCause;
             this.ProblemAction = problemAction;
             this.ProblemDelay = problemDelay;
+            IsOrderActive = isOrderActive;
         }
     }
 }

@@ -320,7 +320,8 @@ namespace libSql
 	                        man_factjob_problem.cause, 
 	                        man_factjob_problem.actions, 
 	                        man_factjob_problem.caused_delay, 
-	                        idletime_directory.ord
+	                        idletime_directory.ord,
+                            CASE WHEN (man_factjob.id_man_factjob is not null AND man_factjob.fact_out_qty + man_planjob_list.plan_out_qty > 0) THEN 1 ELSE 0 END AS isOrderActive
                         FROM
 	                        dbo.fbc_brigade
 	                        FULL OUTER JOIN
@@ -451,8 +452,8 @@ namespace libSql
 
                     string orderNum = sqlReader["order_num"] == DBNull.Value ? string.Empty : sqlReader["order_num"].ToString();
                     string ulName = sqlReader["ul_name"] == DBNull.Value ? string.Empty : sqlReader["ul_name"].ToString();
-                    float factOut = sqlReader["fact_out_qty"] == DBNull.Value ? 0 : (float)Convert.ToDecimal(sqlReader["fact_out_qty"]);
-                    float planOut = sqlReader["plan_out_qty"] == DBNull.Value ? 0 : (float)Convert.ToDecimal(sqlReader["plan_out_qty"]);
+                    float factOut = sqlReader["fact_out_qty"] == DBNull.Value ? -1 : (float)Convert.ToDecimal(sqlReader["fact_out_qty"]);
+                    float planOut = sqlReader["plan_out_qty"] == DBNull.Value ? -1 : (float)Convert.ToDecimal(sqlReader["plan_out_qty"]);
                     int normTime = sqlReader["normtime"] == DBNull.Value ? 0 : Convert.ToInt32(sqlReader["normtime"]);
                     int idFBCBrigade = sqlReader["id_fbc_brigade"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["id_fbc_brigade"]);
                     string idletimeName = sqlReader["idletime_name"] == DBNull.Value ? string.Empty : sqlReader["idletime_name"].ToString();
@@ -487,7 +488,8 @@ namespace libSql
                         problemName,
                         problemCause,
                         problemAction,
-                        problemDelay
+                        problemDelay,
+                        Convert.ToInt32(sqlReader["isOrderActive"])
                     ));
                 }
                 connection.Close();
@@ -584,7 +586,8 @@ namespace libSql
 	                        man_factjob_problem.cause, 
 	                        man_factjob_problem.actions, 
 	                        man_factjob_problem.caused_delay, 
-	                        idletime_directory.ord
+	                        idletime_directory.ord,
+                            CASE WHEN (man_factjob.id_man_factjob is not null AND man_factjob.fact_out_qty + man_planjob_list.plan_out_qty > 0) THEN 1 ELSE 0 END AS isOrderActive
                         FROM
 	                        dbo.fbc_brigade
 	                    LEFT JOIN
@@ -760,7 +763,8 @@ namespace libSql
                         problemName,
                         problemCause,
                         problemAction,
-                        problemDelay
+                        problemDelay,
+                        Convert.ToInt32(sqlReader["isOrderActive"])
                     ));
                     }
                 }
@@ -859,7 +863,8 @@ namespace libSql
 	                        man_factjob_problem.cause, 
 	                        man_factjob_problem.actions, 
 	                        man_factjob_problem.caused_delay, 
-	                        idletime_directory.ord
+	                        idletime_directory.ord,
+                            CASE WHEN (man_factjob.id_man_factjob is not null AND man_factjob.fact_out_qty + man_planjob_list.plan_out_qty > 0) THEN 1 ELSE 0 END AS isOrderActive
                         FROM
 	                        dbo.fbc_brigade
 	                    LEFT JOIN
@@ -1035,7 +1040,8 @@ namespace libSql
                         problemName,
                         problemCause,
                         problemAction,
-                        problemDelay
+                        problemDelay,
+                        Convert.ToInt32(sqlReader["isOrderActive"])
                     ));
                     }
                 }

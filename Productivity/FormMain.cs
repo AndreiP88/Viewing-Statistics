@@ -1782,7 +1782,8 @@ namespace Productivity
             {
                 if (orders[i].IdEquip == equip)
                 {
-                    if (orders[i].IdletimeName == "" || orders[i].FactOutQty > 0)
+                    //if (orders[i].IdletimeName == "" || orders[i].FactOutQty > 0)
+                    if (orders[i].IsOrderActive == 1)
                     {
                         result = true;
                         break;
@@ -1826,7 +1827,9 @@ namespace Productivity
                     break;
                 }*/
 
-                if (orders[i].IdletimeName == "" || orders[i].FactOutQty > 0)
+                //if (orders[i].IdletimeName == "" || orders[i].PlanOutQty > 0)
+                //if (orders[i].IdletimeName == "" || (orders[i].FactOutQty != -1 && orders[i].PlanOutQty != -1))
+                if (orders[i].IsOrderActive == 1)
                 {
                     result = true;
                     break;
