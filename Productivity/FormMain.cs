@@ -1231,6 +1231,24 @@ namespace Productivity
                                 }
                             }
 
+                            /*if (shift.Orders.Count == 0)
+                            {
+                                for (int k = 0; k < shift.Equips.Count; k++)
+                                {
+                                    if (viewAllEquipsForUser && !currentEquipsList.Contains(shift.Equips[k]))
+                                    {
+                                        currentEquipsList.Add(shift.Equips[k]);
+                                    }
+                                    else
+                                    {
+                                        if (equips.Contains(shift.Equips[k]) && !currentEquipsList.Contains(shift.Equips[k]))
+                                        {
+                                            currentEquipsList.Add(shift.Equips[k]);
+                                        }
+                                    }
+                                }
+                            }*/
+
                             for (int k = 0; k < currentEquipsList.Count; k++)
                             {
                                 float timeWorkigOut = CalculateWorkTime(shift.Orders, currentEquipsList[k]);
@@ -2055,6 +2073,8 @@ namespace Productivity
         {
             DateTime dateTime = DateTime.Now;
 
+            loadParameter = true;
+
             if (dateTime.Hour >= 20 && dateTime.Hour <= 23 || dateTime.Hour >= 0 && dateTime.Hour < 8)
             {
                 if (comboBox1.Items.Count > 1)
@@ -2074,6 +2094,8 @@ namespace Productivity
             {
                 dateTimePicker1.Value = dateTime;
             }
+
+            loadParameter = false;
         }
 
         private bool CheckCurrentShift(DateTime dateTime, int shift) 
@@ -4306,7 +4328,7 @@ namespace Productivity
             listViewEquips.Refresh();
         }
 
-        private void metroSetSwitch1_SwitchedChanged(object sender)
+        private async void metroSetSwitch1_SwitchedChanged(object sender)
         {
             INISettings settings = new INISettings();
 
@@ -4318,6 +4340,8 @@ namespace Productivity
                 comboBox1.Enabled = false;
                 buttonPreview.Enabled = false;
                 buttonNext.Enabled = false;
+
+                await LoadOrdersForSelectedDateAsync();
             }
             else
             {
@@ -4334,8 +4358,6 @@ namespace Productivity
 
         private async Task LoadOrdersForSelectedDateAsync()
         {
-            loadParameter = true;
-
             if (metroSetSwitch1.Switched)
             {
                 SelectCurrentShift();
@@ -4344,16 +4366,9 @@ namespace Productivity
             DateTime selectDate = dateTimePicker1.Value;
             int selectShift = comboBox1.SelectedIndex + 1;
 
-            loadParameter = false;
-
             await LoadOrdersSelectedDateAndShiftAsync(selectDate, selectShift);
 
             lastTimeUpdateShiftStatistic = DateTime.Now;
-        }
-
-        private async Task metroSetButton1_ClickAsync(object sender, EventArgs e)
-        {
-            await LoadOrdersForSelectedDateAsync();
         }
 
         private async void timer1_TickAsync(object sender, EventArgs e)
@@ -4831,6 +4846,7 @@ namespace Productivity
                 dateTimePicker1.Value = dateTimePicker1.Value.AddDays(-1);
                 comboBox1.SelectedIndex = 1;
             }
+
             loadParameter = false;
 
             await LoadOrdersForSelectedDateAsync();

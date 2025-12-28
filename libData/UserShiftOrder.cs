@@ -25,6 +25,32 @@
         public int ProblemDelay;
         public int IsOrderActive;
 
+
+        public UserShiftOrder(int idEquip)
+        {
+            this.IdEquip = idEquip;
+            this.OrderNumber = "";
+            this.OrderName = "";
+            this.Status = 0;
+            this.Flags = 0;
+            this.DateBegin = "";
+            this.DateEnd = "";
+            this.Duration = 0;
+            this.FactOutQty = 0;
+            this.PlanOutQty = 0;
+            this.Normtime = 0;
+            this.IdManOrderJobItem = -1;
+            this.IDFBCBrigade = -1;
+            this.IdletimeName = "";
+            this.OperationType = -1;
+            this.Note = "";
+            this.IdletimeNote = "";
+            this.ProblemName = "";
+            this.ProblemCause = "";
+            this.ProblemAction = "";
+            this.ProblemDelay = 0;
+            IsOrderActive = -1;
+        }
         public UserShiftOrder(int idEquip, string orderNumber, string orderName, int status, int flags, string dateBegin, string dateEnd, int duration, float factOutQty, float planOutQty, int normtime, int idManOrderJobItem, int idFBCBrigade, string idletimeName, int operationType, string note, string idletimeNote, string problemName, string problemCause, string problemAction, int problemDelay, int isOrderActive)
         {
             this.IdEquip = idEquip;

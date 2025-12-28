@@ -1,5 +1,6 @@
 ﻿using libData;
 using libTime;
+using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -231,21 +232,23 @@ namespace libSql
         {
             //List<User> usersList = LoadOrdersFromFactjob(currentDate, currentShift, givenShiftNumber);
             //List<User> usersList = LoadOrdersForFBC(currentDate, currentShift, givenShiftNumber);
-            List<User> usersList = await LoadOrdersFromFBCBrigadeAsync(currentDate, currentShift, givenShiftNumber, onlyOneUserID, onlyOneEquipID);
+            List<User> usersList = await LoadOrdersFromFBCBrigadeAsyncLOWWWWW(currentDate, currentShift, givenShiftNumber, onlyOneUserID, onlyOneEquipID);
 
             return usersList;
         }
 
-        /// <summary>
-        /// Загрузка списка заказов для списка смен, игнорируя смены без открытых заказо/простоев
-        /// </summary>
-        /// <param name="currentDate">Дата смены</param>
-        /// <param name="currentShift">Номер смены</param>
-        /// <param name="givenShiftNumber">Учитывать номер сены при выборке (не обязательно, по умолчанию = true)</param>
-        /// <param name="onlyOneUserID">Указать индекс пользователя (не обязательно, по умолчанию = -1)</param>
-        /// <param name="onlyOneEquipID">Указать индекс оборудования (не обязательно, по умолчанию = -1)</param>
-        /// <returns>List<User></returns>
-        public async Task<List<User>> LoadOrdersFromShiftListAsync(DateTime currentDate, int currentShift, bool givenShiftNumber = true, int onlyOneUserID = -1, int onlyOneEquipID = -1)
+        
+
+
+
+
+
+
+
+
+
+
+        public async Task<List<User>> LoadOrdersFromFBCBrigadeAsyncNNN(DateTime currentDate, int currentShift, bool givenShiftNumber = true, int onlyOneUserID = -1, int onlyOneEquipID = -1)
         {
             ValueDateTime timeValues = new ValueDateTime();
 
@@ -256,27 +259,17 @@ namespace libSql
             string startDateTime = timeValues.SelectStartDateTimeFromShiftNumberAndDateForFBC(currentDate, currentShift);
             string endDateTime = timeValues.SelectEndDateTimeFromShiftNumberAndDateForFBC(currentDate, currentShift);
 
-            string cLine = @"AND fbc_brigade.date_begin >= CONVERT ( VARCHAR ( 24 ), @startDate, 21 ) 
-                             AND fbc_brigade.date_begin <= CONVERT ( VARCHAR ( 24 ), @endDate, 21 ) 
-                             AND fbc_brigade.shift_no = @shiftNum ";
+            string cLine = @"fbc_brigade.date_begin >= CONVERT ( VARCHAR ( 24 ), @startDate, 21 ) 
+                     AND fbc_brigade.date_begin <= CONVERT ( VARCHAR ( 24 ), @endDate, 21 ) 
+                     AND fbc_brigade.shift_no = @shiftNum ";
 
             if (!givenShiftNumber)
             {
                 startDateTime = timeValues.SelectStartDateTimeFromShiftNumberAndDateOnlyTimeForFBC(currentDate, currentShift);
                 endDateTime = timeValues.SelectEndDateTimeFromShiftNumberAndDateOnlyTimeForFBC(currentDate, currentShift);
 
-                cLine = @"AND fbc_brigade.date_begin >= CONVERT ( VARCHAR ( 24 ), @startDate, 21 ) 
-                          AND fbc_brigade.date_begin <= CONVERT ( VARCHAR ( 24 ), @endDate, 21 ) ";
-            }
-
-            if (onlyOneUserID != -1)
-            {
-                cLine += @"AND man_factjob.id_common_employee = @user ";
-            }
-
-            if (onlyOneEquipID != -1)
-            {
-                cLine += @"AND man_factjob.id_equip = @equip ";
+                cLine = @"fbc_brigade.date_begin >= CONVERT ( VARCHAR ( 24 ), @startDate, 21 ) 
+                  AND fbc_brigade.date_begin <= CONVERT ( VARCHAR ( 24 ), @endDate, 21 ) ";
             }
 
             using (SqlConnection connection = DBConnection.GetDBConnection())
@@ -288,105 +281,16 @@ namespace libSql
 
                     CommandText =
                         @"SELECT
-	                        order_head.id_order_head, 
-	                        man_planjob.id_man_planjob, 
-	                        man_planjob.status, 
-	                        man_factjob.id_common_employee, 
-	                        man_factjob.id_equip, 
-	                        man_factjob.shift_num, 
-	                        order_head.order_num, 
-	                        common_ul_directory.ul_name, 
-	                        order_head.order_name, 
-	                        man_factjob.date_begin, 
-	                        man_factjob.date_end, 
-	                        man_factjob.duration, 
-	                        man_factjob.fact_out_qty, 
-	                        man_factjob.flags, 
-	                        man_planjob_list.plan_out_qty, 
-	                        man_planjob_list.normtime, 
-	                        man_factjob.norm_time, 
-	                        man_factjob.id_man_factjob, 
-	                        man_planjob_list.id_norm_operation, 
-	                        man_planjob_list.id_man_order_job_item, 
-	                        man_planjob_list.id_man_planjob_list, 
-	                        man_factjob.id_fbc_brigade, 
-	                        idletime_directory.idletime_name, 
-	                        fbc_brigade.date_begin AS shif_date_begin, 
-	                        fbc_brigade.date_end AS shif_date_end, 
-	                        norm_operation_table.ord AS operationType, 
-	                        LTRIM(RTRIM(REPLACE(CAST(common_note.note AS NVARCHAR(MAX)), '  ', ' '))) AS note, 
-	                        man_idletime.idletime_name AS idletimeNote, 
-	                        tqm_problem.problem_name, 
-	                        man_factjob_problem.cause, 
-	                        man_factjob_problem.actions, 
-	                        man_factjob_problem.caused_delay, 
-	                        idletime_directory.ord,
-                            CASE WHEN (man_factjob.id_man_factjob is not null AND man_factjob.fact_out_qty + man_planjob_list.plan_out_qty > 0) THEN 1 ELSE 0 END AS isOrderActive
-                        FROM
-	                        dbo.fbc_brigade
-	                        FULL OUTER JOIN
-	                        dbo.man_factjob
-	                        ON 
-		                        (
-			                        man_factjob.date_begin >= fbc_brigade.date_begin AND
-			                        man_factjob.date_begin <= ISNULL( fbc_brigade.date_end, GETDATE( ) ) AND
-			                        man_factjob.id_common_employee = fbc_brigade.id_common_employee
-		                        )
-	                        INNER JOIN
-	                        dbo.man_planjob_list
-	                        ON 
-		                        man_factjob.id_man_planjob_list = man_planjob_list.id_man_planjob_list
-	                        INNER JOIN
-	                        dbo.man_order_job_item
-	                        ON 
-		                        man_planjob_list.id_man_order_job_item = man_order_job_item.id_man_order_job_item
-	                        FULL OUTER JOIN
-	                        dbo.man_planjob
-	                        ON 
-		                        man_order_job_item.id_man_order_job_item = man_planjob.id_man_order_job_item
-	                        FULL OUTER JOIN
-	                        dbo.man_idletime
-	                        ON 
-		                        man_order_job_item.id_man_order_job = man_idletime.id_man_order_job
-	                        INNER JOIN
-	                        dbo.man_order_job
-	                        ON 
-		                        man_order_job_item.id_man_order_job = man_order_job.id_man_order_job
-	                        FULL OUTER JOIN
-	                        dbo.order_head
-	                        ON 
-		                        man_order_job.id_order_head = order_head.id_order_head
-	                        LEFT JOIN
-	                        dbo.idletime_directory
-	                        ON 
-		                        man_idletime.id_idletime = idletime_directory.id_idletime_directory
-	                        FULL OUTER JOIN
-	                        dbo.common_ul_directory
-	                        ON 
-		                        order_head.id_customer = common_ul_directory.id_common_ul_directory
-	                        LEFT JOIN
-	                        dbo.norm_operation_table
-	                        ON 
-		                        man_planjob_list.id_norm_operation = norm_operation_table.id_norm_operation
-	                        LEFT JOIN
-	                        dbo.common_note
-	                        ON 
-		                        man_factjob.id_man_factjob = common_note.objectid AND
-		                        common_note.objecttype = 64
-	                        LEFT JOIN
-	                        dbo.man_factjob_problem
-	                        ON 
-		                        man_factjob.id_man_factjob = man_factjob_problem.id_man_factjob
-	                        LEFT JOIN
-	                        dbo.tqm_problem
-	                        ON 
-		                        man_factjob_problem.id_tqm_problem = tqm_problem.id_tqm_problem
-                        WHERE
-                            man_factjob.id_equip IS NOT NULL AND
-                            man_factjob.date_begin IS NOT NULL " +
+                             fbc_brigade.equip_id AS id_equip, 
+                             fbc_brigade.id_common_employee AS shift_user_id, 
+                             fbc_brigade.date_begin AS shif_date_begin, 
+                             fbc_brigade.date_end AS shif_date_end
+                           FROM
+                             dbo.fbc_brigade
+                           WHERE " +
                             cLine +
                         @"ORDER BY
-	                        man_factjob.date_begin ASC, man_factjob.id_man_factjob ASC"
+                            fbc_brigade.date_begin ASC, fbc_brigade.id_fbc_brigade ASC"
                 };
                 Command.Parameters.AddWithValue("@startDate", startDateTime);
                 Command.Parameters.AddWithValue("@endDate", endDateTime);
@@ -398,16 +302,12 @@ namespace libSql
 
                 while (await sqlReader.ReadAsync())
                 {
-                    int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
-                    int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
+                    int loadUser = Convert.ToInt32(sqlReader["shift_user_id"]);
+                    //int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
+                    int loadEquip = sqlReader["id_equip"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["id_equip"]);
 
                     string shiftDateBegin = sqlReader["shif_date_begin"].ToString();
-
-                    string shiftDateEnd = "";
-                    if (!DBNull.Value.Equals(sqlReader["shif_date_end"]))
-                    {
-                        shiftDateEnd = sqlReader["shif_date_end"].ToString();
-                    }
+                    string shiftDateEnd = sqlReader["shif_date_end"] == DBNull.Value ? "" : sqlReader["shif_date_end"].ToString();
 
                     /*int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser &&
                                                                        v.Equip == loadEquip);*/
@@ -430,7 +330,186 @@ namespace libSql
                                                                v.ShiftNumber == currentShift);
 
                     int indexShift = indexFromUserListShifts;
+                    //Console.WriteLine(dateShift + " (" + currentShift + ")" + ": loadUser: " + loadUser + " - indexFromUserListShifts: " + indexFromUserListShifts);
+                    if (indexFromUserListShifts == -1)
+                    {
+                        usersList[indexFromUserList].Shifts.Add(new UserShift(
+                        dateShift,
+                        currentShift,
+                        shiftDateBegin,
+                        shiftDateEnd
+                        ));
 
+                        indexShift = usersList[indexFromUserList].Shifts.Count - 1;
+
+                        usersList[indexFromUserList].Shifts[indexShift].Orders = new List<UserShiftOrder>();
+
+                        if (!usersList[indexFromUserList].Shifts[indexShift].Equips.Contains(loadEquip) && loadEquip != -1)
+                        {
+                            usersList[indexFromUserList].Shifts[indexShift].Equips.Add(loadEquip);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+
+            if (onlyOneUserID != -1)
+            {
+                cLine += @"AND man_factjob.id_common_employee = @user ";
+            }
+
+            if (onlyOneEquipID != -1)
+            {
+                cLine += @"AND man_factjob.id_equip = @equip ";
+            }
+
+            using (SqlConnection connection = DBConnection.GetDBConnection())
+            {
+                await connection.OpenAsync();
+                SqlCommand Command = new SqlCommand
+                {
+                    Connection = connection,
+
+                    CommandText =
+                        @"SELECT
+                            order_head.id_order_head, 
+                            man_planjob.id_man_planjob, 
+                            man_planjob.status, 
+                            man_factjob.id_common_employee, 
+                            CASE WHEN man_factjob.id_equip IS NOT NULL THEN man_factjob.id_equip ELSE fbc_brigade.equip_id END AS id_equip,
+                            --man_factjob.id_equip, 
+                            man_factjob.shift_num, 
+                            order_head.order_num, 
+                            common_ul_directory.ul_name, 
+                            order_head.order_name, 
+                            man_factjob.date_begin, 
+                            man_factjob.date_end, 
+                            man_factjob.duration, 
+                            man_factjob.fact_out_qty, 
+                            man_factjob.flags, 
+                            man_planjob_list.plan_out_qty, 
+                            man_planjob_list.normtime, 
+                            man_factjob.norm_time, 
+                            man_factjob.id_man_factjob, 
+                            man_planjob_list.id_norm_operation, 
+                            man_planjob_list.id_man_order_job_item, 
+                            man_planjob_list.id_man_planjob_list, 
+                            man_factjob.id_fbc_brigade, 
+                            idletime_directory.idletime_name, 
+                            fbc_brigade.id_common_employee AS shift_user_id, 
+                            fbc_brigade.date_begin AS shif_date_begin, 
+                            fbc_brigade.date_end AS shif_date_end, 
+                            norm_operation_table.ord AS operationType, 
+                            LTRIM(RTRIM(REPLACE(CAST(common_note.note AS NVARCHAR(MAX)), '  ', ' '))) AS note, 
+                            man_idletime.idletime_name AS idletimeNote, 
+                            tqm_problem.problem_name, 
+                            man_factjob_problem.cause, 
+                            man_factjob_problem.actions, 
+                            man_factjob_problem.caused_delay, 
+                            idletime_directory.ord,
+                            CASE WHEN (man_factjob.id_man_factjob is not null AND man_factjob.fact_out_qty + man_planjob_list.plan_out_qty > 0) THEN 1 ELSE 0 END AS isOrderActive
+                        FROM
+                            dbo.fbc_brigade
+                        FULL OUTER JOIN
+                        dbo.man_factjob
+                        ON 
+                            (
+                                man_factjob.date_begin >= fbc_brigade.date_begin AND
+                                man_factjob.date_begin <= ISNULL( fbc_brigade.date_end, GETDATE( ) ) AND
+                                man_factjob.id_common_employee = fbc_brigade.id_common_employee
+                            )
+                        INNER JOIN
+                        dbo.man_planjob_list
+                        ON 
+                            man_factjob.id_man_planjob_list = man_planjob_list.id_man_planjob_list
+                        INNER JOIN
+                        dbo.man_order_job_item
+                        ON 
+                            man_planjob_list.id_man_order_job_item = man_order_job_item.id_man_order_job_item
+                        FULL OUTER JOIN
+                        dbo.man_planjob
+                        ON 
+                            man_order_job_item.id_man_order_job_item = man_planjob.id_man_order_job_item
+                        FULL OUTER JOIN
+                        dbo.man_idletime
+                        ON 
+                            man_order_job_item.id_man_order_job = man_idletime.id_man_order_job
+                        INNER JOIN
+                        dbo.man_order_job
+                        ON 
+                            man_order_job_item.id_man_order_job = man_order_job.id_man_order_job
+                        FULL OUTER JOIN
+                        dbo.order_head
+                        ON 
+                            man_order_job.id_order_head = order_head.id_order_head
+                        LEFT JOIN
+                        dbo.idletime_directory
+                        ON 
+                            man_idletime.id_idletime = idletime_directory.id_idletime_directory
+                        FULL OUTER JOIN
+                        dbo.common_ul_directory
+                        ON 
+                            order_head.id_customer = common_ul_directory.id_common_ul_directory
+                        LEFT JOIN
+                        dbo.norm_operation_table
+                        ON 
+                            man_planjob_list.id_norm_operation = norm_operation_table.id_norm_operation
+                        LEFT JOIN
+                        dbo.common_note
+                        ON 
+                            man_factjob.id_man_factjob = common_note.objectid AND
+                            common_note.objecttype = 64
+                        LEFT JOIN
+                        dbo.man_factjob_problem
+                        ON 
+                            man_factjob.id_man_factjob = man_factjob_problem.id_man_factjob
+                        LEFT JOIN
+                        dbo.tqm_problem
+                        ON 
+                            man_factjob_problem.id_tqm_problem = tqm_problem.id_tqm_problem
+                        WHERE " +
+                            cLine +
+                        @"ORDER BY
+                    man_factjob.date_begin ASC, man_factjob.id_man_factjob ASC"
+                };
+                Command.Parameters.AddWithValue("@startDate", startDateTime);
+                Command.Parameters.AddWithValue("@endDate", endDateTime);
+                Command.Parameters.AddWithValue("@shiftNum", currentShift);
+                Command.Parameters.AddWithValue("@user", onlyOneUserID);
+                Command.Parameters.AddWithValue("@equip", onlyOneEquipID);
+
+                DbDataReader sqlReader = await Command.ExecuteReaderAsync();
+
+                while (await sqlReader.ReadAsync())
+                {
+                    int loadUser = Convert.ToInt32(sqlReader["shift_user_id"]);
+                    int loadEquip = sqlReader["id_equip"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["id_equip"]);
+                    string shiftDateBegin = sqlReader["shif_date_begin"].ToString();
+
+                    string shiftDateEnd = sqlReader["shif_date_end"] == DBNull.Value ? "" : sqlReader["shif_date_end"].ToString();
+
+                    /*int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser &&
+                                                                       v.Equip == loadEquip);*/
+
+                    int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser);
+
+                    if (indexFromUserList == -1)
+                    {
+                        usersList.Add(new User(
+                            loadUser
+                        ));
+
+                        indexFromUserList = usersList.Count - 1;
+                        
+                        usersList[indexFromUserList].Shifts = new List<UserShift>();
+                    }
+
+                    int indexFromUserListShifts = usersList[indexFromUserList].Shifts.FindIndex(
+                                                        (v) => v.ShiftDate == dateShift &&
+                                                               v.ShiftNumber == currentShift);
+                    
+                    int indexShift = indexFromUserListShifts;
+                    
                     if (indexFromUserListShifts == -1)
                     {
                         usersList[indexFromUserList].Shifts.Add(new UserShift(
@@ -452,8 +531,8 @@ namespace libSql
 
                     string orderNum = sqlReader["order_num"] == DBNull.Value ? string.Empty : sqlReader["order_num"].ToString();
                     string ulName = sqlReader["ul_name"] == DBNull.Value ? string.Empty : sqlReader["ul_name"].ToString();
-                    float factOut = sqlReader["fact_out_qty"] == DBNull.Value ? -1 : (float)Convert.ToDecimal(sqlReader["fact_out_qty"]);
-                    float planOut = sqlReader["plan_out_qty"] == DBNull.Value ? -1 : (float)Convert.ToDecimal(sqlReader["plan_out_qty"]);
+                    float factOut = sqlReader["fact_out_qty"] == DBNull.Value ? 0 : (float)Convert.ToDecimal(sqlReader["fact_out_qty"]);
+                    float planOut = sqlReader["plan_out_qty"] == DBNull.Value ? 0 : (float)Convert.ToDecimal(sqlReader["plan_out_qty"]);
                     int normTime = sqlReader["normtime"] == DBNull.Value ? 0 : Convert.ToInt32(sqlReader["normtime"]);
                     int idFBCBrigade = sqlReader["id_fbc_brigade"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["id_fbc_brigade"]);
                     string idletimeName = sqlReader["idletime_name"] == DBNull.Value ? string.Empty : sqlReader["idletime_name"].ToString();
@@ -466,20 +545,30 @@ namespace libSql
                     string problemAction = sqlReader["actions"] == DBNull.Value ? string.Empty : sqlReader["actions"].ToString();
                     int problemDelay = sqlReader["caused_delay"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["caused_delay"]);
 
-                    usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
+                    int status = sqlReader["status"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["status"]);
+                    int flags = sqlReader["flags"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["flags"]);
+                    string date_begin = sqlReader["date_begin"] == DBNull.Value ? string.Empty : sqlReader["date_begin"].ToString();
+                    string date_end = sqlReader["date_end"] == DBNull.Value ? string.Empty : sqlReader["date_end"].ToString();
+                    int duration = sqlReader["duration"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["duration"]);
+                    int id_man_order_job_item = sqlReader["id_man_order_job_item"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["id_man_order_job_item"]);
+
+
+                    if (loadEquip != -1)
+                    {
+                        usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
                         loadEquip,
                         orderNum,
                         ulName,
-                        Convert.ToInt32(sqlReader["status"]),
-                        Convert.ToInt32(sqlReader["flags"]),
-                        sqlReader["date_begin"].ToString(),
-                        sqlReader["date_end"].ToString(),
-                        Convert.ToInt32(sqlReader["duration"]),
+                        status,
+                        flags,
+                        date_begin,
+                        date_end,
+                        duration,
                         //Convert.ToInt32(sqlReader["fact_out_qty"]),
                         factOut,
                         planOut,
                         normTime,
-                        Convert.ToInt32(sqlReader["id_man_order_job_item"]),
+                        id_man_order_job_item,
                         idFBCBrigade,
                         idletimeName,
                         operationType,
@@ -491,12 +580,51 @@ namespace libSql
                         problemDelay,
                         Convert.ToInt32(sqlReader["isOrderActive"])
                     ));
+                    }
                 }
                 connection.Close();
             }
-            
+
             return usersList;
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //Сделать загрузку отдельно списка смен с добавлением оборудования
         /// <summary>
@@ -509,7 +637,7 @@ namespace libSql
         /// <param name="onlyOneUserID">Указать индекс пользователя (не обязательно, по умолчанию = -1)</param>
         /// <param name="onlyOneEquipID">Указать индекс оборудования (не обязательно, по умолчанию = -1)</param>
         /// <returns>List<User></returns>
-        public async Task<List<User>> LoadOrdersFromFBCBrigadeAsync(DateTime currentDate, int currentShift, bool givenShiftNumber = true, int onlyOneUserID = -1, int onlyOneEquipID = -1)
+        public async Task<List<User>> LoadOrdersFromFBCBrigadeAsyncLOWWWWW(DateTime currentDate, int currentShift, bool givenShiftNumber = true, int onlyOneUserID = -1, int onlyOneEquipID = -1)
         {
             ValueDateTime timeValues = new ValueDateTime();
 
@@ -770,6 +898,14 @@ namespace libSql
                 }
                 connection.Close();
             }
+
+            for (int i = 0; i < usersList.Count; i++)
+                for (int j = 0; j < usersList[i].Shifts.Count; j++)
+                {
+                    Console.WriteLine(usersList[i].Id + ": " + usersList[i].Name + " - " + usersList[i].Shifts[j].ShiftDateBegin +
+                        " (" + usersList[i].Shifts[j].ShiftNumber + "): " + usersList[i].Shifts[j].Equips.Count + ": " + usersList[i].Shifts[j].Equips[0] +
+                        " - " + usersList[i].Shifts[j].Orders.Count);
+                }
 
             return usersList;
         }
@@ -1044,6 +1180,268 @@ namespace libSql
                         Convert.ToInt32(sqlReader["isOrderActive"])
                     ));
                     }
+                }
+                connection.Close();
+            }
+
+            return usersList;
+        }
+
+        /// <summary>
+        /// Загрузка списка заказов для списка смен, игнорируя смены без открытых заказо/простоев
+        /// </summary>
+        /// <param name="currentDate">Дата смены</param>
+        /// <param name="currentShift">Номер смены</param>
+        /// <param name="givenShiftNumber">Учитывать номер сены при выборке (не обязательно, по умолчанию = true)</param>
+        /// <param name="onlyOneUserID">Указать индекс пользователя (не обязательно, по умолчанию = -1)</param>
+        /// <param name="onlyOneEquipID">Указать индекс оборудования (не обязательно, по умолчанию = -1)</param>
+        /// <returns>List<User></returns>
+        public async Task<List<User>> LoadOrdersFromShiftListAsync(DateTime currentDate, int currentShift, bool givenShiftNumber = true, int onlyOneUserID = -1, int onlyOneEquipID = -1)
+        {
+            ValueDateTime timeValues = new ValueDateTime();
+
+            List<User> usersList = new List<User>();
+
+            string dateShift = currentDate.ToString("dd.MM.yyyy");
+
+            string startDateTime = timeValues.SelectStartDateTimeFromShiftNumberAndDateForFBC(currentDate, currentShift);
+            string endDateTime = timeValues.SelectEndDateTimeFromShiftNumberAndDateForFBC(currentDate, currentShift);
+
+            string cLine = @"AND fbc_brigade.date_begin >= CONVERT ( VARCHAR ( 24 ), @startDate, 21 ) 
+                             AND fbc_brigade.date_begin <= CONVERT ( VARCHAR ( 24 ), @endDate, 21 ) 
+                             AND fbc_brigade.shift_no = @shiftNum ";
+
+            if (!givenShiftNumber)
+            {
+                startDateTime = timeValues.SelectStartDateTimeFromShiftNumberAndDateOnlyTimeForFBC(currentDate, currentShift);
+                endDateTime = timeValues.SelectEndDateTimeFromShiftNumberAndDateOnlyTimeForFBC(currentDate, currentShift);
+
+                cLine = @"AND fbc_brigade.date_begin >= CONVERT ( VARCHAR ( 24 ), @startDate, 21 ) 
+                          AND fbc_brigade.date_begin <= CONVERT ( VARCHAR ( 24 ), @endDate, 21 ) ";
+            }
+
+            if (onlyOneUserID != -1)
+            {
+                cLine += @"AND man_factjob.id_common_employee = @user ";
+            }
+
+            if (onlyOneEquipID != -1)
+            {
+                cLine += @"AND man_factjob.id_equip = @equip ";
+            }
+
+            using (SqlConnection connection = DBConnection.GetDBConnection())
+            {
+                await connection.OpenAsync();
+                SqlCommand Command = new SqlCommand
+                {
+                    Connection = connection,
+
+                    CommandText =
+                        @"SELECT
+	                        order_head.id_order_head, 
+	                        man_planjob.id_man_planjob, 
+	                        man_planjob.status, 
+	                        man_factjob.id_common_employee, 
+	                        man_factjob.id_equip, 
+	                        man_factjob.shift_num, 
+	                        order_head.order_num, 
+	                        common_ul_directory.ul_name, 
+	                        order_head.order_name, 
+	                        man_factjob.date_begin, 
+	                        man_factjob.date_end, 
+	                        man_factjob.duration, 
+	                        man_factjob.fact_out_qty, 
+	                        man_factjob.flags, 
+	                        man_planjob_list.plan_out_qty, 
+	                        man_planjob_list.normtime, 
+	                        man_factjob.norm_time, 
+	                        man_factjob.id_man_factjob, 
+	                        man_planjob_list.id_norm_operation, 
+	                        man_planjob_list.id_man_order_job_item, 
+	                        man_planjob_list.id_man_planjob_list, 
+	                        man_factjob.id_fbc_brigade, 
+	                        idletime_directory.idletime_name, 
+	                        fbc_brigade.date_begin AS shif_date_begin, 
+	                        fbc_brigade.date_end AS shif_date_end, 
+	                        norm_operation_table.ord AS operationType, 
+	                        LTRIM(RTRIM(REPLACE(CAST(common_note.note AS NVARCHAR(MAX)), '  ', ' '))) AS note, 
+	                        man_idletime.idletime_name AS idletimeNote, 
+	                        tqm_problem.problem_name, 
+	                        man_factjob_problem.cause, 
+	                        man_factjob_problem.actions, 
+	                        man_factjob_problem.caused_delay, 
+	                        idletime_directory.ord,
+                            CASE WHEN (man_factjob.id_man_factjob is not null AND man_factjob.fact_out_qty + man_planjob_list.plan_out_qty > 0) THEN 1 ELSE 0 END AS isOrderActive
+                        FROM
+	                        dbo.fbc_brigade
+	                        FULL OUTER JOIN
+	                        dbo.man_factjob
+	                        ON 
+		                        (
+			                        man_factjob.date_begin >= fbc_brigade.date_begin AND
+			                        man_factjob.date_begin <= ISNULL( fbc_brigade.date_end, GETDATE( ) ) AND
+			                        man_factjob.id_common_employee = fbc_brigade.id_common_employee
+		                        )
+	                        INNER JOIN
+	                        dbo.man_planjob_list
+	                        ON 
+		                        man_factjob.id_man_planjob_list = man_planjob_list.id_man_planjob_list
+	                        INNER JOIN
+	                        dbo.man_order_job_item
+	                        ON 
+		                        man_planjob_list.id_man_order_job_item = man_order_job_item.id_man_order_job_item
+	                        FULL OUTER JOIN
+	                        dbo.man_planjob
+	                        ON 
+		                        man_order_job_item.id_man_order_job_item = man_planjob.id_man_order_job_item
+	                        FULL OUTER JOIN
+	                        dbo.man_idletime
+	                        ON 
+		                        man_order_job_item.id_man_order_job = man_idletime.id_man_order_job
+	                        INNER JOIN
+	                        dbo.man_order_job
+	                        ON 
+		                        man_order_job_item.id_man_order_job = man_order_job.id_man_order_job
+	                        FULL OUTER JOIN
+	                        dbo.order_head
+	                        ON 
+		                        man_order_job.id_order_head = order_head.id_order_head
+	                        LEFT JOIN
+	                        dbo.idletime_directory
+	                        ON 
+		                        man_idletime.id_idletime = idletime_directory.id_idletime_directory
+	                        FULL OUTER JOIN
+	                        dbo.common_ul_directory
+	                        ON 
+		                        order_head.id_customer = common_ul_directory.id_common_ul_directory
+	                        LEFT JOIN
+	                        dbo.norm_operation_table
+	                        ON 
+		                        man_planjob_list.id_norm_operation = norm_operation_table.id_norm_operation
+	                        LEFT JOIN
+	                        dbo.common_note
+	                        ON 
+		                        man_factjob.id_man_factjob = common_note.objectid AND
+		                        common_note.objecttype = 64
+	                        LEFT JOIN
+	                        dbo.man_factjob_problem
+	                        ON 
+		                        man_factjob.id_man_factjob = man_factjob_problem.id_man_factjob
+	                        LEFT JOIN
+	                        dbo.tqm_problem
+	                        ON 
+		                        man_factjob_problem.id_tqm_problem = tqm_problem.id_tqm_problem
+                        WHERE
+                            man_factjob.id_equip IS NOT NULL AND
+                            man_factjob.date_begin IS NOT NULL " +
+                            cLine +
+                        @"ORDER BY
+	                        man_factjob.date_begin ASC, man_factjob.id_man_factjob ASC"
+                };
+                Command.Parameters.AddWithValue("@startDate", startDateTime);
+                Command.Parameters.AddWithValue("@endDate", endDateTime);
+                Command.Parameters.AddWithValue("@shiftNum", currentShift);
+                Command.Parameters.AddWithValue("@user", onlyOneUserID);
+                Command.Parameters.AddWithValue("@equip", onlyOneEquipID);
+
+                DbDataReader sqlReader = await Command.ExecuteReaderAsync();
+
+                while (await sqlReader.ReadAsync())
+                {
+                    int loadUser = Convert.ToInt32(sqlReader["id_common_employee"]);
+                    int loadEquip = Convert.ToInt32(sqlReader["id_equip"]);
+
+                    string shiftDateBegin = sqlReader["shif_date_begin"].ToString();
+
+                    string shiftDateEnd = "";
+                    if (!DBNull.Value.Equals(sqlReader["shif_date_end"]))
+                    {
+                        shiftDateEnd = sqlReader["shif_date_end"].ToString();
+                    }
+
+                    /*int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser &&
+                                                                       v.Equip == loadEquip);*/
+
+                    int indexFromUserList = usersList.FindIndex((v) => v.Id == loadUser);
+
+                    if (indexFromUserList == -1)
+                    {
+                        usersList.Add(new User(
+                            loadUser
+                        ));
+
+                        indexFromUserList = usersList.Count - 1;
+
+                        usersList[indexFromUserList].Shifts = new List<UserShift>();
+                    }
+
+                    int indexFromUserListShifts = usersList[indexFromUserList].Shifts.FindIndex(
+                                                        (v) => v.ShiftDate == dateShift &&
+                                                               v.ShiftNumber == currentShift);
+
+                    int indexShift = indexFromUserListShifts;
+
+                    if (indexFromUserListShifts == -1)
+                    {
+                        usersList[indexFromUserList].Shifts.Add(new UserShift(
+                        dateShift,
+                        currentShift,
+                        shiftDateBegin,
+                        shiftDateEnd
+                        ));
+
+                        indexShift = usersList[indexFromUserList].Shifts.Count - 1;
+
+                        usersList[indexFromUserList].Shifts[indexShift].Orders = new List<UserShiftOrder>();
+
+                        if (!usersList[indexFromUserList].Shifts[indexShift].Equips.Contains(loadEquip))
+                        {
+                            usersList[indexFromUserList].Shifts[indexShift].Equips.Add(loadEquip);
+                        }
+                    }
+
+                    string orderNum = sqlReader["order_num"] == DBNull.Value ? string.Empty : sqlReader["order_num"].ToString();
+                    string ulName = sqlReader["ul_name"] == DBNull.Value ? string.Empty : sqlReader["ul_name"].ToString();
+                    float factOut = sqlReader["fact_out_qty"] == DBNull.Value ? -1 : (float)Convert.ToDecimal(sqlReader["fact_out_qty"]);
+                    float planOut = sqlReader["plan_out_qty"] == DBNull.Value ? -1 : (float)Convert.ToDecimal(sqlReader["plan_out_qty"]);
+                    int normTime = sqlReader["normtime"] == DBNull.Value ? 0 : Convert.ToInt32(sqlReader["normtime"]);
+                    int idFBCBrigade = sqlReader["id_fbc_brigade"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["id_fbc_brigade"]);
+                    string idletimeName = sqlReader["idletime_name"] == DBNull.Value ? string.Empty : sqlReader["idletime_name"].ToString();
+                    int operationType = sqlReader["operationType"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["operationType"]);
+
+                    string note = sqlReader["note"] == DBNull.Value ? string.Empty : sqlReader["note"].ToString();
+                    string idletimeNote = sqlReader["idletimeNote"] == DBNull.Value ? string.Empty : sqlReader["idletimeNote"].ToString();
+                    string problemName = sqlReader["problem_name"] == DBNull.Value ? string.Empty : sqlReader["problem_name"].ToString();
+                    string problemCause = sqlReader["cause"] == DBNull.Value ? string.Empty : sqlReader["cause"].ToString();
+                    string problemAction = sqlReader["actions"] == DBNull.Value ? string.Empty : sqlReader["actions"].ToString();
+                    int problemDelay = sqlReader["caused_delay"] == DBNull.Value ? -1 : Convert.ToInt32(sqlReader["caused_delay"]);
+
+                    usersList[indexFromUserList].Shifts[indexShift].Orders.Add(new UserShiftOrder(
+                        loadEquip,
+                        orderNum,
+                        ulName,
+                        Convert.ToInt32(sqlReader["status"]),
+                        Convert.ToInt32(sqlReader["flags"]),
+                        sqlReader["date_begin"].ToString(),
+                        sqlReader["date_end"].ToString(),
+                        Convert.ToInt32(sqlReader["duration"]),
+                        //Convert.ToInt32(sqlReader["fact_out_qty"]),
+                        factOut,
+                        planOut,
+                        normTime,
+                        Convert.ToInt32(sqlReader["id_man_order_job_item"]),
+                        idFBCBrigade,
+                        idletimeName,
+                        operationType,
+                        note,
+                        idletimeNote,
+                        problemName,
+                        problemCause,
+                        problemAction,
+                        problemDelay,
+                        Convert.ToInt32(sqlReader["isOrderActive"])
+                    ));
                 }
                 connection.Close();
             }
