@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using libData;
@@ -169,7 +168,7 @@ namespace Viewing_Statistics
             }
         }
 
-        private async Task LoadShiftsForUsersListAsync(DateTime startDate)
+        private async Task LoadShiftsForUsersListAsync(DateTime startDate, CancellationToken token)
         {
             try
             {
@@ -185,8 +184,8 @@ namespace Viewing_Statistics
                 usersList = await valueShifts.LoadShiftsAsync(usersList, startMonth.AddMonths(-1), countShifts, givenShiftNumber);
                 
                 //usersList = valueShifts.LoadShifts(usersList, startDate, countShifts, givenShiftNumber);
-                usersListPreviewMonth = await valueShifts.LoadShiftsForSelectedMonth(usersListPreviewMonth, startDate.AddMonths(-1), countShifts, givenShiftNumber);
-                usersListCurrentMonth = await valueShifts.LoadShiftsForSelectedMonth(usersListCurrentMonth, startDate, countShifts, givenShiftNumber);
+                usersListPreviewMonth = await valueShifts.LoadShiftsForSelectedMonth(usersListPreviewMonth, startDate.AddMonths(-1), countShifts, givenShiftNumber, token);
+                usersListCurrentMonth = await valueShifts.LoadShiftsForSelectedMonth(usersListCurrentMonth, startDate, countShifts, givenShiftNumber, token);
             }
             catch (Exception ex)
             {
@@ -197,6 +196,10 @@ namespace Viewing_Statistics
 
         private async Task ReloadDataFromBaseAsync(List<PageView> pagesList, DateTime startDate)
         {
+            cancelTokenSource?.Cancel();
+
+            cancelTokenSource = new CancellationTokenSource();
+
             List<int> equips = GetAllEquipsFromPagesList(pagesList);
 
             DisposingAllControlsFromTabPages();
@@ -204,7 +207,7 @@ namespace Viewing_Statistics
             LoadAllUsers();
             LoadMachine();
             await LoadUsersListAsync(equips, startDate);
-            await LoadShiftsForUsersListAsync(startDate);
+            await LoadShiftsForUsersListAsync(startDate, cancelTokenSource.Token);
         }
 
         private void DisposingAllControlsFromTabPages()
@@ -902,10 +905,7 @@ namespace Viewing_Statistics
 
         private void StartAddingWorkingTimeToListView(DoubleBufferedDataGridView dataGrid, int period, int countOutValue, List<string> outValues)
         {
-            if (cancelTokenSource != null)
-            {
-                cancelTokenSource.Cancel();
-            }
+            cancelTokenSource?.Cancel();
 
             DateTime previewMonth = GetStartDate(period).AddMonths(-1);
             DateTime currentMonth = GetStartDate(period);
@@ -1244,7 +1244,7 @@ namespace Viewing_Statistics
             }
         }
 
-        private async Task<List<User>> LoadShiftsListMonthAsync(DateTime selectDate)
+        /*private async Task<List<User>> LoadShiftsListMonthAsync(DateTime selectDate)
         {
             ValueShifts valueShifts = new ValueShifts();
             ValueUsers usersValue = new ValueUsers();
@@ -1265,7 +1265,7 @@ namespace Viewing_Statistics
             //MessageBox.Show(selectDate.ToString() + ": " + usersListMonth.Count + " = " + usersList.Count);
 
             return usersListMonth;
-        }
+        }*/
 
         private void AddWorkingTimeMonthUsersToListView(CancellationToken token, DoubleBufferedDataGridView dataGrid, List<User> usersListMonth, DateTime selectDate, List<string> values)
         {

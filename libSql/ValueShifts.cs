@@ -1,10 +1,10 @@
 ﻿using libData;
 using libTime;
-using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace libSql
@@ -14,40 +14,63 @@ namespace libSql
         public ValueShifts()
         {
         }
-        public async Task<List<User>> LoadShiftsForSelectedMonth(List<User> listUsers, DateTime selectDate, int countShifts, bool givenShiftNumber = true)
+        public async Task<List<User>> LoadShiftsForSelectedMonth(List<User> listUsers, DateTime selectDate, int countShifts, bool givenShiftNumber, CancellationToken token)
         {
             List<User> usersList = listUsers;
 
-            ValueDateTime timeValues = new ValueDateTime();
-
-            int countDaysFromSellectedDate = DateTime.DaysInMonth(selectDate.Year, selectDate.Month);
-
-            DateTime startMonth = DateTime.MinValue.AddYears(selectDate.Year - 1).AddMonths(selectDate.Month - 1);
-            
-            for (int currentDay = 0; currentDay < countDaysFromSellectedDate; currentDay++)
+            await Task.Run(async () =>
             {
-                for (int currentShift = 1; currentShift <= countShifts; currentShift++)
+                if (token.IsCancellationRequested)
                 {
-                    DateTime currentDate = startMonth.AddDays(currentDay);
+                    return;
+                }
 
-                    List<User> loadedList = await LoadOrdersAsync(currentDate, currentShift, givenShiftNumber);
-                    
-                    for (int i = 0; i < loadedList.Count; i++)
+                ValueDateTime timeValues = new ValueDateTime();
+
+                int countDaysFromSellectedDate = DateTime.DaysInMonth(selectDate.Year, selectDate.Month);
+
+                DateTime startMonth = DateTime.MinValue.AddYears(selectDate.Year - 1).AddMonths(selectDate.Month - 1);
+
+                for (int currentDay = 0; currentDay < countDaysFromSellectedDate; currentDay++)
+                {
+                    if (token.IsCancellationRequested)
                     {
-                        int indexFromUserList = usersList.FindIndex((v) => v.Id == loadedList[i].Id);
-                        
-                        if (indexFromUserList != -1)
+                        return;
+                    }
+
+                    for (int currentShift = 1; currentShift <= countShifts; currentShift++)
+                    {
+                        if (token.IsCancellationRequested)
                         {
-                            usersList[indexFromUserList].Shifts.AddRange(loadedList[i].Shifts);
-                            
-                            /*for (int j = 0; j < loadedList[i].Shifts.Count; j++)
+                            return;
+                        }
+
+                        DateTime currentDate = startMonth.AddDays(currentDay);
+
+                        List<User> loadedList = await LoadOrdersAsync(currentDate, currentShift, givenShiftNumber);
+
+                        for (int i = 0; i < loadedList.Count; i++)
+                        {
+                            if (token.IsCancellationRequested)
                             {
-                                usersList[indexFromUserList].Shifts.Add(loadedList[i].Shifts[j]);
-                            }*/
+                                return;
+                            }
+
+                            int indexFromUserList = usersList.FindIndex((v) => v.Id == loadedList[i].Id);
+
+                            if (indexFromUserList != -1)
+                            {
+                                usersList[indexFromUserList].Shifts.AddRange(loadedList[i].Shifts);
+
+                                /*for (int j = 0; j < loadedList[i].Shifts.Count; j++)
+                                {
+                                    usersList[indexFromUserList].Shifts.Add(loadedList[i].Shifts[j]);
+                                }*/
+                            }
                         }
                     }
                 }
-            }
+            }, token);
 
             return usersList;
         }
@@ -899,13 +922,13 @@ namespace libSql
                 connection.Close();
             }
 
-            for (int i = 0; i < usersList.Count; i++)
+            /*for (int i = 0; i < usersList.Count; i++)
                 for (int j = 0; j < usersList[i].Shifts.Count; j++)
                 {
                     Console.WriteLine(usersList[i].Id + ": " + usersList[i].Name + " - " + usersList[i].Shifts[j].ShiftDateBegin +
                         " (" + usersList[i].Shifts[j].ShiftNumber + "): " + usersList[i].Shifts[j].Equips.Count + ": " + usersList[i].Shifts[j].Equips[0] +
                         " - " + usersList[i].Shifts[j].Orders.Count);
-                }
+                }*/
 
             return usersList;
         }

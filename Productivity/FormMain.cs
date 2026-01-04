@@ -19,9 +19,6 @@ using System.Data.Common;
 using System.Data.SqlClient;
 
 using ExportExcel;
-using System.Xml.Linq;
-using System.Reflection;
-using Microsoft.SqlServer.Server;
 
 namespace Productivity
 {
@@ -50,6 +47,7 @@ namespace Productivity
         bool loadPageList = true;
         bool loadParameter = true;
         bool loadShiftsParameter = true;
+        bool loadMonthStatistic = false;
         bool loadCategoryStatistic = false;
         bool loadCategoryYearStatistic = false;
         bool loadUserStatistic = false;
@@ -519,11 +517,14 @@ namespace Productivity
             comboBox2.SelectedIndex = DateTime.Now.AddMonths(-1).Month;
         }
 
-        private void CreateColomnsToDataGrid(int days, int month)
+        //private void CreateColomnsToDataGrid(int days, int month)
+        private void CreateColomnsToDataGrid(DateTime date)
         {
-            INISettings settings= new INISettings();
+            INISettings settings = new INISettings();
 
             int countShifts = settings.GetCountShifts();
+            int days = DateTime.DaysInMonth(date.Year, date.Month);
+            int month = date.Month;
 
             dataGridView1.Rows.Clear();
             dataGridView1.Columns.Clear();
@@ -610,8 +611,8 @@ namespace Productivity
             {
                 AddCellToGrid(0, i, countShifts);
 
-                dataGridView1.Rows[0].Cells[i].Value = ((i - 2 + countShifts) / countShifts).ToString("D2") + "." + month.ToString("D2");
-                dataGridView1.Rows[0].Cells[i + 1].Value = ((i + 1 - 2 + countShifts) / countShifts).ToString("D2") + "." + month.ToString("D2");
+                dataGridView1.Rows[0].Cells[i].Value = ((i - 2 + countShifts) / countShifts).ToString("D2") + "." + month.ToString("D2") + "." + date.Year.ToString("D4");
+                dataGridView1.Rows[0].Cells[i + 1].Value = ((i + 1 - 2 + countShifts) / countShifts).ToString("D2") + "." + month.ToString("D2") + "." + date.Year.ToString("D4");
             }
 
             dataGridView1.Rows.Add();
@@ -686,19 +687,46 @@ namespace Productivity
             //nOffset += collSpan + 1;
         }
 
-        private async Task ChangeDateAsync()
+        private async Task ChangeDateAsync(bool update, bool reload)
+        {
+            if (loadMonthStatistic)
+            {
+                cancelTokenSource?.Cancel();
+
+                Thread.Sleep(200);
+
+                dataGridView1.Rows.Clear();
+                dataGridView1.Columns.Clear();
+
+                Thread.Sleep(500);
+
+                if (update)
+                {
+                    await StartUpdateStatistic(reload);
+                }
+            }
+            else
+            {
+                await StartUpdateStatistic(reload);
+            }
+        }
+
+        private async Task StartUpdateStatistic(bool reload)
         {
             if (!loadShiftsParameter)
             {
                 if (comboBox2.SelectedIndex != -1 && comboBox3.SelectedIndex != -1 && comboBox4.SelectedIndex != -1)
                 {
-                    await UpdateStatistics();
+                    await UpdateStatistics(reload);
                 }
             }
         }
 
-        private DateTime ReturnDateFromInputParameter(int year, int month)
+        private DateTime ReturnDateForMonthStatistic()
         {
+            int year = GetYearFromComboBox();
+            int month = GetMonthFromComboBox();
+
             DateTime result = DateTime.MinValue.AddYears(year - 1).AddMonths(month - 1);
 
             return result;
@@ -809,8 +837,13 @@ namespace Productivity
             }
         }
 
-        private async Task<List<User>> LoadShiftsListAsync()
+        private async Task<List<User>> LoadShiftsListAsync(DateTime selectDate, CancellationToken token)
         {
+            if (token.IsCancellationRequested)
+            {
+                return null;
+            }
+
             ValueShifts valueShifts = new ValueShifts();
 
             INISettings settings = new INISettings();
@@ -818,14 +851,9 @@ namespace Productivity
             int countShifts = settings.GetCountShifts();
             bool givenShiftNumber = settings.GetGivenShiftNumber();
 
-            int year = GetYearFromComboBox();
-            int month = GetMonthFromComboBox();
-
-            DateTime selectDate = ReturnDateFromInputParameter(year, month);
-
             //usersList = await valueShifts.LoadShiftsForSelectedMonth(usersList, selectDate, countShifts, givenShiftNumber);
             //сдесь проверить usersList, не пустой ли?
-            return await valueShifts.LoadShiftsForSelectedMonth(usersList, selectDate, countShifts, givenShiftNumber);
+            return await valueShifts.LoadShiftsForSelectedMonth(usersList, selectDate, countShifts, givenShiftNumber, token);
         }
         private bool IsThereEquipForUser(List<UserShift> shifts, int equip)
         {
@@ -845,8 +873,13 @@ namespace Productivity
 
         private async Task AddUsersToListViewAsync(CancellationToken token)
         {
-            await Task.Run(() =>
+            //await Task.Run(() =>
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 ValueCategoryes valueCategoryes = new ValueCategoryes();
                 INISettings settings = new INISettings();
 
@@ -895,10 +928,13 @@ namespace Productivity
                             break;
                         }
 
-                        Invoke(new Action(() =>
+                        if (!token.IsCancellationRequested)
                         {
-                            AddItemToGrid("e" + equips[i], "", machine, Color.Gray);
-                        }));
+                            Invoke(new Action(() =>
+                            {
+                                AddItemToGrid("e" + equips[i], "", machine, Color.Gray);
+                            }));
+                        }
 
                         for (int j = 0; j < usersList.Count; j++)
                         {
@@ -933,10 +969,13 @@ namespace Productivity
                                     break;
                                 }
 
-                                Invoke(new Action(() =>
+                                if (!token.IsCancellationRequested)
                                 {
-                                    AddItemToGrid(CreateNameListViewItem(equips[i], usersList[j].Id), countUserForCurrentEquip.ToString(), user, color);
-                                }));
+                                    Invoke(new Action(() =>
+                                    {
+                                        AddItemToGrid(CreateNameListViewItem(equips[i], usersList[j].Id), countUserForCurrentEquip.ToString(), user, color);
+                                    }));
+                                }
                             }
                         }
                     }
@@ -1026,10 +1065,13 @@ namespace Productivity
                             break;
                         }
 
-                        Invoke(new Action(() =>
+                        if (!token.IsCancellationRequested)
                         {
-                            AddItemToGrid("u" + usersCurrent[i], "", user, Color.Gray);
-                        }));
+                            Invoke(new Action(() =>
+                            {
+                                AddItemToGrid("u" + usersCurrent[i], "", user, Color.Gray);
+                            }));
+                        }
 
                         int countEquipForCurrentUser = 0;
 
@@ -1071,16 +1113,19 @@ namespace Productivity
                                         break;
                                     }
 
-                                    Invoke(new Action(() =>
+                                    if (!token.IsCancellationRequested)
                                     {
-                                        AddItemToGrid(CreateNameListViewItem(equipsCurrent[j], usersList[index].Id), countEquipForCurrentUser.ToString(), machine, color);
-                                    }));
+                                        Invoke(new Action(() =>
+                                        {
+                                            AddItemToGrid(CreateNameListViewItem(equipsCurrent[j], usersList[index].Id), countEquipForCurrentUser.ToString(), machine, color);
+                                        }));
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }, token);
+            }//, token);
         }
 
         private void AddItemToGrid(string name, string text, string subText, Color color, int colSpan = 1)
@@ -1112,18 +1157,18 @@ namespace Productivity
             return "e" + equip + "u" + user;
         }
 
-        private void StartAddingWorkingTimeToListView(CancellationToken token)
+        private async Task StartAddingWorkingTimeToListView(CancellationToken token)
         {
-            Task taskDetails = new Task(() => AddWorkingTimeUsersToListView(token), token);
+            Task taskDetails = new Task(async () => await AddWorkingTimeUsersToListView(token), token);
             taskDetails.Start();
-            //AddWorkingTimeUsersToListView(cancelTokenSource.Token);
+            //await AddWorkingTimeUsersToListView(cancelTokenSource.Token);
 
             //Task taskEquips = new Task(() => AddWorkingTimeEquipsToListView(cancelTokenSource.Token), cancelTokenSource.Token);
             //taskEquips.Start();
             //AddWorkingTimeEquipsToListView
         }
 
-        private void AddWorkingTimeUsersToListView(CancellationToken token)
+        private async Task AddWorkingTimeUsersToListView(CancellationToken token)
         {
             Invoke(new Action(() =>
             {
@@ -1929,76 +1974,92 @@ namespace Productivity
             return countDaysFromSellectedMonth;
         }
 
-        private async Task UpdateStatistics()
+        private async Task UpdateStatistics(bool reload = true)
         {
             ValueCategoryes valueCategoryes = new ValueCategoryes();
-
-            comboBox2.Enabled = false;
-            comboBox3.Enabled = false;
-            comboBox4.Enabled = false;
-            comboBox7.Enabled = false;
-            button1.Enabled = false;
-
-            int year = GetYearFromComboBox();
-            int month = GetMonthFromComboBox();
-
-            DateTime selectDate = ReturnDateFromInputParameter(year, month);
-
-            int countDaysFromSellectedMonth = DateTime.DaysInMonth(year, month);
-
-            CreateColomnsToDataGrid(countDaysFromSellectedMonth, month);
 
             cancelTokenSource?.Cancel();
             Thread.Sleep(300);
 
             cancelTokenSource = new CancellationTokenSource();
 
+            loadMonthStatistic = true;
+
+            comboBox2.Enabled = false;
+            comboBox3.Enabled = false;
+            comboBox4.Enabled = false;
+            comboBox7.Enabled = false;
+            button1.Text = "Отмена";
+
+            DateTime selectDate = ReturnDateForMonthStatistic();
+
+            dataGridView1.Rows.Clear();
+            dataGridView1.Columns.Clear();
+
+            CreateColomnsToDataGrid(selectDate);
+
             //List<int> equips = GetSelectegEquipsList();
             List<Category> categoryEquips = valueCategoryes.GetSelectedCategoriesAndEquipsList();
 
             Stopwatch stopwatch = new Stopwatch();
-            
-            Console.WriteLine("Start LoadUsersList: " + DateTime.Now.ToString("R"));
-            stopwatch.Start();
-            await LoadUsersList(categoryEquips, selectDate);
-            stopwatch.Stop();
-            Console.WriteLine("LoadUsersList: " + stopwatch.ElapsedMilliseconds);
 
-            Console.WriteLine("Start LoadShiftsList: ");
-            stopwatch.Start();
-            usersList = await LoadShiftsListAsync();
-            stopwatch.Stop();
-            Console.WriteLine("LoadShiftsList: " + stopwatch.ElapsedMilliseconds + ", usersList = " + usersList.Count);
+            try
+            {
+                if (reload)
+                {
+                    Console.WriteLine("Start LoadUsersList: " + DateTime.Now.ToString("R"));
+                    stopwatch.Start();
+                    await LoadUsersList(categoryEquips, selectDate);
+                    stopwatch.Stop();
+                    Console.WriteLine("LoadUsersList: " + stopwatch.ElapsedMilliseconds);
 
-            Console.WriteLine("Start AddUsersToListView: ");
-            //LoadShifts();
-            stopwatch.Start();
-            await AddUsersToListViewAsync(cancelTokenSource.Token);
-            stopwatch.Stop();
-            Console.WriteLine("AddUsersToListView: " + stopwatch.ElapsedMilliseconds);
+                    Console.WriteLine("Start LoadShiftsList: ");
+                    stopwatch.Start();
+                    usersList = await LoadShiftsListAsync(selectDate, cancelTokenSource.Token);
+                    stopwatch.Stop();
+                    Console.WriteLine("LoadShiftsList: " + stopwatch.ElapsedMilliseconds + ", usersList = " + usersList.Count);
+                }
+
+                Console.WriteLine("Start AddUsersToListView: ");
+                //LoadShifts();
+                stopwatch.Start();
+                await AddUsersToListViewAsync(cancelTokenSource.Token);
+                stopwatch.Stop();
+                Console.WriteLine("AddUsersToListView: " + stopwatch.ElapsedMilliseconds);
+
+                if (comboBox7.SelectedIndex == -1)
+                {
+                    comboBox7.SelectedIndex = 0;
+                }
+                else
+                {
+                    Console.WriteLine("Start LoadShifts: ");
+                    //LoadShifts();
+                    stopwatch.Start();
+                    await StartAddingWorkingTimeToListView(cancelTokenSource.Token);
+                    stopwatch.Stop();
+                    Console.WriteLine("LoadShifts: " + stopwatch.ElapsedMilliseconds);
+
+                }
+                Console.WriteLine("End: " + DateTime.Now.ToString("R"));
+                //LoadShifts();
+            }
+            catch (TaskCanceledException ex) when (ex.CancellationToken.IsCancellationRequested)
+            {
+                Console.WriteLine($"Статистика месяца. {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Произошла ошибка: {ex.Message}");
+            }
+
+            loadMonthStatistic = false;
 
             comboBox2.Enabled = true;
             comboBox3.Enabled = true;
             comboBox4.Enabled = true;
             comboBox7.Enabled = true;
-            button1.Enabled = true;
-
-            if (comboBox7.SelectedIndex == -1)
-            {
-                comboBox7.SelectedIndex = 0;
-            }
-            else
-            {
-                Console.WriteLine("Start LoadShifts: ");
-                //LoadShifts();
-                stopwatch.Start();
-                StartAddingWorkingTimeToListView(cancelTokenSource.Token);
-                stopwatch.Stop();
-                Console.WriteLine("LoadShifts: " + stopwatch.ElapsedMilliseconds);
-                
-            }
-            Console.WriteLine("End: " + DateTime.Now.ToString("R"));
-            //LoadShifts();
+            button1.Text = "Обновить";
         }
 
         private void EnabledButtonsForCategory(int item, int itemsCount)
@@ -2569,15 +2630,15 @@ namespace Productivity
 
                                 float orderPreviousMakeReady = shifts.GetAmountDoneFromPreviousShifts(userShift.Orders[currentStep].IdManOrderJobItem, order.DateBegin, 0);
                                 float lastMakeReady = orderPreviousMakeReady == 0 ? 1 : ((normtime.PlanOutQtyMakeReady < orderPreviousMakeReady) ? 0 : (normtime.PlanOutQtyMakeReady - orderPreviousMakeReady));
-                                Console.WriteLine("!!!!!!!!!!orderPreviousMakeReady " + orderPreviousMakeReady + ", lastMakeReady " + lastMakeReady + ", normtime.PlanOutQtyMakeReady " + normtime.PlanOutQtyMakeReady);
+                                /*Console.WriteLine("!!!!!!!!!!orderPreviousMakeReady " + orderPreviousMakeReady + ", lastMakeReady " + lastMakeReady + ", normtime.PlanOutQtyMakeReady " + normtime.PlanOutQtyMakeReady);*/
                                 int normTimeFull = 0;
                                 int normTimeGeneral = 0;
 
                                 float lastTimeWork = 0;
                                 float lastTimeMakeReady = (normtime.PlanNormtimeMakeReady / (normtime.PlanOutQtyMakeReady == 0 ? 1 : normtime.PlanOutQtyMakeReady)) * lastMakeReady;
 
-                                Console.WriteLine(order.OrderNumber + ": " + order.OrderName + " | " + order.IdManOrderJobItem + " - " + normtime.PlanNormtimeMakeReady + " / " + normtime.PlanOutQtyMakeReady + " * " + lastMakeReady + " = " + lastTimeMakeReady + "\nРабота: " + view.NormTimeWork + " == " + normtime.PlanNormtimeWork + "\nПриладка: " + view.NormTimeMakeReady + " == " + normtime.PlanNormtimeMakeReady +
-                                    "\nТираж: " + view.Amount + " Сделано: " + view.Done + "\nПрил: " + view.MakeReady + " Сделано: " + view.DoneMakeReady);
+                                /*Console.WriteLine(order.OrderNumber + ": " + order.OrderName + " | " + order.IdManOrderJobItem + " - " + normtime.PlanNormtimeMakeReady + " / " + normtime.PlanOutQtyMakeReady + " * " + lastMakeReady + " = " + lastTimeMakeReady + "\nРабота: " + view.NormTimeWork + " == " + normtime.PlanNormtimeWork + "\nПриладка: " + view.NormTimeMakeReady + " == " + normtime.PlanNormtimeMakeReady +
+                                    "\nТираж: " + view.Amount + " Сделано: " + view.Done + "\nПрил: " + view.MakeReady + " Сделано: " + view.DoneMakeReady);*/
 
                                 //Сделать подсчёт оставшегося времени с учетом оставшейся части приладки view.NormTimeMakeReady * lastMakeReady
                                 //Что делает GetNormTimeForOrder?
@@ -2708,13 +2769,13 @@ namespace Productivity
 
                                             currentOperation += "Норма: " + (view.Amount / normtime.PlanNormtimeWork * 60).ToString("N0") + " шт/ч; ";
 
-                                            Console.WriteLine("TEST: view.Amount / normtime.PlanNormtimeWork = (" + view.Amount + " / " + normtime.PlanNormtimeWork + ") = " + view.Amount / normtime.PlanNormtimeWork +
+                                            /*Console.WriteLine("TEST: view.Amount / normtime.PlanNormtimeWork = (" + view.Amount + " / " + normtime.PlanNormtimeWork + ") = " + view.Amount / normtime.PlanNormtimeWork +
                                                 "; workCount = (currentTimeBegin - lastTimeMakeReady) * norm = (" + currentTimeBegin + " - " + lastTimeMakeReady + ") * (" + view.Amount + " / " + normtime.PlanNormtimeWork + ") = " + (currentTimeBegin  -  lastTimeMakeReady) * (view.Amount / normtime.PlanNormtimeWork) + 
                                                  "\n---------------------------------");
 
                                             Console.WriteLine("TEST2: currentMakereadyWorkingOut = " + currentMakereadyWorkingOut + "; lastTimeMakeReady < currentTimeBegin " +
                                                 lastTimeMakeReady + " < " + currentTimeBegin +
-                                                 "\n---------------------------------");
+                                                 "\n---------------------------------");*/
                                         }
                                         else
                                         {
@@ -3690,22 +3751,22 @@ namespace Productivity
 
         private async void comboBox2_SelectedIndexChangedAsync(object sender, EventArgs e)
         {
-            await ChangeDateAsync();
+            await ChangeDateAsync(true, true);
         }
 
         private async void comboBox3_SelectedIndexChangedAsync(object sender, EventArgs e)
         {
-            await ChangeDateAsync();
+            await ChangeDateAsync(true, true);
         }
 
         private async void comboBox4_SelectedIndexChangedAsync(object sender, EventArgs e)
         {
-            await ChangeDateAsync();
+            await ChangeDateAsync(true, false);
         }
 
         private async void button1_ClickAsync(object sender, EventArgs e)
         {
-            await ChangeDateAsync();
+            await ChangeDateAsync(false, true);
         }
 
         private async void metroSetTabControl1_SelectedIndexChangedAsync(object sender, EventArgs e)
@@ -4015,7 +4076,7 @@ namespace Productivity
             {
                 //UpdateStatistics();
 
-                await ChangeDateAsync();
+                await ChangeDateAsync(true, true);
             }
 
             if (selectedIndex == PageStatistic)
@@ -7074,7 +7135,7 @@ namespace Productivity
             string userAndEquip = rowIndexes.ElementAt(idr - 2).Key;
             string value = dataGridView1[idc, idr].Value.ToString();
 
-            DateTime date = Convert.ToDateTime(sDate + "." + comboBox3.Text);
+            DateTime date = Convert.ToDateTime(sDate);
 
             FormViewShiftDetails form = new FormViewShiftDetails(date, sShift, userAndEquip);
             form.ShowDialog();
